@@ -61,14 +61,12 @@ TEST(test_Thermo_Stat,test_basic){
 
     container.createPointers();
 
-    //std::cout << container.to_string() << std::endl;
 
     
     //after this call the Temperature of the system should be 30 (because it's the target temperature)
     calculator.applyThermostats();
 
     //particles afterwards
-    //std::cout << container.to_string() << std::endl;
 
     double temp = getTemp(container);
 
@@ -94,12 +92,6 @@ TEST(test_Thermo_Stat,test_heating){
         boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective
         },100.0,5.0);  
-    //initial_temp = 30
-    //target_temp = 100
-    //max_temp_diff = 10
-
-    //max_temp_diff is 1 and target_temp is 30
-    //so in every Thermostat iteration, the temperature is increased by one maximum
 
 
     //have some particles to simulate
