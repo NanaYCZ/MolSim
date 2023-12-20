@@ -1,6 +1,7 @@
 #include "SphereGeneration.h"
 #include "utils/ArrayUtils.h"
 #include "utils/MaxwellBoltzmannDistribution.h"
+#include "inputHandling/FileReaderProgramArgs.h"
 #include "cmath"
 
 void addSpheres(CellContainer& container, std::list<FileReader::SphereData> spheres, size_t dim) {

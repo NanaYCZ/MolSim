@@ -2,6 +2,7 @@
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
 #include "FileReader.h"
+#include "FileReaderProgramArgs.h"
 #include "xmlParsing/parameters.hpp"
 
 #include <spdlog/spdlog.h>

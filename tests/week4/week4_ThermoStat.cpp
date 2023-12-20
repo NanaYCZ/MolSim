@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "inputHandling/FileReader.h"
+#include "inputHandling/FileReaderProgramArgs.h"
 #include "inputHandling/generators/CuboidGeneration.h"
 #include "inputHandling/generators/SphereGeneration.h"
 #include "particleModel/storage/CellContainer.h"
@@ -7,7 +8,12 @@
 #include "particleModel/updating/CellCalculator.h"
 #include "utils/ArrayUtils.h"
 
-
+/**
+ * @brief calculates the temperature of the system(all particles in the container, that are 
+ *        within the domain boundary)
+ * 
+ * @return temperature of the system
+*/
 double getTemp(CellContainer& container){
 
     double temp = 0;
@@ -16,6 +22,9 @@ double getTemp(CellContainer& container){
         for(Particle* particle_ptr : *iter){   
             //std::cout << "encountered particle"  << std::endl;
             auto v = particle_ptr->getV();
+            // if(ArrayUtils::L2Norm(v) > 50)
+            //     std::cout << "high veloctiy for: " << particle_ptr->toString() << "\n" << std::endl;
+
             temp += ((v[0]* v[0] + v[1] * v[1] + v[2] * v[2] ) * particle_ptr->getM());
         }
     }
@@ -23,18 +32,27 @@ double getTemp(CellContainer& container){
     std::cout << "Afterwards have kinetic energy(times 2): " << temp << std::endl;
 
     //dimension should be 2 and boltzman constant is 1
-    temp = temp / ( 3.0 * container.size() *  1);
+    temp = temp / ( 2.0 * container.size() *  1);
 
     return temp;
 }
 
-
+/**
+ * @brief Tests if the Thermostat applied to a CellContainer with particles changes the 
+ *        temperature of the system(particles in the CellContainer) correctly. First some 
+ *        particles are added to a CellContainer. Then without anything else, the Thermostat
+ *        is applied to the CellContainer by calling it on a CellCalculator, that wraps our
+ *        CellContainer. The CellCalculator was initialized with  
+ *        target_temp = 30 and no max_temp_diff. Therefore calling `applyThermostats` should
+ *        directly change the temperature of the system to 30.
+ *
+ */
 TEST(test_Thermo_Stat,test_basic){
-    CellContainer container(15,15,15,3.0,3.0);
+    CellContainer container(15,15,0,3.0,3.0);
     CellCalculator calculator(container,0.0014,3.0,
         {boundary_conditions::outflow,boundary_conditions::outflow,
         boundary_conditions::outflow,boundary_conditions::outflow,
-        boundary_conditions::outflow,boundary_conditions::outflow},0.0,30.0);
+        boundary_conditions::outflow,boundary_conditions::outflow},30.0);
 
     container.addParticle({1,1,0},{2,2,2},3);
     container.addParticle({6,5,0},{2,2,2},4);
@@ -43,14 +61,14 @@ TEST(test_Thermo_Stat,test_basic){
 
     container.createPointers();
 
-    std::cout << container.to_string() << std::endl;
+    //std::cout << container.to_string() << std::endl;
 
     
     //after this call the Temperature of the system should be 30 (because it's the target temperature)
     calculator.applyThermostats();
 
     //particles afterwards
-    std::cout << container.to_string() << std::endl;
+    //std::cout << container.to_string() << std::endl;
 
     double temp = getTemp(container);
 
@@ -59,27 +77,39 @@ TEST(test_Thermo_Stat,test_basic){
 
 }
 
-
+/**
+ * @brief Tests if the Thermostat correctly heats up a system(particles in the CellContainer).
+ *        Frist some particles are added to a CellContainer. Then a CellCalculator, that wraps 
+ *        the CellContainer is initialized with initial_temp=0.0 (again will be ignored) without anything else, the Thermostat
+ *        is applied to the CellContainer by calling it on a CellCalculator, that wraps our
+ *        CellContainer. The CellCalculator was initialized with  
+ *        target_temp = 30 and no max_temp_diff. Therefore calling `applyThermostats` should
+ *        directly change the temperature of the system to 30.
+ *
+ */
 TEST(test_Thermo_Stat,test_heating){
-    CellContainer container(50,50,50,3.0,3.0);
+    CellContainer container(50,50,0,3.0,3.0);
     CellCalculator calculator(container,0.0014,3.0,
         {boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective
-        },30,100.0,10.0);  
+        },100.0,5.0);  
+    //initial_temp = 30
+    //target_temp = 100
+    //max_temp_diff = 10
 
     //max_temp_diff is 1 and target_temp is 30
     //so in every Thermostat iteration, the temperature is increased by one maximum
 
 
     //have some particles to simulate
-    container.addParticle({1,1,0},{2,2,2},3);
-    container.addParticle({6,5,0},{2,2,2},4);
-    container.addParticle({7,12,0},{2,2,2},4);
-    container.addParticle({7,4,0},{3,4,5},7);
-    container.addParticle({20,30,0},{2,4,2},3);
-    container.addParticle({3,5,45},{3,4,3},8);
-    container.addParticle({24,8,4},{1,1,1},9);
+    container.addParticle({1,1,0},{2,2,0},3);
+    container.addParticle({3,3,0},{2,2,0},4);
+    container.addParticle({7,12,0},{2,2,0},4);
+    container.addParticle({7,7,0},{3,4,0},7);
+    container.addParticle({12,8,0},{2,4,0},3);
+    container.addParticle({30,23,0},{3,4,0},8);
+    container.addParticle({10,8,0},{1,1,0},9);
 
     container.createPointers();
 
@@ -91,7 +121,7 @@ TEST(test_Thermo_Stat,test_heating){
     calculator.initializeFX();
 
 
-    for(int i = 0; i < 50; i++){
+    for(int i = 0; i < 20; i++){
         calculator.applyReflectiveBoundaries();
         calculator.calculateLinkedCellF();
         calculator.calculateWithinFVX();
@@ -109,25 +139,25 @@ TEST(test_Thermo_Stat,test_heating){
 
 
 TEST(test_Thermo_Stat,test_cooling){
-    CellContainer container(50,50,50,3.0,3.0);
+    CellContainer container(50,50,0,3.0,3.0);
     CellCalculator calculator(container,0.0014,3.0,
         {boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective
-        },30,20.0,5.0);  
+        },20.0,1.0);  
 
-    //max_temp_diff is 1 and target_temp is 30
+    //max_temp_diff is 5 and target_temp is 20
     //so in every Thermostat iteration, the temperature is increased by one maximum
 
 
     //have some particles to simulate
-    container.addParticle({1,1,0},{2,2,2},3);
-    container.addParticle({6,5,0},{2,2,2},4);
-    container.addParticle({7,12,0},{2,2,2},4);
-    container.addParticle({7,4,0},{3,4,5},7);
-    container.addParticle({20,30,0},{2,4,2},3);
-    container.addParticle({3,5,45},{3,4,3},8);
-    container.addParticle({24,8,4},{1,1,1},9);
+    container.addParticle({1,1,0},{2,2,0},3);
+    container.addParticle({6,5,0},{2,2,0},4);
+    container.addParticle({7,12,0},{2,2,0},4);
+    container.addParticle({7,4,0},{3,4,0},7);
+    container.addParticle({20,30,0},{2,4,0},3);
+    container.addParticle({3,5,0},{3,4,0},8);
+    container.addParticle({24,8,0},{1,1,0},9);
 
     container.createPointers();
 
@@ -196,7 +226,7 @@ TEST(test_Thermo_Stat,test_initial_Temp){
         boundary_conditions::reflective,boundary_conditions::reflective
         },    //boundary conditions
         {200,200,200},        //domain size
-        std::nullopt,
+        std::nullopt,       
         std::nullopt,
         "out",          // file_basename
         10,             // write_frequency
@@ -223,9 +253,6 @@ TEST(test_Thermo_Stat,test_initial_Temp){
     // with boltzmann distribution
     std::cout << "temp is: " << temp << std::endl;
     std::cout << "temp should be roughly 30" << std::endl;
-
-
-
 
 }
 

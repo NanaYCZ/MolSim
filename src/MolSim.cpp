@@ -3,6 +3,7 @@
 #include "inputHandling/generators/CuboidGeneration.h"
 #include "inputHandling/generators/SphereGeneration.h"
 #include "inputHandling/Checkpointer.h"
+#include "inputHandling/FileReaderProgramArgs.h"
 #include "Simulation.h"
 
 #include <spdlog/sinks/basic_file_sink.h>
@@ -98,8 +99,9 @@ int main(int argc, char *argsv[])
 
     CellContainer cellContainer(args.domain_dimensions[0],args.domain_dimensions[1],args.domain_dimensions[2],
                                 args.cut_off_radius,args.cell_size);
-    CellCalculator cellCalculator(cellContainer,args.delta_t,args.cut_off_radius, args.boundaries,args.init_temp,
-                                    args.target_temp, args.max_temp_diff,args.gravity_factor);
+    CellCalculator cellCalculator(cellContainer,args.delta_t,args.cut_off_radius, args.boundaries, 
+                                  args.target_temp.has_value() ? args.target_temp : args.init_temp,
+                                  args.max_temp_diff,args.gravity_factor);
 
     addCuboids(cellContainer,args.cuboids);
     addSpheres(cellContainer,args.spheres,2);

@@ -1,10 +1,25 @@
 #include <gtest/gtest.h>
 #include "inputHandling/FileReader.h"
+#include "inputHandling/FileReaderProgramArgs.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <array>
+
+
+std::string to_string(boundary_conditions cond){
+    if(cond == boundary_conditions::reflective)
+        return "reflective";
+    else if(cond == boundary_conditions::ghost_reflective)
+        return "ghost_reflective";
+    else if(cond == boundary_conditions::periodic)
+        return "periodic";
+    else if(cond == boundary_conditions::outflow)
+        return "outflow";
+    else    
+        throw std::invalid_argument("Not a correct boundary condition");
+}
 
 
 /**
@@ -30,14 +45,33 @@ void writeArgsIntoXMLFile(const FileReader::ProgramArgs &programArgs,std::string
     xmlStream << "  <outputParameters>" << std::endl;
     xmlStream << "    <baseName>" << programArgs.file_basename << "</baseName>" << std::endl;
     xmlStream << "    <writeFrequency>" << programArgs.write_frequency << "</writeFrequency>" << std::endl;
+    if(programArgs.checkpoint_input_file.has_value())
+        xmlStream << "    <checkpointInputFileName>" << programArgs.checkpoint_input_file.value() << "</checkpointInputFileName>" << std::endl;
+
+    if(programArgs.checkpoint_output_file.has_value())
+        xmlStream << "    <checkpointOutputFileName>" << programArgs.checkpoint_output_file.value() << "</checkpointOutputFileName>" << std::endl;
+
     xmlStream << "  </outputParameters>" << std::endl;
 
     // Add simulationParameters node under parameters
     xmlStream << "  <simulationParameters>" << std::endl;
     xmlStream << "    <tEnd>" << programArgs.t_end << "</tEnd>" << std::endl;
     xmlStream << "    <deltaT>" << programArgs.delta_t << "</deltaT>" << std::endl;
-    xmlStream << "    <cutOfRadius>" << programArgs.cut_of_radius << "</cutOfRadius>" << std::endl;
+    xmlStream << "    <cutOffRadius>" << programArgs.cut_off_radius << "</cutOffRadius>" << std::endl;
     xmlStream << "    <cellSize>" << programArgs.cell_size << "</cellSize>" << std::endl;
+    xmlStream << "    <gravityFactor>" << programArgs.gravity_factor << "</gravityFactor>" << std::endl;
+    if(programArgs.calculate_thermostats){
+    xmlStream << "    <Thermostats>" << std::endl;
+    xmlStream << "      <initTemp>" << programArgs.init_temp << "</initTemp>" << std::endl;                    
+    if(programArgs.target_temp.has_value())
+        xmlStream << "      <targetTemp>" << programArgs.target_temp.value() << "</targetTemp>" << std::endl;                    
+
+    xmlStream << "      <thermoStatFrequency>" << programArgs.thermo_stat_frequency << "</thermoStatFrequency>" << std::endl;    
+    if(programArgs.max_temp_diff.has_value())
+        xmlStream << "      <maxTempDiff>" << programArgs.max_temp_diff.value() << "</maxTempDiff>" << std::endl;                    
+
+    xmlStream << "</Thermostats>" << std::endl;
+    }
     xmlStream << "    <boundaryConditions>" << std::endl;
     xmlStream << "      <boundaryConditionsPositiveZ>" << (programArgs.boundaries[0] == boundary_conditions::reflective ?  "reflective" : "outflow") << "</boundaryConditionsPositiveZ> " << std::endl;
     xmlStream << "      <boundaryConditionsNegativeZ>" << (programArgs.boundaries[1] == boundary_conditions::reflective ?  "reflective" : "outflow") << "</boundaryConditionsNegativeZ> " << std::endl;
@@ -71,6 +105,8 @@ void writeArgsIntoXMLFile(const FileReader::ProgramArgs &programArgs,std::string
         xmlStream << "      <y>" << cuboid.N2 << "</y>" << std::endl;
         xmlStream << "      <z>" << cuboid.N3 << "</z>" << std::endl;
         xmlStream << "    </dimensions>" << std::endl;
+        if(cuboid.avg_v.has_value())
+            xmlStream << "      <meanVelocity>" << cuboid.avg_v.value() << "</meanVelocity>" << std::endl;
         xmlStream << "    <mass>" << cuboid.m << "</mass>" << std::endl;
         xmlStream << "    <meshWidth>" << cuboid.h << "</meshWidth>" << std::endl;
         xmlStream << "    <sigma>" << cuboid.sigma << "</sigma>" << std::endl;
@@ -90,6 +126,8 @@ void writeArgsIntoXMLFile(const FileReader::ProgramArgs &programArgs,std::string
         xmlStream << "      <y>" << sphere.Velocity[1] << "</y>" << std::endl;
         xmlStream << "      <z>" << sphere.Velocity[2] << "</z>" << std::endl;
         xmlStream << "    </velocity>" << std::endl;
+        if(sphere.avg_v.has_value())
+            xmlStream << "      <meanVelocity>" << sphere.avg_v.value() << "</meanVelocity>" << std::endl;
         xmlStream << "    <mass>" << sphere.mass << "</mass>" << std::endl;
         xmlStream << "    <radius>" << sphere.radius << "</radius>" << std::endl;
         xmlStream << "    <meshWidth>" << sphere.meshWidth << "</meshWidth>" << std::endl;
@@ -126,6 +164,19 @@ void writeArgsIntoXMLFile(const FileReader::ProgramArgs &programArgs,std::string
 */
 TEST(test_readProgArgs,test_big){
     std::string filename = "args_test.xml";
+
+    /*
+    std::array<double, 3> CenterPosition;
+    std::array<double, 3> Velocity;
+    double mass;
+    double radius;
+    double meshWidth;
+    double sigma;
+    double epsilon;
+
+    //by default no maxwell-boltzmann is applied
+    std::optional<double> avg_v;
+    */
     FileReader::SphereData sphere = {
         {1.5, 2.0, 3.0}, 
         {5.12, 3.343, 7.8}, 
@@ -133,29 +184,80 @@ TEST(test_readProgArgs,test_big){
         2.5,             
         1.65,             
         0.5,             
-        0.8              
+        0.8,
+        0.1          
     };
+
+    /*
+    std::array<double, 3> x, v;
+
+
+
+    /// N1: amount of particles along dimension 1
+    /// N2: amount of particles along dimension 2
+    /// N3: amount of particles along dimension 3
+    uint64_t N1, N2, N3;
+
+    /// Mass m of the particles in the cuboid
+    /// Mesh width h
+    double m, h;
+
+    /// sigma and epsilon parameters for the force calculation
+    /// between particles of this cuboid
+    double sigma, epsilon;
+
+    /// Average velocity default 0 means by default no Maxwell-boltzmann is applied
+    std::optional<double> avg_v;
+    */
 
     // Initialize CuboidData with specific values
     FileReader::CuboidData cuboid = {
         {0.0, 23.2324, 9.9}, 
         {15.23, 1.435, 7.7}, 
-        5,               
-        9,               
-        5,               
-        20.0,            
-        2.0,             
+        5,      //N1            
+        9,      //N2     
+        5,      //N3     
+        20.0,   //m        
+        2.0,    //h      
         0.3,             
         0.6,             
-        0.1              
+        0.1     //avg_v         
     };
     
+    /*
+
+    bool calculate_thermostats = false;
+
+    double delta_t;
+    double t_end;
+    double cut_off_radius;
+    double cell_size;
+    double gravity_factor = 0;
+    double init_temp = 0;
+    std::optional<double> max_temp_diff = std::nullopt;
+    std::optional<double> target_temp = std::nullopt;
+    int thermo_stat_frequency = 0;
+    std::array<boundary_conditions,6> boundaries;
+    std::array<double,3> domain_dimensions;
+
+    std::optional<std::string> checkpoint_input_file;
+    std::optional<std::string> checkpoint_output_file;
+
+
+
+    std::string file_basename = "out";
+    size_t write_frequency = 10;
+
+    */
+
+
     FileReader::ProgramArgs programArgs = {
         false,
         0.054,           // delta_t
         1422.0,          // t_end
-        2.0,            //cut of radius
+        2.0,            //cut off radius
         1.0,            //cell size
+        -12.44,     //gravity factor
         10.0,       //initial temp
         20.0,       //max temp diff
         30.0,       //target temp
@@ -165,11 +267,15 @@ TEST(test_readProgArgs,test_big){
         boundary_conditions::reflective,boundary_conditions::reflective
         },    //boundary conditions
         {5,5,5},        //domain size
+        "in_checkp",    //in checkpoint file
+        "out_checkp",   //out checkpoint file
         "out",          // file_basename
         10,             // write_frequency
         {cuboid},      // spheres
         {sphere}       // cuboids
     };
+
+    programArgs.calculate_thermostats = true;
 
 
     FileReader fileReader;
@@ -182,6 +288,10 @@ TEST(test_readProgArgs,test_big){
     // read out the data from the previously created file
     FileReader::ProgramArgs programArgs_read = fileReader.readProgramArguments(filename);
 
+
+    std::cout << programArgs.to_string() << std::endl;
+    std::cout << "Read:\n" ;
+    std::cout << programArgs_read.to_string() << std::endl;
 
     // check if the structs are equal
     // comparison operation is overloaded for the defined structs

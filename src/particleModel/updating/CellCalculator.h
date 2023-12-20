@@ -37,8 +37,7 @@ class CellCalculator {
 
 public:
     CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,
-                   std::array<boundary_conditions,6> boundaries_cond, double initial_temp = -1,
-                   std::optional<double> target_temp_param = std::nullopt, 
+                   std::array<boundary_conditions,6> boundaries_cond, std::optional<double> target_temp = std::nullopt, 
                    std::optional<double> max_temp_diff_param = std::nullopt,
                    double gravity_factor = 0);
 
@@ -94,7 +93,7 @@ public:
      * Particles from the cellContainer, if they have moved outside the boundary.
      * (the particles are moved into the halo_particles vector)
      * 
-     * If the boundary conditions are reflective, applyBoundaries uses Ghost Partilces to create
+     * If the boundary conditions are reflective, applyReflectiveBoundaries uses Ghost Partilces to create
      * opposing forces for particles in the direction of that boundary side. 
      * 
      * (for imagination(how i think):
@@ -110,7 +109,16 @@ public:
     */
     void applyReflectiveBoundaries();
 
-    
+    /**
+     * @brief applies a Thermostat iteration to the CellContainer of this CellCalculator
+     * 
+     *  First the current temperature @f$ T_{current} @f$ of the system (all Particles within the boundaries) is calculated. 
+     *  Then the scaling factor @f$ \beta = \sqrt{ \frac{ T_{target} }{ T_{current} } } @f$ is calculated,
+     *  which when applied to all particle velocities would change the temperature of the system 
+     *  to `target_temp` (CellCalculator member). Then if a `max_temp_diff` is given, the absolute 
+     *  value of @f$ \beta @f$ is capped by`max_temp_diff`. If capped the current temperature might 
+     *  not be @f$ T_{target} @f$. Then the velocities of all particles are scaled by @f$ \beta @f$.
+    */
     void applyThermostats();
 
 
@@ -140,9 +148,8 @@ private:
     std::array<dim_t, 3> domain_max_dim;
     std::array<double,3> domain_bounds;
 
-    double initial_temp;
-    std::optional<double> max_temp_diff;
     std::optional<double> target_temp;
+    std::optional<double> max_temp_diff;
 
     //{positive_z,negative_z,positive_x,negative_x,positive_y,negative_y}
     std::array<boundary_conditions,6> boundaries;
@@ -153,8 +160,6 @@ private:
     void addGhostParticleForcesInDir_i(int i,double boundary,
                                     std::vector<Particle*>& particles);
 
-    void removeParticlesInDir_i(int i,double boundary,
-                                            std::vector<Particle*>& cell);
 
     /**
      * @brief helper method to change the location of particles within the cell structure

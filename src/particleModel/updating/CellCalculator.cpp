@@ -12,12 +12,11 @@ std::vector<std::vector<double>> sigma_mixed{{1.0}};
 std::vector<std::vector<double>> epsilon_mixed{{5.0}};
 
 CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,
-      std::array<boundary_conditions,6> boundaries_cond, double init_temp,
-      std::optional<double> target_temp_param, std::optional<double> max_temp_diff_param,
-      double gravity_factor)
+      std::array<boundary_conditions,6> boundaries_cond, std::optional<double> target_temp_param,
+       std::optional<double> max_temp_diff_param,double gravity_factor)
     : cellContainer(cellContainer), gravity_factor(gravity_factor), delta_t(delta_t), cutoff(cutoff),
     domain_max_dim(cellContainer.getDomain_Max()),domain_bounds(cellContainer.getDomainBounds()),
-    initial_temp(init_temp) , max_temp_diff(max_temp_diff_param),  target_temp(target_temp_param),
+    max_temp_diff(max_temp_diff_param),  target_temp(target_temp_param),
     boundaries(boundaries_cond), particles(*cellContainer.getParticles())
     {
     for(auto b : boundaries) {
@@ -218,7 +217,6 @@ void CellCalculator::updateCells(instructions& cell_updates) {
                       //apply reflection in pos direction
                       particle_ptr->setX(i, -x[i]);
                       particle_ptr->setV(i, -v[i]);
-
                   } else {
                       SPDLOG_INFO("new halo particle: " + (*particle_ptr).toString());
                       cellContainer.getHaloParticles().push_back(particle_ptr);
@@ -372,16 +370,7 @@ std::array<double,3> CellCalculator::ghostParticleLennardJonesForce(const Partic
 }
 
 
-/**
- * @brief applies a Thermostat iteration to the CellContainer of this CellCalculator
- * 
- *  First the current temperature @f$ T_{current} @f$ of the system (all Particles within the boundaries) is calculated. 
- *  Then the scaling factor @f$ \beta = \sqrt{ \frac{ T_{target} }{ T_{current} } } @f$ is calculated,
- *  which when applied to all particle velocities would change the temperature of the system 
- *  to `target_temp` (CellCalculator member). Then if a `max_temp_diff` is given, the absolute 
- *  value of @f$ \beta @f$ is capped by`max_temp_diff`. If capped the current temperature might 
- *  not be @f$ T_{target} @f$. Then the velocities of all particles are scaled by @f$ \beta @f$.
-*/
+
 void CellCalculator::applyThermostats(){
   double kinetic_energy = 0;
   size_t amt = 0;
@@ -398,7 +387,11 @@ void CellCalculator::applyThermostats(){
   //calculate the current temperatur from the current kinetic energy in the system
   //assuming we only have two kinds of dimensions namely 2 or 3
   double current_temp = kinetic_energy/((cellContainer.hasThreeDimensions() ? 3 : 2) * amt * k_boltzman);
-  double next_temp = target_temp.value_or(initial_temp);
+  double next_temp;
+  if(target_temp.has_value())
+    next_temp = target_temp.value();  
+  else  
+    throw std::invalid_argument("applyThermostats was called, altough target temp was not provided ");
   
 
   //if the temperatur diffference would be too big cap it
@@ -419,21 +412,22 @@ void CellCalculator::applyThermostats(){
         particle_ptr->setV(temp_scaling * v);
       }
   }
+
+  kinetic_energy = 0;
+  for(auto iter = cellContainer.begin(); iter != cellContainer.end(); ++iter){
+    for(Particle* particle_ptr : *iter){
+      const std::array<double,3> &v = particle_ptr->getV();
+      double v_squared = v[0] * v[0]  + v[1] * v[1] + v[2] * v[2];
+      double m = particle_ptr->getM();
+      kinetic_energy += v_squared * m;
+    }
+  }
+
+  current_temp = kinetic_energy/((cellContainer.hasThreeDimensions() ? 3 : 2) * amt * k_boltzman);
 }
 
 
 
-void CellCalculator::removeParticlesInDir_i(int i,double boundary,
-                                            std::vector<Particle*>& cell){
-    for(auto particle_ptr_iter = cell.begin();particle_ptr_iter != cell.end();){
-      Particle& particle = **particle_ptr_iter;
-      std::array<double,3> x = particle.getX();
-      if(x[i] > boundary) 
-        particle_ptr_iter = cell.erase(particle_ptr_iter);
-      else
-        ++particle_ptr_iter;
-    }
-} 
 
 /**
  * @brief add force from Ghost Particles for every particle in the cell
@@ -476,16 +470,13 @@ void CellCalculator::applyReflectiveBoundaries() {
   if(cellContainer.hasThreeDimensions()){
       //TOP SIDE
       //boundaries[0] corresponds to boundary_conditions in positiveZ direction
-      if(boundaries[0] == boundary_conditions::reflective || boundaries[0] == boundary_conditions::outflow){
+      if(boundaries[0] == boundary_conditions::reflective ){
         auto iter = cellContainer.begin_custom(
         1,domain_max_dim[0], // iteration cuboid in x dim 
         1,domain_max_dim[1], // iteration cuboid in y dim 
         domain_max_dim[2]-comparing_depth,domain_max_dim[2]);  // iteration cuboid in z dim 
         for(;iter != cellContainer.end_custom();++iter){
-          if(boundaries[0] == boundary_conditions::reflective)
-            addGhostParticleForcesInDir_i(2,domain_bounds[2],*iter);
-          else
-            removeParticlesInDir_i(2,domain_bounds[2],*iter);
+          addGhostParticleForcesInDir_i(2,domain_bounds[2],*iter);
         }
       }
 
@@ -520,16 +511,13 @@ void CellCalculator::applyReflectiveBoundaries() {
 
   */
   //boundaries[2] corresponds to boundary_conditions in positiveX direction
-  if(boundaries[2] == boundary_conditions::reflective || boundaries[2] == boundary_conditions::outflow){
+  if(boundaries[2] == boundary_conditions::reflective ){
     auto iter = cellContainer.begin_custom(
       domain_max_dim[0]-comparing_depth,domain_max_dim[0], // iteration cuboid in x dim 
       1,domain_max_dim[1], // iteration cuboid in y dim 
       1,z_max);  // iteration cuboid in z dim 
     for(;iter != cellContainer.end_custom();++iter){
-      if(boundaries[2] == boundary_conditions::reflective )
-        addGhostParticleForcesInDir_i(0,domain_bounds[0],*iter);
-      else
-        removeParticlesInDir_i(0,domain_bounds[0],*iter);
+      addGhostParticleForcesInDir_i(0,domain_bounds[0],*iter);
     }
   }
 
@@ -577,17 +565,14 @@ void CellCalculator::applyReflectiveBoundaries() {
 
   */
   //boundaries[4] corresponds to boundary_conditions in positiveY direction
-  if(boundaries[4] == boundary_conditions::reflective || boundaries[4] == boundary_conditions::outflow){
+  if(boundaries[4] == boundary_conditions::reflective){
     auto iter = cellContainer.begin_custom(
       1,domain_max_dim[0], // iteration cuboid in x dim 
       domain_max_dim[1]-comparing_depth,domain_max_dim[1], // iteration cuboid in y dim 
       1,z_max);  // iteration cuboid in z dim 
 
     for(;iter != cellContainer.end_custom();++iter){
-      if(boundaries[4] == boundary_conditions::outflow)
-        addGhostParticleForcesInDir_i(1,domain_bounds[1],*iter);
-      else
-        removeParticlesInDir_i(1,domain_bounds[1],*iter);
+      addGhostParticleForcesInDir_i(1,domain_bounds[1],*iter);
     }
   }
 

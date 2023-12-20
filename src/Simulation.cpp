@@ -38,7 +38,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
 
         SPDLOG_TRACE("Doing a Iteration with CellCalculator");
         calculator.applyReflectiveBoundaries();
-        //new order to directly calculate F~ & V & X for each cell
+ 
         calculator.calculateLinkedCellF();
         calculator.calculateWithinFVX();
         

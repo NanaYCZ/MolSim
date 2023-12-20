@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <cmath>
 #include "particleModel/updating/CellCalculator.h"
 #include "particleModel/storage/CellContainerIterators.h"
 
@@ -7,7 +8,6 @@ void calculateBoundariesTopOrBottom(dim_t lower_z,dim_t upper_z, double z_border
 
     auto domain_max_dim = cellCalculator.getDomain_Max();
     auto particles = cellCalculator.getParticles();
-    auto ref_size = cellCalculator.getRefSize();
     dim_t x, y;
     x = y =  1;
 
@@ -24,7 +24,7 @@ void calculateBoundariesTopOrBottom(dim_t lower_z,dim_t upper_z, double z_border
 
       // a assume that we have an offset of 1 everywhere
       double distance =z_dim - z_border;
-
+      double ref_size = std::pow(2,1.0/6.0) * sigma_mixed[particle.getType()][particle.getType()];
       if (std::abs(distance) < ref_size) {
         // calculate repulsing force with Halo particle
         double ghost_particle_z = z_dim - 2*distance;
@@ -55,7 +55,7 @@ void calculateBoundariesFrontOrBack(dim_t lower_x,dim_t upper_x ,double x_border
 
     auto domain_max_dim = cellCalculator.getDomain_Max();
     auto particles = cellCalculator.getParticles();
-    auto ref_size = cellCalculator.getRefSize();
+    
 
     dim_t y, z;
     z = y =  1;
@@ -73,7 +73,7 @@ void calculateBoundariesFrontOrBack(dim_t lower_x,dim_t upper_x ,double x_border
 
       // a assume that we have an offset of 1 everywhere
         double distance = x_dim - x_border;
-
+      double ref_size = std::pow(2,1.0/6.0) * sigma_mixed[particle.getType()][particle.getType()];
       if (std::abs(distance) < ref_size) {
         // calculate repulsing force with Halo particle
         double ghost_particle_x = x_dim - 2 * distance;
@@ -102,7 +102,6 @@ void calculateBoundariesLeftOrRight(dim_t lower_y,dim_t upper_y ,double y_border
     
     auto domain_max_dim = cellCalculator.getDomain_Max();
     auto particles = cellCalculator.getParticles();
-    auto ref_size = cellCalculator.getRefSize();
     
     dim_t x, z;
     z = x =  1;
@@ -120,7 +119,7 @@ void calculateBoundariesLeftOrRight(dim_t lower_y,dim_t upper_y ,double y_border
 
       // a assume that we have an offset of 1 everywhere
         double distance = y_dim - y_border;
-
+      double ref_size = std::pow(2,1.0/6.0) * sigma_mixed[particle.getType()][particle.getType()];
       if (std::abs(distance) < ref_size) {
         // calculate repulsing force with Halo particle
         double ghost_particle_y = y_dim - 2 * distance;
@@ -152,7 +151,7 @@ void calculateBoundariesLeftOrRight(dim_t lower_y,dim_t upper_y ,double y_border
 TEST(test_new_Boundaries,test_basic){
    CellContainer cellContainer(4,4,1,1.0,1.0);
 
-    CellCalculator cellCalculator(cellContainer,0.0014,
+    CellCalculator cellCalculator(cellContainer,0.0014,1.0,
             {boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective});
@@ -178,7 +177,7 @@ TEST(test_new_Boundaries,test_basic){
     CellContainer other_cellContainer(4,4,1,1.0,1.0);
 
 
-    CellCalculator other_cellCalculator(other_cellContainer,0.0014,
+    CellCalculator other_cellCalculator(other_cellContainer,0.0014,1.0,
             {boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective});

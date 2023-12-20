@@ -2,6 +2,7 @@
 #include "inputHandling/FileReader.h"
 #include "inputHandling/generators/CuboidGeneration.h"
 #include "inputHandling/Checkpointer.h"
+#include "inputHandling/FileReaderProgramArgs.h"
 
 
 
@@ -35,10 +36,6 @@ TEST(test_Checkpointing,test_basic){
     std::list<Particle> particles_list(particles.begin(),particles.end());
 
 
-    std::cout << "writing the particles: " << std::endl;
-    for (const auto& particle : particles_list) {
-        std::cout << particle.toString() << std::endl;
-    }
 
     Checkpointer::writeCheckpoint(particles_list,"checkpoint_test.txt");
 
@@ -57,8 +54,6 @@ TEST(test_Checkpointing,test_basic){
 
     for(;it1 != particles_list.end() && it2 != particles_read.end();it1++ , it2++){
         Particle other_particle = std::get<0>(*it2);
-        std::cout << "Checking for equality of: " << std::endl;
-        std::cout << it1->toString() << "\n" << other_particle.toString() << std::endl;
         ASSERT_TRUE(*it1 == other_particle);
     }
 
