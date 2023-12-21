@@ -12,16 +12,16 @@ typedef int dim_t;
  * 
  * 
  * The cellContainer is a cuboid of cells, the cells are:
- *                            { (n1,n2,n3) \in N^3 | 0 <=  n1  <= domain_max_dim[0]+2 
- *                                              \and 0 <= n2 <= domain_max_dim[1]+2 
- *                                              \and 0 <= n3 <= domain_max_dim[2]+2}
+ *                           { (n1,n2,n3) in N^3 | 0 <=  n1  <= domain_max_dim[0]+2 
+ *                                              and 0 <= n2 <= domain_max_dim[1]+2 
+ *                                             and 0 <= n3 <= domain_max_dim[2]+2} 
  * where N are the natural numbers
  *
  * The CustomIterator can be created with a custom lower/ upper bound for 
  * the x,y and the z direction and the iterates over all these cells:
- *                            { (n1,n2,n3) \in N^3 | lower_x <=  n1  <= upper_x 
- *                                              \and lower_y <=  n2  <= upper_y 
- *                                              \and lower_z <=  n3  <= upper_z}
+ *                            { (n1,n2,n3) in N^3 | lower_x <=  n1  <= upper_x 
+ *                                              and lower_y <=  n2  <= upper_y 
+ *                                              and lower_z <=  n3  <= upper_z} 
  * where N are the natural numbers
  * 
  * This way one can iterate over an arbitrary subcuboid of the CellContainer
@@ -61,9 +61,9 @@ public:
      * @param upp_z Upper bound for z dimension within the custom subcuboid
      *
      * The Iterator created by this Constructor will iterate over the following cells 
-     * - { (n1,n2,n3) ∈ N^3 | lower_x <=  n1  <= upper_x
-     *                        ∧ lower_y <=  n2  <= upper_y
-     *                        ∧ lower_z <=  n3  <= upper_z }
+     *   { (n1,n2,n3) \in N^3 | lower_x <=  n1  <= upper_x
+     *                        and lower_y <=  n2  <= upper_y
+     *                        and lower_z <=  n3  <= upper_z } 
      * 
      * begining with the cell (low_x,low_y,low_z)
      * (where N represents the set of natural numbers.)
@@ -120,9 +120,9 @@ private:
  * @brief iterates over all cells of the CellContainer, that are in the domain
  *
  * iterates over the cells in the set:
- *                            { (n1,n2,n3) \in N^3 | 1 <=  n1  <= domain_max_dim[0] 
- *                                              \and 1 <= n2 <= domain_max_dim[1] 
- *                                              \and 1 <= n3 <= domain_max_dim[2]}
+ *                            { (n1,n2,n3) in N^3 | 1 <=  n1  <= domain_max_dim[0] 
+ *                                              and 1 <= n2 <= domain_max_dim[1] 
+ *                                              and 1 <= n3 <= domain_max_dim[2]} 
  * 
  * Therefore it iterates over all 'inner cells' over the Container, because the 
  * outermost layers of the cells correspond to the Halo Cells.
