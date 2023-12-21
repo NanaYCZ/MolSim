@@ -191,11 +191,11 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5416ce56-4327-4739-8
 - We did not yet delete the old reflective boundaries, that are encapsulated in the `applyReflectiveBoundaries()` function, because we will see how they compare to the new reflective boundaries(`updateCells`) for future tasks. We will likely delete the Ghost Particle reflective boundaries in the next and last sheet, if there is no significant disadvantage in the new method. For now our main method of handling reflective boundaries is the new one that is implemented in the `updateCells`. (maybe a combination :) in the future)
 
 #### Force Calculations
-- We moved the functions for calculating forces into the Cellcalculator, because we now have to calculate with different sigma and epsilon depending on the particles that are currently in our system. Therefore it is more convenient to have it wihtin the Cellcalculator and specific to an CellCalculator object 
+- We moved the functions for calculating forces into the Cellcalculator, because we now have to calculate with different sigma and epsilon depending on the particles that are currently in our system. Therefore it is more convenient to have it wihtin the Cellcalculator and specific to an CellCalculator object.
 
 
-#### ParticleContainer
-- why we removed it 
+#### Order of calculating Position, Forces and Velocities
+- We changed the order of calculating position, forces and velocities back to the order, which was used in the very beginning and reintroduced the `calculateX()`, `calculateV()` and `calculateF()` functions as well as `shiftF()`. Our current implementation uses this way of iterating through the simulation. We still kept the old methods, because they are quite developed and in case we run into inconsistencies we want to be able to compare the new implementation of the iteration it to our old implementation (`calculateWithinFVX()` and `initializeFX()`), but like the Ghost Particles, we will likely remove the `calculateWithinFVX()` and `initializeFX()` in the last sheet, if we don't run into any inconsistencies. 
 
 
 
