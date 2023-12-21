@@ -46,9 +46,8 @@ command line arguments and what is being returned by the executable. This file s
 
 ## Report
 ### Task 1 Thermostats
-- in Misc it is explained how to correctly specify the Thermostats in the XML input file.
-  For every iteration of the Thermostats, first the kinetic energy of the current system is calculated according to the formula, then the scaling factor $\beta$ is calculated and the absolute size of $\beta$ is capped by $\delta T$ / the maximal temperature difference given in the XML input file. 
-
+- In Misc it is explained how to correctly specify the Thermostats in the XML input file and how a given initial Temperature is handled.
+  For every iteration of the Thermostats, first the kinetic energy of the current system is calculated according to the formula, then the scaling factor $\beta = \sqrt{\frac{ T_{new} }{ T_{current} }}$ is calculated. $T_{new}$ corresponds to either $T_{target}$, if given, or $T_{initial}$ if the target temperature is not specified in the file. However, if $\Delta T$ is given and the following holds $|T_{new} - T_{current}| > \Delta T $, then $T_{new} = sign(T_{new} - T_{current}) + T_{current} $. In the end, the velocities of all particles are scaled by $\beta$.
 
 ### Task 2 Simulation of the Rayleigh-Taylor instability
 #### Boundary Conditions
@@ -84,7 +83,10 @@ command line arguments and what is being returned by the executable. This file s
 - when adding a particle in the CellContainer that has an unknown sigma - epsilon combination, we are
   declaring it as a new type and updating sigma_mixed and epsilon_mixed, which are {{1}} and {{5}} per default.
 - here is the resulting simulation of the Rayleigh-Taylor instability:
-https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/105e5eb7-dd66-4191-8cbb-da813e8dfadd
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/ef578030-ac11-4efa-a22b-74f841085304
+
 - as expected, the heavier particles are moving down, making the lighter particles escape to the top.
 
 
@@ -116,14 +118,15 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/c331437e-ccae-4806-b
 
 - After that a steady wave is running from the middle outwards and we can see that the lower part of the wave is spreading faster than the upper part.
 
-![final_wave_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/b3c86025-9c3a-4b0e-88a8-0b444d8b32c5)
+![steady_wave_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/0a9d36d9-c103-4744-b856-96ca214ce8ae)
+
 
 
 - When the wave, that steadily moves outwards, hits the left/ right boundary, the wave is "breaking". This means the particles are moving upwards, because there initial movement goes outwards, but due to the boundaries, they can not move further into that direction and then have to move upwards.
 
-![short_before_break_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/bf7e8137-9fa0-4554-b747-9385affc4b9e)
+![outwards_wave_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/43e8afa8-3920-41de-8bc7-8b96ffcbaa43)
 
-![wave_breaking_at_border_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/4c2851f1-12ad-4e8f-b205-da9e1a312452)
+![wave_upwards](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/47a2d94a-3dbe-4908-892e-68afb1c7566d)
 
 
 
@@ -160,7 +163,7 @@ We tried the same simulation with periodic boundaries at the left and right side
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/c1dc8700-e142-4ec0-8719-f62880f3f1d3
 
-It looks very similar to the simulation with reflective boundary conditions on the left and right side, especially regarding the waves going outwards and breaking at the boundary. This seems plausible, as in the case with periodic boundaries, the waves are not reflected by the reflective boundaries, but by the symmetric wave on the opposite side due to the periodicity of our domain. However some of the particles that splash away with high speed right after the collision, seem to behave a bit differently, as they are very chaotic and now seem to distribute over the whole domain after the inital crash.
+- It looks very similar to the simulation with reflective boundary conditions on the left and right side, especially regarding the waves going outwards and breaking at the boundary. This seems plausible, as in the case with periodic boundaries, the waves are not reflected by the reflective boundaries, but by the symmetric wave on the opposite side due to the periodicity of our domain. However some of the particles that splash away with high speed right after the collision, seem to behave a bit differently, as they are very chaotic and now seem to distribute over the whole domain after the inital crash.
 
 When using periodic boundaries and moving the initial position of the drop a bit to the left, it is possible to actually see the two symmetric opposing waves crashing into one another very nicely.
 
@@ -183,6 +186,9 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5416ce56-4327-4739-8
 - Setting a `meanVelocity` and Thermostats at the same time does not make sense and is undefined behaviour. If no `meanVelocity` and no Thermostat is given, the particles from the respective cuboid, will just have the initial velocity specified by the user. If a `meanVelocity` and no Thermostat is given, the particles of the respective cuboid will be initialized with a Maxwell-Boltzman distributed initial velocity, that is added to the inital velocity given by the user (no matter if it is zero or not). If instead a Thermostat and no `meanVelocity` is given, an intial Temperature for the Thermostat must have been specified by the user. This inital Temperature will then be used to set the intial velocities of all cuboids according to the Maxwell-Boltzman distribution depending on the Thermostat inital Temperature, but only if the initial velocity of all cuboids are zero. This is realized by setting the `meanVelocity` of all cuboids to $\sqrt{T_{init}/m_i}$, where $m_i$ is the mass of the particles of the respective cuboid.
 - The `boundaryConditions` (in the different directions) can now either be 'outflow', 'reflective', 'ghost_reflective' or 'periodic'.
 
+
+#### Ghost Particle Reflective Boundaries
+- Our different boundary conditions are now mostly handled in the `updateCells` method and for the reflective boundary conditions we implemented a different simpler approach, that seems to be at least as good as the old Ghost Particle reflective boundaries approach. The Ghost Particle Approach is especially unstable for high velocities and forces and does not guarantee that particles stay within the domain boundary. We did not yet delete the old reflective boundaries, that are encapsulated in the `applyReflectiveBoundaries()` function, because we will see how they compare to the new reflective boundaries(`updateCells`) for future tasks. We will likely delete the Ghost Particle reflective boundaries in the next and last sheet, if there is no significant disadvantage in the new method. For now our main method of handling reflective boundaries is the new one that is implemented in the `updateCells`. (maybe a combination :) in the future)
 
 
 

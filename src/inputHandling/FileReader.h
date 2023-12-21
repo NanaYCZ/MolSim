@@ -40,23 +40,5 @@ class FileReader {
 
   static void initializeCorrectInitialTemp(FileReader::ProgramArgs& args);
 
-  /**
-   * @brief Reads Cuboids of Particles from a file and returns a list of
-   * CuboidData structs
-   *
-   * reads cuboids from a file specified by the given filename(file has to have
-   * specific format). A cuboid in the file is just a list of the parameters
-   * that are in the CuboidData struct. Turns the parameters given in the file
-   * into a struct containing the parameters and creates a list of CuboidData
-   * structs based on the read data.
-   *
-   * @param particleContainer reference to the ParticleContainer to add to
-   * @param filename Filename of the file containing CuboidData
-   *
-   *
-   * @return Returns a list of structs that contain the data of the Cuboids that
-   * were read. Mainly used for testing and debugging purposes.
-   *
-   */
-  std::list<CuboidData> readCuboidFile(std::string filename);
+
 };
