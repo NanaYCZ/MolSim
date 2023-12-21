@@ -173,12 +173,11 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5416ce56-4327-4739-8
 
 
 
-### Performance
 
 
 
 ### Misc
-#### XMl File
+#### XML File
 - the new file format includes a optional `Thermostats` component in the `simulationParameters`. 
   In `Thermostats`, one has to specify the initial temperature of the system and the frequency, with
   which the Thermostats is applied. A target temperature and the maximal temperature difference are optional. The maximum temperature difference sets the limit for the magnitude of a temperature update from the current temperature towards the target temperature.
@@ -188,7 +187,16 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5416ce56-4327-4739-8
 
 
 #### Ghost Particle Reflective Boundaries
-- Our different boundary conditions are now mostly handled in the `updateCells` method and for the reflective boundary conditions we implemented a different simpler approach, that seems to be at least as good as the old Ghost Particle reflective boundaries approach. The Ghost Particle Approach is especially unstable for high velocities and forces and does not guarantee that particles stay within the domain boundary. We did not yet delete the old reflective boundaries, that are encapsulated in the `applyReflectiveBoundaries()` function, because we will see how they compare to the new reflective boundaries(`updateCells`) for future tasks. We will likely delete the Ghost Particle reflective boundaries in the next and last sheet, if there is no significant disadvantage in the new method. For now our main method of handling reflective boundaries is the new one that is implemented in the `updateCells`. (maybe a combination :) in the future)
+- Our different boundary conditions are now mostly handled in the `updateCells` method and for the reflective boundary conditions we implemented a different simpler approach, that seems to be at least as good as the old Ghost Particle reflective boundaries approach. The Ghost Particle Approach is especially unstable for high velocities and forces and does not guarantee that particles stay within the domain boundary.
+- We did not yet delete the old reflective boundaries, that are encapsulated in the `applyReflectiveBoundaries()` function, because we will see how they compare to the new reflective boundaries(`updateCells`) for future tasks. We will likely delete the Ghost Particle reflective boundaries in the next and last sheet, if there is no significant disadvantage in the new method. For now our main method of handling reflective boundaries is the new one that is implemented in the `updateCells`. (maybe a combination :) in the future)
+
+#### Force Calculations
+- We moved the functions for calculating forces into the Cellcalculator, because we now have to calculate with different sigma and epsilon depending on the particles that are currently in our system. Therefore it is more convenient to have it wihtin the Cellcalculator and specific to an CellCalculator object 
+
+
+#### ParticleContainer
+- why we removed it 
+
 
 
 
