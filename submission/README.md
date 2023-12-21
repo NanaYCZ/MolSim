@@ -53,49 +53,58 @@ command line arguments and what is being returned by the executable. This file s
 ### Task 2 Simulation of the Rayleigh-Taylor instability
 
 
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/105e5eb7-dd66-4191-8cbb-da813e8dfadd
+
+
+
+
+
 ### Task 3 Simulation of a falling drop - Liquid
 - the `Checkpointer` is a seperate component, that serializes all the particles that are currently 
-  in our `CellContainer` and prints them into a file. For every particle, the respective sigma and epsilon is stored as well. A file of this format can be deserialized into a list of (particle,sigma,epsilon) tuples and these can be added into a `CellContainer`
-- when running the simulation of the falling drop with the given parameters and an equlibrated fluid at the bottom, we get the following  simulation.  The color shows the amount of velocitiy that particles have.
+  in our `CellContainer` and prints them into a file. For every particle, the respective sigma and epsilon is stored as well. A file of this format can be deserialized into a list of (particle,sigma,epsilon) tuples and these can be added into a `CellContainer`.
+  
+When running the simulation of the falling drop with the given parameters and an equlibrated fluid at the bottom, we get the following  simulation.  The color shows the amount of velocitiy that particles have.
 
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/2c07ac5f-6ec8-4850-83f6-b1184dc499c5
 
-the same simulation with arrows, which have corresponding amount and direction to the velocity of the particles
+The same simulation with arrows, which have size and color corresponding to amount and direction of the particle velocities.
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/c331437e-ccae-4806-b990-a1dab352802c
 
-There are different observations, that can be made. In the initial moment when the drop hits the surface of the liquid, the velocity (and force) spreads like a shockwave in a cricle around the point of impact.
+- There are different observations, that can be made. In the initial moment when the drop hits the surface of the liquid, the velocity (and force) spreads like a shockwave in a cricle around the point of impact.
+
+![shock_wave_gihg_res_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5045e79f-53d5-4381-9bd9-3265a3ecf174)
 
 
-![shock_wave](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/477d60d3-911d-4b9d-9548-a2b7c83f8571)
 
-
-Once the lower part of the "shockwave" reaches the bottom, it is reflected due to the reflecting boundaries.
+- Once the lower part of the "shockwave" reaches the bottom, it is reflected due to the reflecting boundaries.
 
 ![reflection_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/32b1a56c-469f-4c40-9c10-074cd1743fd5)
 
 
-After that a steady wave is running from the middle outwards and we can see that the lower part of the wave is spreading faster than the upper part.
+- After that a steady wave is running from the middle outwards and we can see that the lower part of the wave is spreading faster than the upper part.
 
 ![final_wave_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/b3c86025-9c3a-4b0e-88a8-0b444d8b32c5)
 
 
-When the wave, that steadily moves outwards, hits the left/ right boundary, the wave is "breaking". This means the particles are moving upwards, because there initial movement goes outwards, but due to the boundaries, they can not move further into that direction and then have to move upwards.
+- When the wave, that steadily moves outwards, hits the left/ right boundary, the wave is "breaking". This means the particles are moving upwards, because there initial movement goes outwards, but due to the boundaries, they can not move further into that direction and then have to move upwards.
 
 ![short_before_break_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/bf7e8137-9fa0-4554-b747-9385affc4b9e)
 
 ![wave_breaking_at_border_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/4c2851f1-12ad-4e8f-b205-da9e1a312452)
 
+
+
 At the same time, some of the upper particles of the drop are moving outwards with very high velocity, above the liquid.
 
 ![fast_particles_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/0e44da09-60cf-44c6-8fbe-8a46f3211e5a)
 
-After some time the gravity is showing it's effect on these particles and they are, stil with high velocity, moving downwards again.
+- After some time the gravity is showing it's effect on these particles and they are, stil with high velocity, moving downwards again.
 
 ![final_particles2_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/843e2ec4-cdbe-4af7-bccb-308ead773b86)
 
-At the same time, the previously described steady wave is breaking at the left and right boundary and therefore, the two groups of particles are "crashing"
+- At the same time, the previously described steady wave is breaking at the left and right boundary and therefore, the two groups of particles are "crashing"
 
 ![short_before_break_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/f0933cb6-8c37-44a7-b195-a12e891986f2)
 
@@ -103,17 +112,32 @@ At the same time, the previously described steady wave is breaking at the left a
 ![before_the_crash_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/8b29b571-55cb-4fa5-a61a-8c6ff77e0e33)
 
 
-Lastly we observed, that after the initial displacement of the fluid from the middle, the reflected waves are meeting in the middle again. (This can be seen best without any coloring)
+- Lastly we observed, that after the initial displacement of the fluid from the middle, the reflected waves are meeting in the middle again. (This can be seen best without any coloring)
 
-After the drop hits the water, t ~ 8.25, the particles are distributed like this:
+Left side shows distribution right after the drop hits the water, t ~ 8.25. 
 
-![crater](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/7e4b79b1-0b56-4c88-ad98-93c38e17a970)
+Right side shows distribution after the waves were reflected, t ~ 17.5.
 
-After the waves were reflected, t ~ 17.5, the particles are distributed like this:
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/7e4b79b1-0b56-4c88-ad98-93c38e17a970" width="500">
 
-![inv_crater](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d7198861-f8e8-4558-b528-72ad6217b468)
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d7198861-f8e8-4558-b528-72ad6217b468" width="450">
 
-To sum up, the simulation has some expected physical properties, like the waves, that are moving outwards from the point of impact. These waves are reflected by the boundary then. Apart from that there are a few particles that are "splashing" away with high speed. This looks similar to videos of a real droplet into fluid (e.g. https://www.youtube.com/watch?v=cNI-LIVs-to ). Altough one thing is missing in our simulation, namely the drop jumping back upwards right after the initial collision with the fluid. This might be missing in our simulation due to the fluid being not very deep.
+To sum up, the simulation has some expected physical properties, like the waves, that are moving outwards from the point of impact. These waves are reflected by the boundary then. Apart from that there are a few particles that are "splashing" away with high speed. This looks similar to videos of a real droplet into fluid (e.g. https://www.youtube.com/watch?v=cNI-LIVs-to ). Altough one thing, which appears in many videos showcasing a droplet falling into fluid, is missing in our simulation, namely the drop jumping back upwards right after the collision with the fluid. This might be missing due to the fluid being not very deep in our simulation.
+
+We tried the same simulation with periodic boundaries at the left and right side of the domain and got this simulation.
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/c1dc8700-e142-4ec0-8719-f62880f3f1d3
+
+It looks very similar to the simulation with reflective boundary conditions on the left and right side, especially regarding the waves going outwards and breaking at the boundary. This seems plausible, as in the case with periodic boundaries, the waves are not reflected by the reflective boundaries, but by the symmetric wave on the opposite side due to the periodicity of our domain. However some of the particles that splash away with high speed right after the collision, seem to behave a bit differently, as they are very chaotic and now seem to distribute over the whole domain after the inital crash.
+
+When using periodic boundaries and moving the initial position of the drop a bit to the left, it is possible to actually see the two symmetric opposing waves crashing into one another very nicely.
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5416ce56-4327-4739-88fd-c191dabdaa56
+
+
+
 
 ### Performance
 
@@ -123,7 +147,10 @@ To sum up, the simulation has some expected physical properties, like the waves,
 #### XMl File
 - the new file format includes a optional `Thermostats` component in the `simulationParameters`. 
   In `Thermostats`, one has to specify the initial temperature of the system and the frequency, with
-  which the Thermostats is applied. A target temperature and the maximal temperature difference are optional. The maximum temperature difference sets the limit for the magnitude of a temperature update from the current temperature towards the target temperature. The `outputParameters` now contain an option for a checkpoint file, that should be used as input to the next simulation and an option that will produce a checkpoint file at the end of the simulation. The checkpoint input file has to be a file that was produced by our program. The sigma and epsilon in the cuboid/sphere component of the Schema are now applied to the cuboids in the simulation and it is possible to specify a `meanVelocity` in the cuboids/spheres component. Setting a `meanVelocity` and Thermostats at the same time does not make sense and is undefined behaviour. The `boundaryConditions` (in the different directions) can now either be 'outflow', 'reflective' or 'periodic'.
+  which the Thermostats is applied. A target temperature and the maximal temperature difference are optional. The maximum temperature difference sets the limit for the magnitude of a temperature update from the current temperature towards the target temperature.
+- The `outputParameters` now contain an option for a input checkpoint file, that will be used as input to the next simulation, if the otion is set and an option that will produce a output checkpoint file at the end of the simulation, if set. The checkpoint input file has to be a file that was produced by our program. The sigma and epsilon in the cuboid/sphere component of the Schema are now applied to the cuboids in the simulation and it is possible to specify a `meanVelocity` in the cuboids/spheres component.
+- Setting a `meanVelocity` and Thermostats at the same time does not make sense and is undefined behaviour. If no `meanVelocity` and no Thermostat is given, the particles from the respective cuboid, will just have the initial velocity specified by the user. If a `meanVelocity` and no Thermostat is given, the particles of the respective cuboid will be initialized with a Maxwell-Boltzman distributed initial velocity, that is added to the inital velocity given by the user (no matter if it is zero or not). If instead a Thermostat and no `meanVelocity` is given, an intial Temperature for the Thermostat must have been specified by the user. This inital Temperature will then be used to set the intial velocities of all cuboids according to the Maxwell-Boltzman distribution depending on the Thermostat inital Temperature, but only if the initial velocity of all cuboids are zero. This is realized by setting the `meanVelocity` of all cuboids to $\sqrt{T_{init}/m_i}$, where $m_i$ is the mass of the particles of the respective cuboid.
+- The `boundaryConditions` (in the different directions) can now either be 'outflow', 'reflective', 'ghost_reflective' or 'periodic'.
 #### Boundary Conditions
 
 
