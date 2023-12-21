@@ -121,7 +121,13 @@ public:
     */
     void applyThermostats();
 
+    void calculateX();
 
+    void calculateV();
+
+    void calculateF();
+
+    void shiftF();
 
     auto& getParticles(){
         return particles;
