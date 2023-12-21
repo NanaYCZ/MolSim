@@ -10,14 +10,16 @@
  *
  * \image latex runtime_nice.png "Runtime Measurements"
  *
- * @param particleContainer contains all particles to simulate
+ * @param container contains all particles to simulate
+ * @param calculator is responsible for the particle calculations
  * @param end_time timespan to simulate
  * @param delta_t time step for each iteration
+ * @param write_frequency specifies the frequency for the vtk output
  * @param performance_measurement bool to set the performance measuring of the simulation
  * @param calculator int to set the performance measuring of the simulation
  */
 
-void runSimulation(CellContainer &particleContainer, CellCalculator &calculator,
+void runSimulation(CellContainer &container, CellCalculator &calculator,
                    const double end_time,const double delta_t,
                    const size_t write_frequency,std::optional<int> thermostats_frequency,
                    bool performance_measurement);

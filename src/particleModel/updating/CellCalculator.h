@@ -193,7 +193,18 @@ private:
      */
     void finishF(std::vector<Particle*> *current_cell);
 
+    /**
+     * @brief helper method to determine if the particles are in cutoff distance
+     *
+     * calculating the euclidean distance, but comparing the results squared to avoid calculating the square root
+     */
     bool inCutoffDistance(Particle &p1, Particle &p2, const std::array<double,3> &offset) const;
 
+    /**
+     * @brief helper method to mirror the cell position on the other side
+     *
+     * used to implement the periodic boundaries, writes the changed distance of the
+     * particles through the mirroring in the offset for further calculations
+     */
     bool mirror(std::array<dim_t,3> &position, std::array<double,3> &offset);
 };
