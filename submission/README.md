@@ -53,6 +53,12 @@ command line arguments and what is being returned by the executable. This file s
 ### Task 2 Simulation of the Rayleigh-Taylor instability
 
 
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/105e5eb7-dd66-4191-8cbb-da813e8dfadd
+
+
+
+
+
 ### Task 3 Simulation of a falling drop - Liquid
 - the `Checkpointer` is a seperate component, that serializes all the particles that are currently 
   in our `CellContainer` and prints them into a file. For every particle, the respective sigma and epsilon is stored as well. A file of this format can be deserialized into a list of (particle,sigma,epsilon) tuples and these can be added into a `CellContainer`
@@ -67,8 +73,8 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/c331437e-ccae-4806-b
 
 There are different observations, that can be made. In the initial moment when the drop hits the surface of the liquid, the velocity (and force) spreads like a shockwave in a cricle around the point of impact.
 
+![shock_wave_gihg_res_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5045e79f-53d5-4381-9bd9-3265a3ecf174)
 
-![shock_wave](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/477d60d3-911d-4b9d-9548-a2b7c83f8571)
 
 
 Once the lower part of the "shockwave" reaches the bottom, it is reflected due to the reflecting boundaries.
@@ -115,6 +121,14 @@ After the waves were reflected, t ~ 17.5, the particles are distributed like thi
 
 To sum up, the simulation has some expected physical properties, like the waves, that are moving outwards from the point of impact. These waves are reflected by the boundary then. Apart from that there are a few particles that are "splashing" away with high speed. This looks similar to videos of a real droplet into fluid (e.g. https://www.youtube.com/watch?v=cNI-LIVs-to ). Altough one thing is missing in our simulation, namely the drop jumping back upwards right after the initial collision with the fluid. This might be missing in our simulation due to the fluid being not very deep.
 
+We tried the same simulation with periodic boundaries at the left and right side of the domain and got this simulation.
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/c1dc8700-e142-4ec0-8719-f62880f3f1d3
+
+It looks very similar to the simulation with reflective boundary conditions on the left and right side, especially regarding the waves going outwards and breaking at the boundary. This seems plausible, as in the case with periodic boundaries, the waves are not reflected by the reflective boundaries, but by the symmetric wave on the opposite side due to the periodicity of our domain. However some of the particles that splash away with high speed right after the collision, seem to behave a bit differently, as they are very chaotic and now seem to distribute over the whole domain after the inital crash.
+
+
 ### Performance
 
 
@@ -123,7 +137,7 @@ To sum up, the simulation has some expected physical properties, like the waves,
 #### XMl File
 - the new file format includes a optional `Thermostats` component in the `simulationParameters`. 
   In `Thermostats`, one has to specify the initial temperature of the system and the frequency, with
-  which the Thermostats is applied. A target temperature and the maximal temperature difference are optional. The maximum temperature difference sets the limit for the magnitude of a temperature update from the current temperature towards the target temperature. The `outputParameters` now contain an option for a checkpoint file, that should be used as input to the next simulation and an option that will produce a checkpoint file at the end of the simulation. The checkpoint input file has to be a file that was produced by our program. The sigma and epsilon in the cuboid/sphere component of the Schema are now applied to the cuboids in the simulation and it is possible to specify a `meanVelocity` in the cuboids/spheres component. Setting a `meanVelocity` and Thermostats at the same time does not make sense and is undefined behaviour. The `boundaryConditions` (in the different directions) can now either be 'outflow', 'reflective' or 'periodic'.
+  which the Thermostats is applied. A target temperature and the maximal temperature difference are optional. The maximum temperature difference sets the limit for the magnitude of a temperature update from the current temperature towards the target temperature. The `outputParameters` now contain an option for a input checkpoint file, that should be used as input to the next simulation and an option that will produce a output checkpoint file at the end of the simulation, if set. The checkpoint input file has to be a file that was produced by our program. The sigma and epsilon in the cuboid/sphere component of the Schema are now applied to the cuboids in the simulation and it is possible to specify a `meanVelocity` in the cuboids/spheres component. Setting a `meanVelocity` and Thermostats at the same time does not make sense and is undefined behaviour. If no `meanVelocity` and no Thermostat is given, the particles from the respective cuboid, will just have the initial velocity specified by the user. If a `meanVelocity` and no Thermostat is given, the particles of the respective cuboid will be initialized with a Maxwell-Boltzman distributed initial velocity, that is added to the inital velocity given by the user (no matter if it is zero or not). If instead a Thermostat and no `meanVelocity` is given, an intial Temperature for the Thermostat must have been specified by the user. This inital Temperature will then be used to set the intial velocities of all cuboids according to the Maxwell-Boltzman distribution depending on the Thermostat inital Temperature, but only if the initial velocity of all cuboids are zero. This is realized by setting the `meanVelocity` of all cuboids to $$\sqrt{T_{init}/m_i}$$, where $$m_i$$ is the mass of the particles of the respective cuboid.  The `boundaryConditions` (in the different directions) can now either be 'outflow', 'reflective', 'ghost_reflective' or 'periodic'.
 #### Boundary Conditions
 
 
