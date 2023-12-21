@@ -51,10 +51,41 @@ command line arguments and what is being returned by the executable. This file s
 
 
 ### Task 2 Simulation of the Rayleigh-Taylor instability
+#### Boundary Conditions
+- for this task we implemented the periodic boundaries and added a second reflective 
+  boundaries method to fix some issues with the previous one.
+- when discussing different methods for the periodic boundaries, we figured out that 
+  our linked cell algorithm was already capable of that. Because when the algorithm 
+  steps outside the domain while following a path, it tries to calculate the forces 
+  as if there are more cells, so what we had to do was allowing that last step and 
+  mirror the cell coordinates on the other side of the domain. 
+- as a result every cell gets combined with all the surrounding cells within the 
+  cutoff radius and instead of ignoring the cells outside the domain, we are replacing
+  them with the corresponding cells of the periodic boundary algorithm.
+- the position updating made use of the same mirror helper method, which allocates a new
+  cell position corresponding to the previous one, in case the domain has been left and 
+  provides the offset to update the new x,y,z coordinates of the updated particles.
+#### Code Structure
+- it turned out that we don't need the halo cells for our algorithm, due to the convenient
+  force implementation. But now we have the outer layer of the cell structure reserved to 
+  fulfill the previous worksheets, resulting in an inefficiency with the unused
+  cells. For now, we will leave it this way, because all the indexing and initialising is
+  based on that and removing it may lead to issues.
+- we removed the ParticleContainer structure because of the common methods with the CellContainer,
+  XML input and inheritance based Simulation structure. This constantly lead to issues when working on the 
+  CellContainer/CellCalculator, forcing us to make things compatible with both Containers, which
+  are quite different by now.
 
-
+#### Simulation
+- we are also applying the gravity which can be passed as a factor in the XML file
+- to implement the Lorentz-Berthelot mixing rule, we are creating a look-up matrix with the indexes
+  representing the types of the two particles. The sigma_ij being found in sigma_mixed[ i ][ j ], epsilon_ij
+  analogous, this way we are avoiding redundant calculations
+- when adding a particle in the CellContainer that has an unknown sigma - epsilon combination, we are
+  declaring it as a new type and updating sigma_mixed and epsilon_mixed, which are {{1}} and {{5}} per default.
+- here is the resulting simulation of the Rayleigh-Taylor instability:
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/105e5eb7-dd66-4191-8cbb-da813e8dfadd
-
+- as expected, the heavier particles are moving down, making the lighter particles escape to the top.
 
 
 
@@ -151,7 +182,6 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5416ce56-4327-4739-8
 - The `outputParameters` now contain an option for a input checkpoint file, that will be used as input to the next simulation, if the otion is set and an option that will produce a output checkpoint file at the end of the simulation, if set. The checkpoint input file has to be a file that was produced by our program. The sigma and epsilon in the cuboid/sphere component of the Schema are now applied to the cuboids in the simulation and it is possible to specify a `meanVelocity` in the cuboids/spheres component.
 - Setting a `meanVelocity` and Thermostats at the same time does not make sense and is undefined behaviour. If no `meanVelocity` and no Thermostat is given, the particles from the respective cuboid, will just have the initial velocity specified by the user. If a `meanVelocity` and no Thermostat is given, the particles of the respective cuboid will be initialized with a Maxwell-Boltzman distributed initial velocity, that is added to the inital velocity given by the user (no matter if it is zero or not). If instead a Thermostat and no `meanVelocity` is given, an intial Temperature for the Thermostat must have been specified by the user. This inital Temperature will then be used to set the intial velocities of all cuboids according to the Maxwell-Boltzman distribution depending on the Thermostat inital Temperature, but only if the initial velocity of all cuboids are zero. This is realized by setting the `meanVelocity` of all cuboids to $\sqrt{T_{init}/m_i}$, where $m_i$ is the mass of the particles of the respective cuboid.
 - The `boundaryConditions` (in the different directions) can now either be 'outflow', 'reflective', 'ghost_reflective' or 'periodic'.
-#### Boundary Conditions
 
 
 
