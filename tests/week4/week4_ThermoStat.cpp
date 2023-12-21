@@ -77,13 +77,11 @@ TEST(test_Thermo_Stat,test_basic){
 
 /**
  * @brief Tests if the Thermostat correctly heats up a system(particles in the CellContainer).
- *        Frist some particles are added to a CellContainer. Then a CellCalculator, that wraps 
- *        the CellContainer is initialized with initial_temp=0.0 (again will be ignored) without anything else, the Thermostat
- *        is applied to the CellContainer by calling it on a CellCalculator, that wraps our
- *        CellContainer. The CellCalculator was initialized with  
- *        target_temp = 30 and no max_temp_diff. Therefore calling `applyThermostats` should
- *        directly change the temperature of the system to 30.
- *
+ *        Frist some particles are added to a CellContainer. The system will then have the inital
+ *        temperature=40. Then a CellCalculator, that wraps the CellContainer is initialized 
+ *        with target_temp = 100 and max_temp_diff = 5.0 and we do 20 iterations of the simulation
+ *        and apply the the Thermostat in every step. Since we start with temp=40 and then can increase
+ *        the temp by 5 every step, after 20 steps our system should have the target temp=100
  */
 TEST(test_Thermo_Stat,test_heating){
     CellContainer container(50,50,0,3.0,3.0);
@@ -125,11 +123,19 @@ TEST(test_Thermo_Stat,test_heating){
     temp = getTemp(container);
 
     std::cout << "The Temperature after the simulation is: " << temp << std::endl;
-    //due to rounding errors etc. we can't expect to get the exact double temperature again
+    //due to rounding errors etc. we can't expect to get the exact double temperature 
     ASSERT_NEAR(100,temp,0.00001);
 }
 
-
+/**
+ * @brief Tests if the Thermostat correctly cools down a system(particles in the CellContainer).
+ *        Frist some particles are added to a CellContainer. The system will then have the inital
+ *        temperature=40. Then a CellCalculator, that wraps the CellContainer is initialized 
+ *        with target_temp = 20 and max_temp_diff = 1.0 and we do 30 iterations of the simulation
+ *        and apply the the Thermostat in every step. Since we start with temp=40 and then can decrease
+ *        the temp by 1.0 every step, after 30 steps our system should have the target temp=20
+ * 
+ */
 TEST(test_Thermo_Stat,test_cooling){
     CellContainer container(50,50,0,3.0,3.0);
     CellCalculator calculator(container,0.0014,3.0,
@@ -161,7 +167,7 @@ TEST(test_Thermo_Stat,test_cooling){
     calculator.initializeFX();
 
 
-    for(int i = 0; i < 20; i++){
+    for(int i = 0; i < 30; i++){
         calculator.applyReflectiveBoundaries();
         calculator.calculateLinkedCellF();
         calculator.calculateWithinFVX();
@@ -177,12 +183,20 @@ TEST(test_Thermo_Stat,test_cooling){
     ASSERT_NEAR(20,temp,0.00001);
 }
 
+
+/**
+ * @brief Just an informal check to see if the inital temp is correctly applied an the system
+ *        has roughly the expected value of temp=30. Due to the non determinism, we don't check
+ *        that the system actually has the exact inital temp = 30.
+ * 
+ * 
+*/
 TEST(test_Thermo_Stat,test_initial_Temp){
      FileReader::SphereData sphere = {
         {100, 100, 100}, 
         {0, 0, 0}, 
         1.0,            
-        20,             
+        50,             
         1.0,             
         1,             
         1              
@@ -190,11 +204,11 @@ TEST(test_Thermo_Stat,test_initial_Temp){
 
     // Initialize CuboidData with specific values
     FileReader::CuboidData cuboid = {
-        {20, 20, 20}, 
+        {20, 20, 0}, 
         {0, 0, 0}, 
-        20,               
-        20,               
-        20,               
+        50,               
+        50,               
+        0,               
         1,            
         1,             
         0.3,             
@@ -217,7 +231,7 @@ TEST(test_Thermo_Stat,test_initial_Temp){
         boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective
         },    //boundary conditions
-        {200,200,200},        //domain size
+        {500,500,0},        //domain size
         std::nullopt,       
         std::nullopt,
         "out",          // file_basename
