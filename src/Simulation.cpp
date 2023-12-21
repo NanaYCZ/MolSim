@@ -12,7 +12,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
     outputWriter::VTKWriter writer;
     auto logger = spdlog::get("logger");
 
-    std::chrono::high_resolution_clock::time_point perf_time_start, perf_time_end;
+
 
     double current_time = 0;
     int iteration = 0;
@@ -27,11 +27,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
     SPDLOG_LOGGER_DEBUG(logger, container.to_string());
     logger->flush();
 
-    //size_t before_size = container.size();
-
-    // for this loop, we assume: current x, current f and current v are known
-    if (performance_measurement)
-        perf_time_start = std::chrono::high_resolution_clock::now();
+    auto perf_time_start= std::chrono::steady_clock::now();
 
     while (current_time < end_time) {
         SPDLOG_TRACE(std::to_string(current_time));
@@ -71,7 +67,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
         current_time += delta_t;
     }
 
-    auto runtimeDuration=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - perf_time_start).count();
+    auto runtimeDuration=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - perf_time_start).count();
 
     double mups = static_cast<double>(container.size()) * iteration /
                   (static_cast<double>(runtimeDuration) / 1000);
@@ -85,8 +81,6 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
         std::cout << "MUPS/s: " << mups << std::endl;
     }
 
-    //std::cout << "before: " << before_size << std::endl;
-    //std::cout << "after: " << container.size() << std::endl;
     spdlog::info("[" + std::string(pos, '=') + ">] 100%\r");
     SPDLOG_INFO("output written. Terminating...\r");
 }

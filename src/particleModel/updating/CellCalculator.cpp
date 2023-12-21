@@ -347,9 +347,15 @@ std::array<double,3> CellCalculator::force(const Particle &p_i, const Particle &
     double norm = ArrayUtils::L2Norm(x_i - x_j + offset);
     norm = std::max(min_distance, norm);
 
-    double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
+    double prefactor = (-24 * epsilon) / (norm*norm);
 
-    prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
+    double helper_parameter0=sigma / norm;
+
+    // pow(sigma/norm, 6)
+    double helper_parameter1=helper_parameter0*helper_parameter0*helper_parameter0*helper_parameter0*helper_parameter0*helper_parameter0;
+
+    // pow(sigma/norm, 6)-2*pow(sigma/norm, 12)
+    prefactor *= (helper_parameter1 - 2 * helper_parameter1*helper_parameter1);
 
     return prefactor * (x_i - x_j + offset);
 }
@@ -364,9 +370,15 @@ std::array<double,3> CellCalculator::ghostParticleLennardJonesForce(const Partic
   double norm = ArrayUtils::L2Norm(x - ghost_position);
   norm = std::max(min_distance, norm);
 
-  double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
+  double prefactor = (-24 * epsilon) / (norm*norm);
 
-  prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
+  double helper_parameter0=sigma / norm;
+
+  // pow(sigma/norm, 6)
+  double helper_parameter1=helper_parameter0*helper_parameter0*helper_parameter0*helper_parameter0*helper_parameter0*helper_parameter0;
+
+  // pow(sigma/norm, 6)-2*pow(sigma/norm, 12)
+  prefactor *= (helper_parameter1 - 2 * helper_parameter1*helper_parameter1);
 
   return prefactor * (x - ghost_position);
 }
