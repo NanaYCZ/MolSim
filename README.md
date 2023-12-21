@@ -152,9 +152,9 @@ Left side shows distribution right after the drop hits the water, t ~ 8.25.
 
 Right side shows distribution after the waves were reflected, t ~ 17.5.
 
-<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/7e4b79b1-0b56-4c88-ad98-93c38e17a970" width="500">
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/7e4b79b1-0b56-4c88-ad98-93c38e17a970" width="400">
 
-<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d7198861-f8e8-4558-b528-72ad6217b468" width="450">
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d7198861-f8e8-4558-b528-72ad6217b468" width="350">
 
 To sum up, the simulation has some expected physical properties, like the waves, that are moving outwards from the point of impact. These waves are reflected by the boundary then. Apart from that there are a few particles that are "splashing" away with high speed. This looks similar to videos of a real droplet into fluid (e.g. https://www.youtube.com/watch?v=cNI-LIVs-to ). Altough one thing, which appears in many videos showcasing a droplet falling into fluid, is missing in our simulation, namely the drop jumping back upwards right after the collision with the fluid. This might be missing due to the fluid being not very deep in our simulation.
 

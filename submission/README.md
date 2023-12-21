@@ -77,7 +77,7 @@ command line arguments and what is being returned by the executable. This file s
 
 #### Simulation
 - we are also applying the gravity which can be passed as a factor in the XML file
-- to implement the Lorentz-Berthelot mixing rule, we are creating a look-up matrix with the indexes
+- to implement the Lorentz-Berthelot mixing rule, we are creating a lookup matrix with the indexes
   representing the types of the two particles. The sigma_ij being found in sigma_mixed[ i ][ j ], epsilon_ij
   analogous, this way we are avoiding redundant calculations
 - when adding a particle in the CellContainer that has an unknown sigma - epsilon combination, we are
