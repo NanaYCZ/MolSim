@@ -163,7 +163,7 @@ We tried the same simulation with periodic boundaries at the left and right side
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/c1dc8700-e142-4ec0-8719-f62880f3f1d3
 
-It looks very similar to the simulation with reflective boundary conditions on the left and right side, especially regarding the waves going outwards and breaking at the boundary. This seems plausible, as in the case with periodic boundaries, the waves are not reflected by the reflective boundaries, but by the symmetric wave on the opposite side due to the periodicity of our domain. However some of the particles that splash away with high speed right after the collision, seem to behave a bit differently, as they are very chaotic and now seem to distribute over the whole domain after the inital crash.
+- It looks very similar to the simulation with reflective boundary conditions on the left and right side, especially regarding the waves going outwards and breaking at the boundary. This seems plausible, as in the case with periodic boundaries, the waves are not reflected by the reflective boundaries, but by the symmetric wave on the opposite side due to the periodicity of our domain. However some of the particles that splash away with high speed right after the collision, seem to behave a bit differently, as they are very chaotic and now seem to distribute over the whole domain after the inital crash.
 
 When using periodic boundaries and moving the initial position of the drop a bit to the left, it is possible to actually see the two symmetric opposing waves crashing into one another very nicely.
 
