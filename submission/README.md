@@ -195,7 +195,13 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5416ce56-4327-4739-8
 
 
 #### Order of calculating Position, Forces and Velocities
-- We changed the order of calculating position, forces and velocities back to the order, which was used in the very beginning and reintroduced the `calculateX()`, `calculateV()` and `calculateF()` functions as well as `shiftF()`. Our current implementation uses this way of iterating through the simulation. We still kept the old methods, because they are quite developed and in case we run into inconsistencies we want to be able to compare the new implementation of the iteration it to our old implementation (`calculateWithinFVX()` and `initializeFX()`), but like the Ghost Particles, we will likely remove the `calculateWithinFVX()` and `initializeFX()` in the last sheet, if we don't run into any inconsistencies. 
+- We changed the order of calculating position, forces and velocities back to the order, 
+  which was used in the very beginning and reintroduced the `calculateX()`, `calculateV()` 
+  and `calculateF()` functions as well as `shiftF()`, which made our simulation run 5.5% slower. 
+  Our current implementation uses this way of iterating through the simulation. We still kept 
+  the old methods, because they are quite developed and in case of issues with the current one 
+  or the need for slight speedup, but like the Ghost Particles, we will likely remove the 
+  `calculateWithinFVX()` and `initializeFX()` in the last sheet, if we don't run see any use for them. 
 
 
 
