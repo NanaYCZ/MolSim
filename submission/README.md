@@ -83,7 +83,10 @@ command line arguments and what is being returned by the executable. This file s
 - when adding a particle in the CellContainer that has an unknown sigma - epsilon combination, we are
   declaring it as a new type and updating sigma_mixed and epsilon_mixed, which are {{1}} and {{5}} per default.
 - here is the resulting simulation of the Rayleigh-Taylor instability:
-https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/105e5eb7-dd66-4191-8cbb-da813e8dfadd
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/ef578030-ac11-4efa-a22b-74f841085304
+
 - as expected, the heavier particles are moving down, making the lighter particles escape to the top.
 
 
