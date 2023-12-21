@@ -16,7 +16,6 @@
  * @param delta_t time step for each iteration
  * @param write_frequency specifies the frequency for the vtk output
  * @param performance_measurement bool to set the performance measuring of the simulation
- * @param calculator int to set the performance measuring of the simulation
  */
 
 void runSimulation(CellContainer &container, CellCalculator &calculator,
