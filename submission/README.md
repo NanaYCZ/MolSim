@@ -47,7 +47,7 @@ command line arguments and what is being returned by the executable. This file s
 ## Report
 ### Task 1 Thermostats
 - In Misc it is explained how to correctly specify the Thermostats in the XML input file and how a given initial Temperature is handled.
-  For every iteration of the Thermostats, first the kinetic energy of the current system is calculated according to the formula, then the scaling factor $\beta = \sqrt{\frac{ T_{new} }{ T_{current} }}$ is calculated. $T_{new}$ corresponds to either $T_{target}$, if given, or $T_{initial}$ if the target temperature is not specified in the file. However, if $\Delta T$ is given and the following holds $|T_{new} - T_{current}| > \Delta T $, then $T_{new} = sign(T_{new} - T_{current}) + T_{current} $. In the end, the velocities of all particles are scaled by $\beta$.
+  For every iteration of the Thermostats, first the kinetic energy of the current system is calculated according to the formula, then the scaling factor $\beta = \sqrt{\frac{ T_{new} }{ T_{current} }}$ is calculated. $T_{new}$ corresponds to either $T_{target}$, if given, or $T_{initial}$ if the target temperature is not specified in the file. However, if $\Delta T$ is given and the following holds $|T_{new} - T_{current}| > \Delta T $, then $T_{new} = sign(T_{new} - T_{current}) \cdot \Delta T + T_{current} $. In the end, the velocities of all particles are scaled by $\beta$.
 
 ### Task 2 Simulation of the Rayleigh-Taylor instability
 #### Boundary Conditions
@@ -134,7 +134,7 @@ At the same time, some of the upper particles of the drop are moving outwards wi
 
 ![fast_particles_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/0e44da09-60cf-44c6-8fbe-8a46f3211e5a)
 
-- After some time the gravity is showing it's effect on these particles and they are, stil with high velocity, moving downwards again.
+- After some time the gravity is showing it's effect on these particles and they are, still with high velocity, moving downwards again.
 
 ![final_particles2_marked](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/843e2ec4-cdbe-4af7-bccb-308ead773b86)
 
@@ -181,7 +181,7 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5416ce56-4327-4739-8
 - the new file format includes a optional `Thermostats` component in the `simulationParameters`. 
   In `Thermostats`, one has to specify the initial temperature of the system and the frequency, with
   which the Thermostats is applied. A target temperature and the maximal temperature difference are optional. The maximum temperature difference sets the limit for the magnitude of a temperature update from the current temperature towards the target temperature.
-- The `outputParameters` now contain an option for a input checkpoint file, that will be used as input to the next simulation, if the otion is set and an option that will produce a output checkpoint file at the end of the simulation, if set. The checkpoint input file has to be a file that was produced by our program. The sigma and epsilon in the cuboid/sphere component of the Schema are now applied to the cuboids in the simulation and it is possible to specify a `meanVelocity` in the cuboids/spheres component.
+- The `outputParameters` now contain an option for a input checkpoint file, that will be used as input to the next simulation, if the option is set and an option that will produce a output checkpoint file at the end of the simulation, if set. The checkpoint input file has to be a file that was produced by our program. The sigma and epsilon in the cuboid/sphere component of the xsd-schema are now applied to the cuboids in the simulation and it is possible to specify a `meanVelocity` in the cuboids/spheres component.
 - Setting a `meanVelocity` and Thermostats at the same time does not make sense and is undefined behaviour. If no `meanVelocity` and no Thermostat is given, the particles from the respective cuboid, will just have the initial velocity specified by the user. If a `meanVelocity` and no Thermostat is given, the particles of the respective cuboid will be initialized with a Maxwell-Boltzman distributed initial velocity, that is added to the inital velocity given by the user (no matter if it is zero or not). If instead a Thermostat and no `meanVelocity` is given, an intial Temperature for the Thermostat must have been specified by the user. This inital Temperature will then be used to set the intial velocities of all cuboids according to the Maxwell-Boltzman distribution depending on the Thermostat inital Temperature, but only if the initial velocity of all cuboids are zero. This is realized by setting the `meanVelocity` of all cuboids to $\sqrt{T_{init}/m_i}$, where $m_i$ is the mass of the particles of the respective cuboid.
 - The `boundaryConditions` (in the different directions) can now either be 'outflow', 'reflective', 'ghost_reflective' or 'periodic'.
 
@@ -191,7 +191,7 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5416ce56-4327-4739-8
 - We did not yet delete the old reflective boundaries, that are encapsulated in the `applyReflectiveBoundaries()` function, because we will see how they compare to the new reflective boundaries(`updateCells`) for future tasks. We will likely delete the Ghost Particle reflective boundaries in the next and last sheet, if there is no significant disadvantage in the new method. For now our main method of handling reflective boundaries is the new one that is implemented in the `updateCells`. (maybe a combination :) in the future)
 
 #### Force Calculations
-- We moved the functions for calculating forces into the Cellcalculator, because we now have to calculate with different sigma and epsilon depending on the particles that are currently in our system. Therefore it is more convenient to have it wihtin the Cellcalculator and specific to an CellCalculator object.
+- We moved the functions for calculating forces into the Cellcalculator, because we now have to calculate with different sigma and epsilon depending on the particles that are currently in our system. Therefore it is more convenient to have it within the Cellcalculator and specific to an CellCalculator object.
 
 
 #### Order of calculating Position, Forces and Velocities
