@@ -29,7 +29,7 @@
         <boundaryConditionsNegativeY>reflective</boundaryConditionsNegativeY>
       </boundaryConditions>
     <domainDimensions> 
-      <x>303</x>
+      <x>160</x>
       <y>180</y>
       <z>1</z>
     </domainDimensions>
@@ -40,7 +40,7 @@
   <!-- Cuboids -->
   <cuboids>
     <position>
-      <x>1.5</x>
+      <x>8</x>
       <y>2</y>
       <z>0</z>
     </position>
@@ -50,8 +50,8 @@
       <z>0</z>
     </velocity>
     <dimensions>
-      <x>250</x>
-      <y>50</y>
+      <x>120</x>
+      <y>100</y>
       <z>1</z>
     </dimensions>
     <mass>1</mass>

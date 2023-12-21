@@ -88,6 +88,7 @@ public:
 
     void setV(std::array<double,3> new_v);
     
+    void addX(int index, double value);
 
     void addX(std::array<double,3> &x_add);
 

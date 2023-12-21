@@ -10,14 +10,13 @@
 
   <!-- Simulation Parameters -->
   <simulationParameters>
-    <tEnd>25</tEnd>
+    <tEnd>70</tEnd>
     <deltaT>0.0005</deltaT>
     <cutOffRadius>3.0</cutOffRadius>
-    <cellSize>3.0</cellSize>
+    <cellSize>1.5</cellSize>
     <gravityFactor>-12.44</gravityFactor>
     <Thermostats>
       <initTemp>40</initTemp>
-      <targetTemp>50</targetTemp>
       <thermoStatFrequency>1000</thermoStatFrequency>
     </Thermostats>
     <boundaryConditions>
@@ -28,7 +27,7 @@
         <boundaryConditionsPositiveY>reflective</boundaryConditionsPositiveY>
         <boundaryConditionsNegativeY>reflective</boundaryConditionsNegativeY>
       </boundaryConditions>
-    <domainDimensions> 
+    <domainDimensions>
       <x>300</x>
       <y>54</y>
       <z>0</z>
@@ -92,5 +91,4 @@
 
 
   <!-- Add arbitrarily many spheres here  -->
-
 </parameters>

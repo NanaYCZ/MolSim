@@ -11,7 +11,7 @@
 
   <!-- Simulation Parameters -->
   <simulationParameters>
-    <tEnd>25</tEnd>
+    <tEnd>40</tEnd>
     <deltaT>0.0005</deltaT>
     <cutOffRadius>2.5</cutOffRadius>                                          
     <cellSize>2.5</cellSize>
@@ -35,7 +35,7 @@
   <spheres>
     <center_position>
         <x>150</x>
-        <y>250</y>
+        <y>150</y>
         <z>0</z>
     </center_position>
     <velocity>

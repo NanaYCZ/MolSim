@@ -5,7 +5,7 @@
 #include <spdlog/spdlog.h>
 #include <limits>
 
-double min_distance = 0.001;
+double min_distance = 0.7;
 
 std::vector<std::vector<double>> sigma_mixed{{1.0}};
 
@@ -53,13 +53,6 @@ void CellCalculator::initializeFX() {
                 position[1] != current_position[1] ||
                 position[2] != current_position[2])
             {
-                std::array<double,3> particle_offset{0,0,0};
-
-                //mirror new cell position into the domain cells in case of periodic boundaries
-                mirror(position, particle_offset);
-                //update particle position for mirrored cell
-                (*iter)->addX(particle_offset);
-
                 cell_updates.emplace_back(*iter,position);
                 iter = current_cell->erase(iter);
 
@@ -171,13 +164,6 @@ void CellCalculator::calculateWithinFVX() {
                 position[1] != current_position[1] ||
                 position[2] != current_position[2])
             {
-                std::array<double,3> particle_offset{0,0,0};
-
-                //mirror new cell position into the domain cells in case of periodic boundaries
-                mirror(position, particle_offset);
-                //update particle position for mirrored cell
-                (*iter)->addX(particle_offset);
-
                 cell_updates.emplace_back(*iter,position);
                 iter = current_cell->erase(iter);
             } else{
@@ -195,53 +181,52 @@ void CellCalculator::updateCells(instructions& cell_updates) {
       Particle* particle_ptr = std::get<0>(ins);
       std::array<dim_t, 3> new_cell_position = std::get<1>(ins);
 
+  
+      //second method for reflective boundaries
+      const std::array<double,3> &x = particle_ptr->getX();
+      const std::array<double,3> &v = particle_ptr->getV();
+      static std::array<unsigned short,6> map_boundaries{3,5,1,2,4,0};//{neg_X, neg_Y, neg_Z, pos_X, pos_Y, pos_Z}
+
+      for (int i = 0; i < 3; ++i) {
+          //check if position is outside the domain
+          if(x[i] < 0) {
+              //check negative boundaries: 0 -> neg_X, 1 -> neg_Y, 2 -> neg_Z
+              if(boundaries[map_boundaries[i]] == boundary_conditions::reflective) {
+                  //apply reflection in pos direction
+                  particle_ptr->setX(i, -x[i]);
+                  particle_ptr->setV(i, -v[i]);
+              } else if(boundaries[map_boundaries[i]] == boundary_conditions::periodic){
+                  //apply periodic in pos direction
+                  particle_ptr->addX(i,domain_bounds[i]);
+              } 
+          } //check if position is outside the domain
+          else if(domain_bounds[i] < x[i]) {
+              //check positive boundaries: 3 -> pos_X, 4 -> pos_Y, 5 -> pos_Z
+              if(boundaries[map_boundaries[i+3]] == boundary_conditions::reflective) {
+                  //apply reflection in neg direction
+                  particle_ptr->setX(i, 2 * domain_bounds[i] - x[i]);
+                  particle_ptr->setV(i, -v[i]);
+
+              } else if(boundaries[map_boundaries[i+3]] == boundary_conditions::periodic) {
+                //apply periodic in neg direction
+                  particle_ptr->addX(i,-domain_bounds[i]);
+              } 
+          }
+      }
+
+      cellContainer.allocateCellFromPosition(x, new_cell_position);
+
       if( 0 < new_cell_position[0] &&  new_cell_position[0] <= domain_max_dim[0] &&
             0 < new_cell_position[1] &&  new_cell_position[1] <= domain_max_dim[1] &&
             0 < new_cell_position[2] && new_cell_position[2] <= domain_max_dim[2]) {
 
           std::vector<Particle*> *new_cell = &particles[new_cell_position[0]][new_cell_position[1]][new_cell_position[2]];
           new_cell->push_back(particle_ptr);
+      }else{
+        SPDLOG_INFO("new halo particle: " + (*particle_ptr).toString());
+        cellContainer.getHaloParticles().push_back(particle_ptr);
       }
-
-      else {
-          //second method for reflective boundaries
-          const std::array<double,3> &x = particle_ptr->getX();
-          const std::array<double,3> &v = particle_ptr->getV();
-          static std::array<unsigned short,6> map_boundaries{3,5,1,2,4,0};//{neg_X, neg_Y, neg_Z, pos_X, pos_Y, pos_Z}
-
-          for (int i = 0; i < 3; ++i) {
-              //check if position is outside the domain
-              if(x[i] < 0) {
-                  //check negative boundaries: 0 -> neg_X, 1 -> neg_Y, 2 -> neg_Z
-                  if(boundaries[map_boundaries[i]] == boundary_conditions::reflective) {
-                      //apply reflection in pos direction
-                      particle_ptr->setX(i, -x[i]);
-                      particle_ptr->setV(i, -v[i]);
-                  } else {
-                      SPDLOG_INFO("new halo particle: " + (*particle_ptr).toString());
-                      cellContainer.getHaloParticles().push_back(particle_ptr);
-                      break;
-                  }
-              } //check if position is outside the domain
-              else if(domain_bounds[i] < x[i]) {
-                  //check positive boundaries: 3 -> pos_X, 4 -> pos_Y, 5 -> pos_Z
-                  if(boundaries[map_boundaries[i+3]] == boundary_conditions::reflective) {
-                      //apply reflection in neg direction
-                      particle_ptr->setX(i, 2 * domain_bounds[i] - x[i]);
-                      particle_ptr->setV(i, -v[i]);
-
-                  } else {
-                      SPDLOG_INFO("new halo particle: " + (*particle_ptr).toString());
-                      cellContainer.getHaloParticles().push_back(particle_ptr);
-                      break;
-                  }
-              }
-          }
-
-          cellContainer.allocateCellFromPosition(x, new_cell_position);
-          std::vector<Particle*> *new_cell = &particles[new_cell_position[0]][new_cell_position[1]][new_cell_position[2]];
-          new_cell->push_back(particle_ptr);
-      }
+      
     }
 }
 
@@ -413,17 +398,6 @@ void CellCalculator::applyThermostats(){
       }
   }
 
-  kinetic_energy = 0;
-  for(auto iter = cellContainer.begin(); iter != cellContainer.end(); ++iter){
-    for(Particle* particle_ptr : *iter){
-      const std::array<double,3> &v = particle_ptr->getV();
-      double v_squared = v[0] * v[0]  + v[1] * v[1] + v[2] * v[2];
-      double m = particle_ptr->getM();
-      kinetic_energy += v_squared * m;
-    }
-  }
-
-  current_temp = kinetic_energy/((cellContainer.hasThreeDimensions() ? 3 : 2) * amt * k_boltzman);
 }
 
 
@@ -470,7 +444,7 @@ void CellCalculator::applyReflectiveBoundaries() {
   if(cellContainer.hasThreeDimensions()){
       //TOP SIDE
       //boundaries[0] corresponds to boundary_conditions in positiveZ direction
-      if(boundaries[0] == boundary_conditions::reflective ){
+      if(boundaries[0] == boundary_conditions::ghost_reflective){
         auto iter = cellContainer.begin_custom(
         1,domain_max_dim[0], // iteration cuboid in x dim 
         1,domain_max_dim[1], // iteration cuboid in y dim 
@@ -482,7 +456,7 @@ void CellCalculator::applyReflectiveBoundaries() {
 
       //BOTTOM SIDE
       //boundaries[1] corresponds to boundary_conditions in negativeZ direction
-      if(boundaries[1] == boundary_conditions::reflective){
+      if(boundaries[1] == boundary_conditions::ghost_reflective){
         auto iter = cellContainer.begin_custom(
         1,domain_max_dim[0], // iteration cuboid in x dim 
         1,domain_max_dim[1], // iteration cuboid in y dim 
@@ -511,7 +485,7 @@ void CellCalculator::applyReflectiveBoundaries() {
 
   */
   //boundaries[2] corresponds to boundary_conditions in positiveX direction
-  if(boundaries[2] == boundary_conditions::reflective ){
+  if(boundaries[2] == boundary_conditions::ghost_reflective){
     auto iter = cellContainer.begin_custom(
       domain_max_dim[0]-comparing_depth,domain_max_dim[0], // iteration cuboid in x dim 
       1,domain_max_dim[1], // iteration cuboid in y dim 
@@ -538,7 +512,7 @@ void CellCalculator::applyReflectiveBoundaries() {
   */
   //boundaries[3] corresponds to boundary_conditions in negativeX direction
   
-  if(boundaries[3] == boundary_conditions::reflective){
+  if(boundaries[3] == boundary_conditions::ghost_reflective){
     auto iter = cellContainer.begin_custom(
       1,comparing_depth, // iteration cuboid in x dim 
       1,domain_max_dim[1], // iteration cuboid in y dim 
@@ -565,7 +539,7 @@ void CellCalculator::applyReflectiveBoundaries() {
 
   */
   //boundaries[4] corresponds to boundary_conditions in positiveY direction
-  if(boundaries[4] == boundary_conditions::reflective){
+  if(boundaries[4] == boundary_conditions::ghost_reflective){
     auto iter = cellContainer.begin_custom(
       1,domain_max_dim[0], // iteration cuboid in x dim 
       domain_max_dim[1]-comparing_depth,domain_max_dim[1], // iteration cuboid in y dim 
@@ -592,7 +566,7 @@ void CellCalculator::applyReflectiveBoundaries() {
 
   */
   //boundaries[5] corresponds to boundary_conditions in negativeY direction
-  if(boundaries[5] == boundary_conditions::reflective) {
+  if(boundaries[5] == boundary_conditions::ghost_reflective) {
     auto iter = cellContainer.begin_custom(
       1,domain_max_dim[0], // iteration cuboid in x dim 
       1,comparing_depth, // iteration cuboid in y dim 

@@ -22,9 +22,9 @@ TEST(test_BoundaryConditions,test_reflective){
     CellContainer cellContainer(4,4,1,1.0,1.0);
 
     CellCalculator cellCalculator(cellContainer,0.0014,1.0,
-            {boundary_conditions::reflective,boundary_conditions::reflective,
-        boundary_conditions::reflective,boundary_conditions::reflective,
-        boundary_conditions::reflective,boundary_conditions::reflective},0);
+            {boundary_conditions::ghost_reflective,boundary_conditions::ghost_reflective,
+        boundary_conditions::ghost_reflective,boundary_conditions::ghost_reflective,
+        boundary_conditions::ghost_reflective,boundary_conditions::ghost_reflective},0);
 
 
 
