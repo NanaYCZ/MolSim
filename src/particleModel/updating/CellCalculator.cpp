@@ -24,6 +24,70 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
     }
 }
 
+
+
+void CellCalculator::calculateX(){
+  instructions cell_updates;
+  for(auto cell = cellContainer.begin(); cell != cellContainer.end();++cell){
+    //iterate trough particles of cell
+    for(auto particle_ptr = (*cell).begin(); particle_ptr != (*cell).end();){
+      // defreferenceung iterator yields a pointer to a particle, therefore defrefernce again
+      Particle& particle = *(*particle_ptr);
+      std::array<double,3>  old_f  ,  v  ,  old_x  , new_x;
+
+      old_f = particle.getOldF(); v = particle.getV(); old_x = particle.getX();
+      double mass = particle.getM();
+
+      new_x = old_x + delta_t * v + (delta_t * delta_t / (2 * mass)) * old_f;
+      particle.setX(new_x);
+
+      std::array<dim_t, 3> new_cell;
+      cellContainer.allocateCellFromPosition(new_x,new_cell);
+
+      if(new_cell[0] != cell.x || new_cell[1] != cell.y || new_cell[2] != cell.z){
+        cell_updates.emplace_back(*particle_ptr,new_cell);
+        particle_ptr = (*cell).erase(particle_ptr);
+      }else{
+        particle_ptr++;
+      }
+    }
+  }
+  updateCells(cell_updates);
+}
+
+
+
+void CellCalculator::calculateV(){
+  for(auto cell = cellContainer.begin(); cell != cellContainer.end();++cell){
+    for(auto particle_ptr : *cell){
+      Particle& particle = *particle_ptr;
+      std::array<double,3> old_f , f , old_v;
+
+      old_f = particle.getOldF(); f = particle.getF(); old_v = particle.getV();
+
+      double mass = particle.getM();
+
+      auto new_v = old_v + (delta_t / (2 * mass)) * (f + old_f);
+      particle.setV(new_v);
+    }
+  }
+}
+
+void CellCalculator::calculateF(){
+  calculateLinkedCellF();
+  for(auto iter = cellContainer.begin(); iter != cellContainer.end();++iter){
+    finishF(&(*iter));
+  }
+}
+
+void CellCalculator::shiftF(){
+  for(auto cell = cellContainer.begin(); cell != cellContainer.end();++cell){
+    for(auto particle_ptr : *cell){
+      particle_ptr->shiftF();
+    }
+  }
+}
+
 void CellCalculator::initializeFX() {
     std::array<dim_t, 3> current_position;
     instructions cell_updates;

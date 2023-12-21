@@ -21,7 +21,8 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
     size_t barWidth, pos;
 
     SPDLOG_INFO("Starting Simulation");
-    calculator.initializeFX();
+    calculator.calculateF();
+    calculator.shiftF();
 
     SPDLOG_LOGGER_DEBUG(logger, "Particles in the simulation:");
     SPDLOG_LOGGER_DEBUG(logger, container.to_string());
@@ -39,8 +40,10 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
         SPDLOG_TRACE("Doing a Iteration with CellCalculator");
         calculator.applyReflectiveBoundaries();
  
-        calculator.calculateLinkedCellF();
-        calculator.calculateWithinFVX();
+        calculator.calculateX();
+        calculator.calculateF();
+        calculator.calculateV();
+        calculator.shiftF();
         
         iteration++;
 
