@@ -46,9 +46,8 @@ command line arguments and what is being returned by the executable. This file s
 
 ## Report
 ### Task 1 Thermostats
-- in Misc it is explained how to correctly specify the Thermostats in the XML input file.
-  For every iteration of the Thermostats, first the kinetic energy of the current system is calculated according to the formula, then the scaling factor $\beta$ is calculated and the absolute size of $\beta$ is capped by $\delta T$ / the maximal temperature difference given in the XML input file. 
-
+- In Misc it is explained how to correctly specify the Thermostats in the XML input file.
+  For every iteration of the Thermostats, first the kinetic energy of the current system is calculated according to the formula, then the scaling factor $\beta = \sqrt{\frac{ T_{new} }{ T_{current} }}$ is calculated.$T_{new}$ corresponds to either $T_{target}$, if given, or $T_{initial}$ if the target temperature is not specified in the file. However, if $\Delta T$ is given and $ | T_{new} - T_{current} | > \Delta T $, then $T_{new} = sign(T_{new} - T_{current}) \cdot T_{current} $. In the end, the velocities of all particles are scaled by $\beta$.
 
 ### Task 2 Simulation of the Rayleigh-Taylor instability
 #### Boundary Conditions
