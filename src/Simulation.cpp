@@ -12,7 +12,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
     outputWriter::VTKWriter writer;
     auto logger = spdlog::get("logger");
 
-
+    std::chrono::high_resolution_clock::time_point perf_time_start;
 
     double current_time = 0;
     int iteration = 0;
@@ -27,7 +27,8 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
     SPDLOG_LOGGER_DEBUG(logger, container.to_string());
     logger->flush();
 
-    auto perf_time_start= std::chrono::steady_clock::now();
+    if (performance_measurement)
+        perf_time_start = std::chrono::high_resolution_clock::now();
 
     while (current_time < end_time) {
         SPDLOG_TRACE(std::to_string(current_time));
@@ -37,10 +38,10 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
         //new order to directly calculate F~ & V & X for each cell
         calculator.calculateLinkedCellF();
         calculator.calculateWithinFVX();
-        
+
         iteration++;
 
-        if (iteration % write_frequency == 0 && !performance_measurement) {
+        if (!performance_measurement && iteration % write_frequency == 0) {
             writer.initializeOutput(container.size());
             container.plotParticles(writer);
             writer.writeFile("out", iteration);
@@ -54,7 +55,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
         /// loading bar
         static int loading_factor = std::max(write_frequency * 5.0, std::ceil(end_time / (delta_t * 100)));
 
-        if (iteration % loading_factor == 0 && !performance_measurement) {
+        if (!performance_measurement && iteration % loading_factor == 0) {
             barWidth = 50;
             pos = static_cast<size_t>(barWidth * (current_time / end_time));
             progressBar = "[" + std::string(pos, '=') + '>'
@@ -67,7 +68,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
         current_time += delta_t;
     }
 
-    auto runtimeDuration=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - perf_time_start).count();
+    auto runtimeDuration=std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - perf_time_start).count();
 
     double mups = static_cast<double>(container.size()) * iteration /
                   (static_cast<double>(runtimeDuration) / 1000);
@@ -87,7 +88,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
 
 
 void plotParticles(CellContainer &container, int iteration) {
-  std::string out_name("MD_vtk");
-  outputWriter::XYZWriter writer;
-  writer.plotParticles(container, out_name, iteration);
+    std::string out_name("MD_vtk");
+    outputWriter::XYZWriter writer;
+    writer.plotParticles(container, out_name, iteration);
 }
