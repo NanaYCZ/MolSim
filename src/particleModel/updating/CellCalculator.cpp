@@ -169,6 +169,11 @@ void CellCalculator::updateCells(instructions& cell_updates) {
       //second method for reflective boundaries
       const std::array<double,3> &x = particle_ptr->getX();
       const std::array<double,3> &v = particle_ptr->getV();
+      //this map is necessary, because in the boundaries member, the order is
+      //{positive_z,negative_z,positive_x,negative_x,positive_y,negative_y}
+      //but here 
+      //{positive_x,negative_y,negative_z,positive_x,positive_y,positive_z}
+      // is wanted
       static std::array<unsigned short,6> map_boundaries{3,5,1,2,4,0};//{neg_X, neg_Y, neg_Z, pos_X, pos_Y, pos_Z}
 
       for (int i = 0; i < 3; ++i) {
@@ -218,7 +223,11 @@ void CellCalculator::updateCells(instructions& cell_updates) {
 bool CellCalculator::mirror(std::array<dim_t,3> &position, std::array<double,3> &offset) {
     static std::array<unsigned short,6> map_boundaries{3,5,1,2,4,0};//{neg_X, neg_Y, neg_Z, pos_X, pos_Y, pos_Z}
     bool mirrored_fully = true;
-
+    //this map is necessary, because in the boundaries member, the order is
+    //{positive_z,negative_z,positive_x,negative_x,positive_y,negative_y}
+    //but here 
+    //{positive_x,negative_y,negative_z,positive_x,positive_y,positive_z}
+    // is wanted
     for (int i = 0; i < 3; ++i) {
         if(position[i] < 1) {
             if(boundaries[map_boundaries[i]] == boundary_conditions::periodic) {

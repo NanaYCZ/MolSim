@@ -123,12 +123,34 @@ public:
     */
     void applyThermostats();
 
+
+    /**
+     * @brief calculates the new positions for all particles
+     *        and handles boundary_conditions::reflective
+     *                    boundary_conditions::periodic
+     *                    boundary_conditions::outflow
+     *        by calling updateCells
+    */
     void calculateX();
 
+
+    /**
+     * @brief calculates the velocities for all particles
+    */
     void calculateV();
 
+
+    /**
+     * @brief calculates the forces for all particles by using the LinkedCell 
+     *        Algorithm
+    */
     void calculateF();
 
+
+    /**
+     * @brief shifts the forces of all particles
+     * 
+    */
     void shiftF();
 
     auto& getParticles(){
@@ -174,7 +196,14 @@ private:
      *
      * when the positions of the particles get changed a list of instructions is being created
      * that summarizes all the changes of particles between cells that have to be made. That
-     * list is being processed in this method.
+     * list is being processed in this method. 
+     * This method then also takes care of:  boundary_conditions::reflective
+     *                                       boundary_conditions::periodic
+     *                                       boundary_conditions::outflow
+     * by taking according actions, if the new position of a particle would be outside
+     * the domain bounds
+     *                  
+     * 
      *
      * @param cell_updates list of instructions to change the location of particles
      */
