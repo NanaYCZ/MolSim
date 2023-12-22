@@ -4,9 +4,6 @@
 **Members:**
 Yuchen Zhao
 
-[Project Link](https://github.com/Grazvy/PSEMolDyn_GroupB)
-
-**Last commit:** commit-id: 4031c37 or "Merge remote-tracking branch 'origin/master'"
 
 **Build/Usage:**
 ```
@@ -36,8 +33,8 @@ make doc_doxygen
 ```
 
 **Notes:**
-Fourth assignment we did separately. For Task 1-3, please refer to [Project Link](https://github.com/Grazvy/PSEMolDyn_GroupB). 
-For Task 4-5, please refer to [Project Link](https://github.com/NanaYCZ/MolSim/).
+We did this assignment separately. For Task 1-3, please refer to [Project Part 123](https://github.com/Grazvy/PSEMolDyn_GroupB). 
+For Task 4-5, please refer to [Project Part 45](https://github.com/NanaYCZ/MolSim/). The main work is shown in branch "yuchen", while the attempt of performance improvement is shown in branch "performence_enhancement_pow612".
 
 ## Report
 ### Task 1 Thermostats
@@ -48,9 +45,9 @@ For Task 4-5, please refer to [Project Link](https://github.com/NanaYCZ/MolSim/)
 
 ### Task 4 Performance Measurement and profiling
 
-- First, runtime measurement was implemented in the Simulation.cpp. The system time before and after the iterations can be recorded using std::chrono: methods. And by recording the iteration counts, particle counts in the containers and runtime, MUPS/s can be calculated. By adjusting whether or not to switch on the performance_measurement option in main.cpp, one can get the runtime with (PM=OFF) or without (PM=ON) the I/O.
-- Because of some issues with 2FA, Linux Cluster was not able to connected to. So for both with and without I/O, performance has been measured locally on Ubuntu 23.10 x86_64 system with CPU AMD Ryzen 7 7735HS. G++ and icpx are used in the compiling, and profiling is done with perf and gprof. The executables are created with follows:
-- for g++:
+First, runtime measurement was implemented in the Simulation.cpp. The system time before and after the iterations can be recorded using std::chrono: methods. And by recording the iteration counts, particle counts in the containers and runtime, MUPS/s can be calculated. By adjusting whether or not to switch on the performance_measurement option in main.cpp, one can get the runtime with (PM=OFF) or without (PM=ON) the I/O.
+Because of some issues with 2FA, Linux Cluster was not able to connected to. So for both with and without I/O, performance has been measured locally on Ubuntu 23.10 x86_64 system with CPU AMD Ryzen 7 7735HS. G++ and icpx are used in the compiling, and profiling is done with perf and gprof. The executables are created with follows:
+for g++:
 ```
 cmake -DCMAKE_CXX_COMPILER=g++ ..
 ```
@@ -79,7 +76,7 @@ and after run the program, generate the report with
 ```
 gprof MolSim > [filename]
 ```
-- All of these measurements are done with 
+All of these measurements are done with 
 ```
 BUILD_TEST                       OFF
 BUILD_TESTING                    OFF
@@ -87,26 +84,33 @@ DOXY_DOC                         OFF
 CMAKE_BUILD_TYPE                 Release
 ```
 so that all other functions are turned off and compiler optimizations are enabled as build type release activates -O3 for intel and g++.
-- The runtime and million molecular updates per seconds are recorded in the table below.
+The runtime and million molecular updates per seconds are recorded in the table below.
+
 | WithIO| Time(ms) | MMUPS(/s) |
 |----------|----------|----------|
 | gprof | 986509 | 0.506848 |
 | perf | 532505 | 0.938977 |
 | g++ | 521936 | 0.957991 |
 | icpx | 253297 | 1.97401 |
+
 ![Performance Measurement with IO](performancetablewithio.png)
+
 | WithoutIO | Time(ms) | MMUPS(/s) |
 |-----------|----------|----------|
 | gprof     | 952947 | 0.524699 |
 | perf      | 477388 | 1.04739 |
 | g++       | 477116 | 1.04798 |
 | icpx      | 234348 | 2.13362 |
+
 ![Performance Measurement without IO](performancetablewithio.png)
-- We can find out that without the writing part the program indeed speeds up. Both gprof and perf are used in conjunction with the g++ compiler, and we can see that pure g++ is indeed faster than gprof and perf, as it lacks the profiling step. It is noteworthy that the time difference between perf and g++ is negligible, but gprof is significantly slower than both. Gprof introduces extra performance overhead and may alter the behavior of the program. However, perf utilizes performance monitoring features provided by processors and operating systems, resulting in minimal interference with the analyzed program and lower performance overhead. Thus using perf is a wiser choice for the later profiling. Additionally, the speed of compilation with icpx is much faster than with g++, which may be due to its unique optimization strategies.
-- We take a deep look into the profile to find out which part of the program takes the main usage of time.
+
+We can find out that without the writing part the program indeed speeds up. Both gprof and perf are used in conjunction with the g++ compiler, and we can see that pure g++ is indeed faster than gprof and perf, as it lacks the profiling step. It is noteworthy that the time difference between perf and g++ is negligible, but gprof is significantly slower than both. Gprof introduces extra performance overhead and may alter the behavior of the program. However, perf utilizes performance monitoring features provided by processors and operating systems, resulting in minimal interference with the analyzed program and lower performance overhead. Thus using perf is a wiser choice for the later profiling. Additionally, the speed of compilation with icpx is much faster than with g++, which may be due to its unique optimization strategies.
+We take a deep look into the profile to find out which part of the program takes the main usage of time.
+
 ![Perf report Performance Measurement without IO](perf_withoutIO.png)
-- From the perf report we can find out that force calculation especially calling the power function within the force calculation takes most of the time consumption. 
-- In the gprof report we get the same result, although gprof does not show the performance of external functions being called. 
+
+From the perf report we can find out that force calculation especially calling the power function within the force calculation takes most of the time consumption. 
+In the gprof report we get the same result, although gprof does not show the performance of external functions being called. 
 ```
 Flat profile:
 Each sample counts as 0.01 seconds.
@@ -147,14 +151,22 @@ time   seconds   seconds    calls   s/call   s/call  name
 0.00    425.47     0.01    50002     0.00     0.00  CellCalculator::updateCells(std::vector<std::tuple<Particle*, std::array<int, 3ul> >, std::allocator<std::tuple<Particle*, std::array<int, 3ul> > > >&)
 ...
 ```
-- Thus, in task 5 a replacement of power function is considered. 
+Thus, in task 5 a replacement of power function is considered. 
 
 ### Task 5 Tuning the sequential Performance
+The calculation of Lennard-Jones potential is one of the most frequently called function located in the CellCalculator and contains pow(x,6) and pow(x,12). If the exponent is a fraction, it might be difficult to handle, but currently, the exponents are small integers, 6 and 12, and 12 is a multiple of 6. Therefore, it is easy to consider using arguments and multiplication to replace the call to the external function power.
+By doing so, icpx, g++ and perf are again used to profile the performance.
 
+| Replacement of pow() | Time(ms) | MMUPS(/s) |
+|----------------------|----------|----------|
+| icpx                 | 336686 | 1.48509 |
+| perf                 | 347053 | 1.44073 |
+| g++                  | 343870 | 1.45407 |
 
+We can find out the result to be magical. Using Intel LLVM C++ Compiler the measurement slows down, however using g++ and g++ profiling the result speed up a lot. And now the difference between icpx and g++ becomes much smaller and more reasonable. This suggests that the previously excellent performance of Intel may exactly be due to extensive optimizations made when calling the pow function.
+The profile of the new performance is shown as follows. We can see that now there is no function that takes the lead of the consumption, only structure issue is left. 
 
-
-
+![Perf report Replacement of pow()](perf_pow612.png)
 
 
 
