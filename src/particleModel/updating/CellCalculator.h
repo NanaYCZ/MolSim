@@ -77,7 +77,9 @@ public:
 
     /**
      * 
-     * @brief calculates boundary conditions 
+     * @brief calculates reflective boundary conditions with Ghost Particles
+     * 
+     * ! only acts on Particles if any boundary is boundary_condition::ghost_reflective !
      * 
      * This method assumes, that at the moment it is called all particles are within the 
      * domain boundaries. If a particle has coordinates outside the domain it is undefined behaviour.

@@ -38,12 +38,14 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
         SPDLOG_TRACE(std::to_string(current_time));
 
         SPDLOG_TRACE("Doing a Iteration with CellCalculator");
+        //this applies Ghost Particle reflective boundary conditions, only 
+        //if any of the boundaries is boundary_condition::ghost_reflective
         calculator.applyReflectiveBoundaries();
  
         calculator.calculateX();
         calculator.calculateF();
         calculator.calculateV();
-        calculator.shiftF();
+    
         
         iteration++;
 
@@ -52,6 +54,8 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
             container.plotParticles(writer);
             writer.writeFile("out", iteration);
         }
+
+        calculator.shiftF();
 
         //thermostats_frequency.has_value() will be evaluated first
         if (thermostats_frequency.has_value() &&  iteration % thermostats_frequency.value() == 0) {
