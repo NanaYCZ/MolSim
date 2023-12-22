@@ -88,50 +88,6 @@ void CellCalculator::shiftF(){
   }
 }
 
-void CellCalculator::initializeFX() {
-    std::array<dim_t, 3> current_position;
-    instructions cell_updates;
-
-    //calculate F
-    calculateLinkedCellF();
-
-    //write new coordinates in current_position array
-    cellContainer.setNextCell(current_position);
-
-    while(current_position[0] != dim_t_res) {
-        std::vector<Particle*> *current_cell = &particles[current_position[0]][current_position[1]][current_position[2]];
-
-        //finish F calculation
-        finishF(current_cell);
-
-        for (auto iter = current_cell->begin(); iter != current_cell->end();) {
-            Particle& particle = *(*iter);
-
-            calculateVX(particle, false);
-            particle.shiftF();
-
-            std::array<dim_t, 3> position;
-            cellContainer.allocateCellFromPosition(particle.getX(), position);
-            
-            if (position[0] != current_position[0] ||
-                position[1] != current_position[1] ||
-                position[2] != current_position[2])
-            {
-                cell_updates.emplace_back(*iter,position);
-                iter = current_cell->erase(iter);
-
-            } else {
-                iter++;
-            }
-        }
-
-        cellContainer.setNextCell(current_position);
-    }
-
-    //update particle distribution in the cells
-    updateCells(cell_updates);
-}
-
 
 void CellCalculator::calculateLinkedCellF() {
     static std::array<dim_t, 3> current;
@@ -202,42 +158,6 @@ void CellCalculator::calculateLinkedCellF() {
 }
 
 
-void CellCalculator::calculateWithinFVX() {
-    std::array<dim_t, 3> current_position;
-    instructions cell_updates;
-
-    //write new coordinates in current_position array
-    cellContainer.setNextCell(current_position);
-
-    while(current_position[0] != dim_t_res) {
-        std::vector<Particle*> *current_cell = &particles[current_position[0]][current_position[1]][current_position[2]];
-        //finish F calculation
-        finishF(current_cell);
-
-        for (auto iter = current_cell->begin(); iter != current_cell->end();) {
-            Particle* particle_ptr = *iter;
-            Particle& particle = *particle_ptr;
-
-            calculateVX(particle, true);
-            particle.shiftF();
-
-            std::array<dim_t, 3> position;
-            cellContainer.allocateCellFromPosition(particle.getX(), position);
-
-            if (position[0] != current_position[0] ||
-                position[1] != current_position[1] ||
-                position[2] != current_position[2])
-            {
-                cell_updates.emplace_back(*iter,position);
-                iter = current_cell->erase(iter);
-            } else{
-                iter++;
-            }
-        }
-        cellContainer.setNextCell(current_position);
-    }
-    updateCells(cell_updates);
-}
 
 void CellCalculator::updateCells(instructions& cell_updates) {
     for(auto ins : cell_updates){
@@ -320,32 +240,6 @@ bool CellCalculator::mirror(std::array<dim_t,3> &position, std::array<double,3> 
         }
     }
     return mirrored_fully;
-}
-
-
-void CellCalculator::calculateVX(Particle &particle, bool calculateV) {
-    const std::array<double, 3> &f = particle.getF();
-    const std::array<double, 3> &x = particle.getX();
-    const std::array<double, 3> &v = particle.getV();
-    const double &m = particle.getM();
-
-    if(calculateV) {
-        const std::array<double, 3> &f_old = particle.getOldF();
-
-        //calculate V
-        for (int i = 0; i < 3; i++) {
-            particle.setV(i, v[i] + delta_t * (f[i] + f_old[i]) / (2 * m));
-        }
-    }
-
-    //calculate X
-    double x_0 = x[0] + delta_t * v[0] + delta_t * delta_t * f[0] / 2.0 / m;
-    double x_1 = x[1] + delta_t * v[1] + delta_t * delta_t * f[1] / 2.0 / m;
-    double x_2 = x[2] + delta_t * v[2] + delta_t * delta_t * f[2] / 2.0 / m;
-
-    particle.setX(0, x_0);
-    particle.setX(1, x_1);
-    particle.setX(2, x_2);
 }
 
 
@@ -465,6 +359,118 @@ void CellCalculator::applyThermostats(){
 }
 
 
+
+
+
+void CellCalculator::initializeFX() {
+    std::array<dim_t, 3> current_position;
+    instructions cell_updates;
+
+    //calculate F
+    calculateLinkedCellF();
+
+    //write new coordinates in current_position array
+    cellContainer.setNextCell(current_position);
+
+    while(current_position[0] != dim_t_res) {
+        std::vector<Particle*> *current_cell = &particles[current_position[0]][current_position[1]][current_position[2]];
+
+        //finish F calculation
+        finishF(current_cell);
+
+        for (auto iter = current_cell->begin(); iter != current_cell->end();) {
+            Particle& particle = *(*iter);
+
+            calculateVX(particle, false);
+            particle.shiftF();
+
+            std::array<dim_t, 3> position;
+            cellContainer.allocateCellFromPosition(particle.getX(), position);
+            
+            if (position[0] != current_position[0] ||
+                position[1] != current_position[1] ||
+                position[2] != current_position[2])
+            {
+                cell_updates.emplace_back(*iter,position);
+                iter = current_cell->erase(iter);
+
+            } else {
+                iter++;
+            }
+        }
+
+        cellContainer.setNextCell(current_position);
+    }
+
+    //update particle distribution in the cells
+    updateCells(cell_updates);
+}
+
+
+
+void CellCalculator::calculateWithinFVX() {
+    std::array<dim_t, 3> current_position;
+    instructions cell_updates;
+
+    //write new coordinates in current_position array
+    cellContainer.setNextCell(current_position);
+
+    while(current_position[0] != dim_t_res) {
+        std::vector<Particle*> *current_cell = &particles[current_position[0]][current_position[1]][current_position[2]];
+        //finish F calculation
+        finishF(current_cell);
+
+        for (auto iter = current_cell->begin(); iter != current_cell->end();) {
+            Particle* particle_ptr = *iter;
+            Particle& particle = *particle_ptr;
+
+            calculateVX(particle, true);
+            particle.shiftF();
+
+            std::array<dim_t, 3> position;
+            cellContainer.allocateCellFromPosition(particle.getX(), position);
+
+            if (position[0] != current_position[0] ||
+                position[1] != current_position[1] ||
+                position[2] != current_position[2])
+            {
+                cell_updates.emplace_back(*iter,position);
+                iter = current_cell->erase(iter);
+            } else{
+                iter++;
+            }
+        }
+        cellContainer.setNextCell(current_position);
+    }
+    updateCells(cell_updates);
+}
+
+
+
+void CellCalculator::calculateVX(Particle &particle, bool calculateV) {
+    const std::array<double, 3> &f = particle.getF();
+    const std::array<double, 3> &x = particle.getX();
+    const std::array<double, 3> &v = particle.getV();
+    const double &m = particle.getM();
+
+    if(calculateV) {
+        const std::array<double, 3> &f_old = particle.getOldF();
+
+        //calculate V
+        for (int i = 0; i < 3; i++) {
+            particle.setV(i, v[i] + delta_t * (f[i] + f_old[i]) / (2 * m));
+        }
+    }
+
+    //calculate X
+    double x_0 = x[0] + delta_t * v[0] + delta_t * delta_t * f[0] / 2.0 / m;
+    double x_1 = x[1] + delta_t * v[1] + delta_t * delta_t * f[1] / 2.0 / m;
+    double x_2 = x[2] + delta_t * v[2] + delta_t * delta_t * f[2] / 2.0 / m;
+
+    particle.setX(0, x_0);
+    particle.setX(1, x_1);
+    particle.setX(2, x_2);
+}
 
 
 /**
