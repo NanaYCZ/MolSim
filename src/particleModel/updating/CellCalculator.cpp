@@ -26,34 +26,35 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
 }
 
 void CellCalculator::calculateX(){
-  instructions cell_updates;
+    for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
+        instructions cell_updates;
 
-  for(auto cell = begin_CI(); cell != end_CI();++cell){
-    //iterate trough particles of cell
-    for(auto particle_ptr = (*cell).begin(); particle_ptr != (*cell).end();){
-        // dereferencing iterator yields a pointer to a particle, therefore dereference again
-      Particle& particle = *(*particle_ptr);
-      std::array<double,3>  old_f, v, old_x, new_x;
+        //iterate trough particles of cell
+        for (auto particle_ptr = (*cell).begin(); particle_ptr != (*cell).end();) {
+            // dereferencing iterator yields a pointer to a particle, therefore dereference again
+            Particle &particle = *(*particle_ptr);
+            std::array<double, 3> old_f, v, old_x, new_x;
 
-      old_f = particle.getOldF(); v = particle.getV(); old_x = particle.getX();
-      double mass = particle.getM();
+            old_f = particle.getOldF();
+            v = particle.getV();
+            old_x = particle.getX();
+            double mass = particle.getM();
 
-      new_x = old_x + delta_t * v + (delta_t * delta_t / (2 * mass)) * old_f;
-      particle.setX(new_x);
+            new_x = old_x + delta_t * v + (delta_t * delta_t / (2 * mass)) * old_f;
+            particle.setX(new_x);
 
-      std::array<dim_t, 3> new_cell;
-      cellContainer.allocateCellFromPosition(new_x,new_cell);
+            std::array<dim_t, 3> new_cell;
+            cellContainer.allocateCellFromPosition(new_x, new_cell);
 
-      if(new_cell[0] != cell.x || new_cell[1] != cell.y || new_cell[2] != cell.z){
-          //todo lock
-          cell_updates.emplace_back(*particle_ptr,new_cell);
-          particle_ptr = (*cell).erase(particle_ptr);
-      }else{
-          particle_ptr++;
-      }
+            if (new_cell[0] != cell.x || new_cell[1] != cell.y || new_cell[2] != cell.z) {
+                cell_updates.emplace_back(*particle_ptr, new_cell);
+                particle_ptr = (*cell).erase(particle_ptr);
+            } else {
+                particle_ptr++;
+            }
+        }
+        updateCells(cell_updates);
     }
-  }
-  updateCells(cell_updates);
 }
 
 
