@@ -8,11 +8,12 @@
 dim_t dim_t_res = -1;
 
 CellContainer::CellContainer(double d_width, double d_height, double d_depth, double r_cutoff, double cell_size)
-            : cell_size(cell_size),cut_of_radius(r_cutoff) ,
-              domain_max_dim({static_cast<dim_t>(d_width / cell_size + 1),
-                              static_cast<dim_t>(d_height / cell_size + 1),
-                              static_cast<dim_t>(d_depth / cell_size + 1)}),
-              domain_bounds({d_width, d_height, d_depth}){
+            : cell_size(cell_size),cut_of_radius(r_cutoff), domain_bounds({d_width, d_height, d_depth})
+              {
+
+    domain_max_dim = {static_cast<dim_t>(d_width / cell_size + 1),
+                      static_cast<dim_t>(d_height / cell_size + 1),
+                      static_cast<dim_t>(d_depth / cell_size + 1)};
     //check if modulo would be 0
     if(isApproximatelyEqual(std::fmod(d_width, cell_size), 0.0)) {
         --domain_max_dim[0];
@@ -81,7 +82,7 @@ void CellContainer::setNextCell(std::array<dim_t, 3> &next_position) {
     static dim_t y = 1;
     static dim_t z = 1;
 
-    //previous call set x to max, indicating the end
+    //previous call set x to reserved value, indicating the end
     if(x == dim_t_res) {
         next_position[0] = dim_t_res;
         x = 1;
@@ -537,7 +538,8 @@ size_t CellContainer::size() {
     return particle_amount - halo_particles.size();
 }
 
-
+std::array<dim_t, 3> CellContainer::domain_max_dim{};
+std::vector<std::vector<std::vector<std::vector<Particle*>>>> CellContainer::particles{};
 
 
 

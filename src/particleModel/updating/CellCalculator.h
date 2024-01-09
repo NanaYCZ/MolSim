@@ -175,15 +175,15 @@ private:
     const double gravity_factor;
     const double delta_t;
     const double cutoff;
-    std::array<dim_t, 3> domain_max_dim;
     std::array<double,3> domain_bounds;
+    std::array<dim_t, 3> domain_max_dim;
 
     std::optional<double> target_temp;
     std::optional<double> max_temp_diff;
 
     //{positive_z,negative_z,positive_x,negative_x,positive_y,negative_y}
     std::array<boundary_conditions,6> boundaries;
-    bool ghost_reflection_is_on;
+    bool ghost_reflection_is_off;
 
     std::vector<std::vector<std::vector<std::vector<Particle*>>>> &particles;
 

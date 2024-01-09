@@ -22,7 +22,6 @@ void CellContainer::CustomIterator::next_correct_index_custom(dim_t& x, dim_t& y
     y = 1;
     z = 1;
   }
-
 }
 
 
@@ -88,5 +87,66 @@ bool CellContainer::Iterator::operator==(const CellContainer::Iterator& other){
 
 bool CellContainer::Iterator::operator!=(const CellContainer::Iterator& other){
     return (!(x == other.x && y == other.y && z == other.z));
+}
+
+
+CellIterator::CellIterator(dim_t x, dim_t y, dim_t z) : x(x), y(y), z(z) {
+    total = CellContainer::domain_max_dim[0] * CellContainer::domain_max_dim[1] * CellContainer::domain_max_dim[2];
+}
+
+CellIterator &CellIterator::operator+=(int p) {
+    for (int i = 0; i < p; ++i) {
+        next_index();
+    }
+    return *this;
+}
+
+CellIterator &CellIterator::operator++() {
+    next_index();
+    return *this;
+}
+
+std::vector<Particle*>& CellIterator::operator*() const {
+    std::vector<Particle*>& ret = CellContainer::particles[x][y][z];
+    return ret;
+}
+
+bool CellIterator::operator!=(CellIterator other) const {
+    return !(x == other.x && y == other.y && z == other.z);
+}
+
+void CellIterator::next_index() {
+    if(x == -1) {
+        throw std::runtime_error("too many iterations");
+    }
+
+    --total;
+
+    if (x < CellContainer::domain_max_dim[0]) {
+        x++;
+    } else if (y < CellContainer::domain_max_dim[1]) {
+        x = 1;
+        y++;
+    } else if (z < CellContainer::domain_max_dim[2]) {
+        x = 1;
+        y = 1;
+        z++;
+    } else {
+        x=-1;
+        y=-1;
+        z=-1;
+    }
+}
+
+int operator-(CellIterator a, CellIterator b) {
+    return a.total;
+}
+
+CellIterator begin_CI() {
+    return CellIterator{1,1,1};
+}
+
+CellIterator end_CI() {
+    return CellIterator{-1,-1,-1};
 }
 

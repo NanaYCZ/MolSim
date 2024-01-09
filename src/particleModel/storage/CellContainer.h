@@ -145,10 +145,6 @@ public:
      * Getter(we did not anotate each of those :3):
     */
 
-    std::array<dim_t, 3>  getDomain_Max(){
-        return domain_max_dim;
-    }
-
     std::vector<Particle>& getInstances() {
         return particle_instances;
     }
@@ -163,10 +159,6 @@ public:
 
     double getCellSize(){
         return cell_size;
-    }
-
-    std::vector<std::vector<std::vector<std::vector<Particle*>>>>* getParticles() {
-        return &particles;
     }
 
     double getCutOfRadius(){
@@ -198,13 +190,18 @@ private:
     bool three_dimensions;
     const double cell_size;
     double cut_of_radius;
-    std::array<dim_t, 3> domain_max_dim;
     std::array<double, 3> domain_bounds;
     dim_t comparing_depth = 1;
     size_t particle_amount = 0;
-    std::vector<std::vector<std::vector<std::vector<Particle*>>>> particles;
+
     std::vector<Particle> particle_instances;
     std::vector<Particle*> halo_particles;
+
+    static std::array<dim_t, 3> domain_max_dim;
+    static std::vector<std::vector<std::vector<std::vector<Particle*>>>> particles;
+
+    friend class CellIterator;
+    friend class CellCalculator;
 
     /**
       * @brief helper method to set the next 3d pattern for "setNextPath(...)"
@@ -232,4 +229,3 @@ private:
       */
     bool isApproximatelyEqual(double a, double b, double epsilon = 1e-8);
 };
-

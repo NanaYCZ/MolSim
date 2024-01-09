@@ -15,25 +15,25 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
       std::array<boundary_conditions,6> boundaries_cond, std::optional<double> target_temp_param,
        std::optional<double> max_temp_diff_param,double gravity_factor)
     : cellContainer(cellContainer), gravity_factor(gravity_factor), delta_t(delta_t), cutoff(cutoff),
-    domain_max_dim(cellContainer.getDomain_Max()),domain_bounds(cellContainer.getDomainBounds()),
-    max_temp_diff(max_temp_diff_param),  target_temp(target_temp_param),
-    boundaries(boundaries_cond), particles(*cellContainer.getParticles())
+    domain_bounds(cellContainer.getDomainBounds()), domain_max_dim(CellContainer::domain_max_dim),
+    target_temp(target_temp_param), max_temp_diff(max_temp_diff_param), boundaries(boundaries_cond),
+    particles(CellContainer::particles)
     {
+    ghost_reflection_is_off = true;
     for(auto b : boundaries) {
-        if(b == boundary_conditions::ghost_reflective) ghost_reflection_is_on = true;
+        if(b == boundary_conditions::ghost_reflective) ghost_reflection_is_off = false;
     }
 }
 
-
-
 void CellCalculator::calculateX(){
   instructions cell_updates;
-  for(auto cell = cellContainer.begin(); cell != cellContainer.end();++cell){
+
+  for(auto cell = begin_CI(); cell != end_CI();++cell){
     //iterate trough particles of cell
     for(auto particle_ptr = (*cell).begin(); particle_ptr != (*cell).end();){
-      // defreferenceung iterator yields a pointer to a particle, therefore defrefernce again
+        // dereferencing iterator yields a pointer to a particle, therefore dereference again
       Particle& particle = *(*particle_ptr);
-      std::array<double,3>  old_f  ,  v  ,  old_x  , new_x;
+      std::array<double,3>  old_f, v, old_x, new_x;
 
       old_f = particle.getOldF(); v = particle.getV(); old_x = particle.getX();
       double mass = particle.getM();
@@ -45,10 +45,11 @@ void CellCalculator::calculateX(){
       cellContainer.allocateCellFromPosition(new_x,new_cell);
 
       if(new_cell[0] != cell.x || new_cell[1] != cell.y || new_cell[2] != cell.z){
-        cell_updates.emplace_back(*particle_ptr,new_cell);
-        particle_ptr = (*cell).erase(particle_ptr);
+          //todo lock
+          cell_updates.emplace_back(*particle_ptr,new_cell);
+          particle_ptr = (*cell).erase(particle_ptr);
       }else{
-        particle_ptr++;
+          particle_ptr++;
       }
     }
   }
@@ -58,57 +59,61 @@ void CellCalculator::calculateX(){
 
 
 void CellCalculator::calculateV(){
-  for(auto cell = cellContainer.begin(); cell != cellContainer.end();++cell){
-    for(auto particle_ptr : *cell){
-      Particle& particle = *particle_ptr;
-      std::array<double,3> old_f , f , old_v;
+    for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
+        for (auto particle_ptr: *cell) {
+            Particle &particle = *particle_ptr;
+            std::array<double, 3> old_f, f, old_v;
 
-      old_f = particle.getOldF(); f = particle.getF(); old_v = particle.getV();
+            old_f = particle.getOldF();
+            f = particle.getF();
+            old_v = particle.getV();
 
-      double mass = particle.getM();
+            double mass = particle.getM();
 
-      auto new_v = old_v + (delta_t / (2 * mass)) * (f + old_f);
-      particle.setV(new_v);
+            auto new_v = old_v + (delta_t / (2 * mass)) * (f + old_f);
+            particle.setV(new_v);
+        }
     }
-  }
 }
 
 void CellCalculator::calculateF(){
   calculateLinkedCellF();
-  for(auto iter = cellContainer.begin(); iter != cellContainer.end();++iter){
+
+  for(auto iter = begin_CI(); iter != end_CI();++iter){
     finishF(&(*iter));
   }
 }
 
 void CellCalculator::shiftF(){
-  for(auto cell = cellContainer.begin(); cell != cellContainer.end();++cell){
-    for(auto particle_ptr : *cell){
-      particle_ptr->shiftF();
+    for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
+        for (auto particle_ptr: *cell) {
+            particle_ptr->shiftF();
+        }
     }
-  }
 }
 
 
 void CellCalculator::calculateLinkedCellF() {
-    static std::array<dim_t, 3> current;
+    static std::array<dim_t, 3> current_cell;
     static std::array<dim_t, 3> pattern;
     std::vector<Particle*>* cell_1;
     std::vector<Particle*>* cell_2;
     std::array<double, 3> F_ij{};
 
     //write new path inside current/start and pattern
-    cellContainer.setNextPath(current, pattern);
+    cellContainer.setNextPath(current_cell, pattern);
 
-    while(current[0] != dim_t_res) {
-        cell_1 = &particles[current[0]][current[1]][current[2]];
-        current[0] += pattern[0];
-        current[1] += pattern[1];
-        current[2] += pattern[2];
+    //todo make start & pattern iterator
+    while(current_cell[0] != dim_t_res) {
+        cell_1 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
+        current_cell[0] += pattern[0];
+        current_cell[1] += pattern[1];
+        current_cell[2] += pattern[2];
 
-        while(0 < current[0] && 0 < current[1] && 0 < current[2] && current[0] <= domain_max_dim[0]
-              && current[1] <= domain_max_dim[1] && current[2] <= domain_max_dim[2]) {
+        while(0 < current_cell[0] && 0 < current_cell[1] && 0 < current_cell[2] && current_cell[0] <= domain_max_dim[0]
+              && current_cell[1] <= domain_max_dim[1] && current_cell[2] <= domain_max_dim[2]) {
 
-            cell_2 = &particles[current[0]][current[1]][current[2]];
+            cell_2 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
 
             for(auto & p_i : *cell_1) {
                 for(auto & p_j : *cell_2) {
@@ -124,19 +129,20 @@ void CellCalculator::calculateLinkedCellF() {
                 }
             }
 
-            cell_1 = &particles[current[0]][current[1]][current[2]];
-            current[0] += pattern[0];
-            current[1] += pattern[1];
-            current[2] += pattern[2];
+            cell_1 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
+            current_cell[0] += pattern[0];
+            current_cell[1] += pattern[1];
+            current_cell[2] += pattern[2];
         }
 
         //apply force between the last two cells of the path, the cell_1 being
         //the last one in the domain and cell_2 being the mirrored position of
         //the previously out of domain one
         std::array<double,3> particle_offset{0,0,0};
-        if(mirror(current, particle_offset)) {
+        if(mirror(current_cell, particle_offset)) {
 
-            cell_2 = &particles[current[0]][current[1]][current[2]];
+            //todo lock/delegate mirrored
+            cell_2 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
 
             for(auto & p_i : *cell_1) {
                 for(auto & p_j : *cell_2) {
@@ -153,7 +159,7 @@ void CellCalculator::calculateLinkedCellF() {
             }
         }
 
-        cellContainer.setNextPath(current, pattern);
+        cellContainer.setNextPath(current_cell, pattern);
     }
 }
 
@@ -197,7 +203,7 @@ void CellCalculator::updateCells(instructions& cell_updates) {
                   particle_ptr->setV(i, -v[i]);
 
               } else if(boundaries[map_boundaries[i+3]] == boundary_conditions::periodic) {
-                //apply periodic in neg direction
+                  //apply periodic in neg direction
                   particle_ptr->addX(i,-domain_bounds[i]);
               } 
           }
@@ -210,9 +216,11 @@ void CellCalculator::updateCells(instructions& cell_updates) {
             0 < new_cell_position[2] && new_cell_position[2] <= domain_max_dim[2]) {
 
           std::vector<Particle*> *new_cell = &particles[new_cell_position[0]][new_cell_position[1]][new_cell_position[2]];
+          //todo lock here
           new_cell->push_back(particle_ptr);
       }else{
         SPDLOG_INFO("new halo particle: " + (*particle_ptr).toString());
+        //todo lock here
         cellContainer.getHaloParticles().push_back(particle_ptr);
       }
       
@@ -326,7 +334,8 @@ std::array<double,3> CellCalculator::ghostParticleLennardJonesForce(const Partic
 void CellCalculator::applyThermostats(){
   double kinetic_energy = 0;
   size_t amt = 0;
-  for(auto iter = cellContainer.begin(); iter != cellContainer.end(); ++iter){
+
+  for(auto iter = begin_CI(); iter != end_CI(); ++iter){
     for(Particle* particle_ptr : *iter){
       const std::array<double,3> &v = particle_ptr->getV();
       double v_squared = v[0] * v[0]  + v[1] * v[1] + v[2] * v[2];
@@ -358,7 +367,7 @@ void CellCalculator::applyThermostats(){
   double temp_scaling = sqrt(next_temp/current_temp);
 
   //apply scaling
-  for(auto iter = cellContainer.begin(); iter != cellContainer.end(); ++iter){
+  for(auto iter = begin_CI(); iter != end_CI(); ++iter){
       for(Particle* particle_ptr : *iter){
         std::array<double,3> v = particle_ptr->getV();
         particle_ptr->setV(temp_scaling * v);
@@ -516,143 +525,138 @@ function images coordinate system like this:
 
 */
 void CellCalculator::applyReflectiveBoundaries() {
-  dim_t z_max = cellContainer.hasThreeDimensions() ? domain_max_dim[2] : 1;
-  dim_t comparing_depth = cellContainer.getComparingdepth();
+    if(ghost_reflection_is_off) return;
 
+    dim_t z_max = cellContainer.hasThreeDimensions() ? domain_max_dim[2] : 1;
+    dim_t comparing_depth = cellContainer.getComparingdepth();
 
-  if(cellContainer.hasThreeDimensions()){
-      //TOP SIDE
-      //boundaries[0] corresponds to boundary_conditions in positiveZ direction
-      if(boundaries[0] == boundary_conditions::ghost_reflective){
-        auto iter = cellContainer.begin_custom(
-        1,domain_max_dim[0], // iteration cuboid in x dim 
-        1,domain_max_dim[1], // iteration cuboid in y dim 
-        domain_max_dim[2]-comparing_depth,domain_max_dim[2]);  // iteration cuboid in z dim 
-        for(;iter != cellContainer.end_custom();++iter){
-          addGhostParticleForcesInDir_i(2,domain_bounds[2],*iter);
+    if (cellContainer.hasThreeDimensions()) {
+        //TOP SIDE
+        //boundaries[0] corresponds to boundary_conditions in positiveZ direction
+        if (boundaries[0] == boundary_conditions::ghost_reflective) {
+            auto iter = cellContainer.begin_custom(
+                    1, domain_max_dim[0], // iteration cuboid in x dim
+                    1, domain_max_dim[1], // iteration cuboid in y dim
+                    domain_max_dim[2] - comparing_depth, domain_max_dim[2]);  // iteration cuboid in z dim
+            for (; iter != cellContainer.end_custom(); ++iter) {
+                addGhostParticleForcesInDir_i(2, domain_bounds[2], *iter);
+            }
         }
-      }
 
-      //BOTTOM SIDE
-      //boundaries[1] corresponds to boundary_conditions in negativeZ direction
-      if(boundaries[1] == boundary_conditions::ghost_reflective){
-        auto iter = cellContainer.begin_custom(
-        1,domain_max_dim[0], // iteration cuboid in x dim 
-        1,domain_max_dim[1], // iteration cuboid in y dim 
-        1,comparing_depth);  // iteration cuboid in z dim 
-        for(;iter != cellContainer.end_custom();++iter){
-          addGhostParticleForcesInDir_i(2,0,*iter);
+        //BOTTOM SIDE
+        //boundaries[1] corresponds to boundary_conditions in negativeZ direction
+        if (boundaries[1] == boundary_conditions::ghost_reflective) {
+            auto iter = cellContainer.begin_custom(
+                    1, domain_max_dim[0], // iteration cuboid in x dim
+                    1, domain_max_dim[1], // iteration cuboid in y dim
+                    1, comparing_depth);  // iteration cuboid in z dim
+            for (; iter != cellContainer.end_custom(); ++iter) {
+                addGhostParticleForcesInDir_i(2, 0, *iter);
+            }
         }
-      }
-  }
-
-
-  
-
-  //BACK SIDE
-  /**
-   * custom iterator, iterates over the cells on this side:
-   
-      /-------------/
-     / |###########/|
-    /  |##########/#|
-   |   |#########|##|
-   |   |#########|##|
-   |  /          | /                 
-   | /           |/                  
-   |-------------|
-
-  */
-  //boundaries[2] corresponds to boundary_conditions in positiveX direction
-  if(boundaries[2] == boundary_conditions::ghost_reflective){
-    auto iter = cellContainer.begin_custom(
-      domain_max_dim[0]-comparing_depth,domain_max_dim[0], // iteration cuboid in x dim 
-      1,domain_max_dim[1], // iteration cuboid in y dim 
-      1,z_max);  // iteration cuboid in z dim 
-    for(;iter != cellContainer.end_custom();++iter){
-      addGhostParticleForcesInDir_i(0,domain_bounds[0],*iter);
     }
-  }
 
+    //BACK SIDE
+    /**
+     * custom iterator, iterates over the cells on this side:
 
-  //FRONT SIDE
-  /**
-   * custom iterator, iterates over the cells on this side:
-  
-      /-------------/
-     / |           /|
-    /_____________/ |
-   |#############|  |
-   |#############|__|                 
-   |#############| /                  
-   |#############|/                   
-   |-------------|                    
+        /-------------/
+       / |###########/|
+      /  |##########/#|
+     |   |#########|##|
+     |   |#########|##|
+     |  /          | /
+     | /           |/
+     |-------------|
 
-  */
-  //boundaries[3] corresponds to boundary_conditions in negativeX direction
-  
-  if(boundaries[3] == boundary_conditions::ghost_reflective){
-    auto iter = cellContainer.begin_custom(
-      1,comparing_depth, // iteration cuboid in x dim 
-      1,domain_max_dim[1], // iteration cuboid in y dim 
-      1,z_max);  // iteration cuboid in z dim 
-
-    for(;iter != cellContainer.end_custom();++iter){
-      addGhostParticleForcesInDir_i(0,0,*iter);
+    */
+    //boundaries[2] corresponds to boundary_conditions in positiveX direction
+    if (boundaries[2] == boundary_conditions::ghost_reflective) {
+        auto iter = cellContainer.begin_custom(
+                domain_max_dim[0] - comparing_depth, domain_max_dim[0], // iteration cuboid in x dim
+                1, domain_max_dim[1], // iteration cuboid in y dim
+                1, z_max);  // iteration cuboid in z dim
+        for (; iter != cellContainer.end_custom(); ++iter) {
+            addGhostParticleForcesInDir_i(0, domain_bounds[0], *iter);
+        }
     }
-  }
 
+    //FRONT SIDE
+    /**
+     * custom iterator, iterates over the cells on this side:
 
-  //RIGHT SIDE / POSITIVE Y DIRECTION
-  /**
-   * custom iterator, iterates over the cells on this side:
-   
-      /-------------/
-     / |           /|
-    /  |          /#|
-   |   |         |##|
-   |   |         |##|
-   |  /          |#/  
-   | /           |/
-   |-------------|
+        /-------------/
+       / |           /|
+      /_____________/ |
+     |#############|  |
+     |#############|__|
+     |#############| /
+     |#############|/
+     |-------------|
 
-  */
-  //boundaries[4] corresponds to boundary_conditions in positiveY direction
-  if(boundaries[4] == boundary_conditions::ghost_reflective){
-    auto iter = cellContainer.begin_custom(
-      1,domain_max_dim[0], // iteration cuboid in x dim 
-      domain_max_dim[1]-comparing_depth,domain_max_dim[1], // iteration cuboid in y dim 
-      1,z_max);  // iteration cuboid in z dim 
+    */
+    //boundaries[3] corresponds to boundary_conditions in negativeX direction
 
-    for(;iter != cellContainer.end_custom();++iter){
-      addGhostParticleForcesInDir_i(1,domain_bounds[1],*iter);
+    if (boundaries[3] == boundary_conditions::ghost_reflective) {
+        auto iter = cellContainer.begin_custom(
+                1, comparing_depth, // iteration cuboid in x dim
+                1, domain_max_dim[1], // iteration cuboid in y dim
+                1, z_max);  // iteration cuboid in z dim
+
+        for (; iter != cellContainer.end_custom(); ++iter) {
+            addGhostParticleForcesInDir_i(0, 0, *iter);
+        }
     }
-  }
 
+    //RIGHT SIDE / POSITIVE Y DIRECTION
+    /**
+     * custom iterator, iterates over the cells on this side:
 
-  //LEFT SIDE / NEGATIVE Y DIRECTION
-  /**
-   * custom iterator, iterates over the cells on this side:
-   
-      /-------------/
-     /#|           /|
-    /##|          / |
-   |###|         |  |
-   |###|         |  |
-   |##/          | /  
-   |#/           |/
-   |-------------|
+        /-------------/
+       / |           /|
+      /  |          /#|
+     |   |         |##|
+     |   |         |##|
+     |  /          |#/
+     | /           |/
+     |-------------|
 
-  */
-  //boundaries[5] corresponds to boundary_conditions in negativeY direction
-  if(boundaries[5] == boundary_conditions::ghost_reflective) {
-    auto iter = cellContainer.begin_custom(
-      1,domain_max_dim[0], // iteration cuboid in x dim 
-      1,comparing_depth, // iteration cuboid in y dim 
-      1,z_max);  // iteration cuboid in z dim 
+    */
+    //boundaries[4] corresponds to boundary_conditions in positiveY direction
+    if (boundaries[4] == boundary_conditions::ghost_reflective) {
+        auto iter = cellContainer.begin_custom(
+                1, domain_max_dim[0], // iteration cuboid in x dim
+                domain_max_dim[1] - comparing_depth, domain_max_dim[1], // iteration cuboid in y dim
+                1, z_max);  // iteration cuboid in z dim
 
-    for(;iter != cellContainer.end_custom();++iter){
-      addGhostParticleForcesInDir_i(1,0,*iter);
+        for (; iter != cellContainer.end_custom(); ++iter) {
+            addGhostParticleForcesInDir_i(1, domain_bounds[1], *iter);
+        }
     }
-  }
+
+    //LEFT SIDE / NEGATIVE Y DIRECTION
+    /**
+     * custom iterator, iterates over the cells on this side:
+
+        /-------------/
+       /#|           /|
+      /##|          / |
+     |###|         |  |
+     |###|         |  |
+     |##/          | /
+     |#/           |/
+     |-------------|
+
+    */
+    //boundaries[5] corresponds to boundary_conditions in negativeY direction
+    if (boundaries[5] == boundary_conditions::ghost_reflective) {
+        auto iter = cellContainer.begin_custom(
+                1, domain_max_dim[0], // iteration cuboid in x dim
+                1, comparing_depth, // iteration cuboid in y dim
+                1, z_max);  // iteration cuboid in z dim
+
+        for (; iter != cellContainer.end_custom(); ++iter) {
+            addGhostParticleForcesInDir_i(1, 0, *iter);
+        }
+    }
 }

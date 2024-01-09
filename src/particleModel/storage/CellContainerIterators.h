@@ -188,3 +188,30 @@ private:
 };
 
 
+class CellIterator {
+public:
+    CellIterator(dim_t x, dim_t y, dim_t z);
+
+    CellIterator &operator+=(int p);
+
+    CellIterator &operator++();
+
+    std::vector<Particle*>& operator*() const;
+
+    //for sequential iterations
+    bool operator!=(CellIterator other) const;
+
+    dim_t x = 1;
+    dim_t y = 1;
+    dim_t z = 1;
+
+    int total;
+
+    void next_index();
+};
+
+//for openMP iterations
+int operator-(CellIterator a, CellIterator b);
+
+CellIterator begin_CI();
+CellIterator end_CI();
