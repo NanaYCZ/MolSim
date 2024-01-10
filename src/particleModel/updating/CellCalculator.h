@@ -64,6 +64,8 @@ public:
      */
     void calculateLinkedCellF();
 
+    void calculatePeriodicF();
+
     /**
      * @brief calculate the forces not covered in "calculateLinkedCellF()", V, X and update the cells
      *

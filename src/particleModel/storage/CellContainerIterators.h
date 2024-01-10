@@ -215,3 +215,56 @@ int operator-(CellIterator a, CellIterator b);
 
 CellIterator begin_CI();
 CellIterator end_CI();
+
+enum state_PI {
+    x_axis = 0,
+    y_axis = 1,
+    z_axis = 2,
+    reset = -1,
+    finished = -2
+};
+
+class PeriodIterator {
+public:
+    PeriodIterator(std::array<dim_t, 3> pattern);
+
+    PeriodIterator();
+
+    PeriodIterator &operator+=(int p);
+
+    PeriodIterator operator++();
+
+    bool operator!=(PeriodIterator other);
+
+    std::array<dim_t,3> operator*();
+
+    std::array<dim_t, 3> min{1,1,1};
+    std::array<dim_t, 3> max{CellContainer::domain_max_dim};
+    std::array<dim_t, 3> progress;
+    std::array<dim_t, 3> current{};
+    std::array<dim_t, 3> mapping{};
+
+    state_PI plane_axis = reset;
+
+    int total;
+
+    //"iterates over every point of every plane"
+    //sets "current" to the next starting point within a plane
+    void next_index();
+
+    //"iterates over every point of a plane"
+    //sets "current" to the next position within the plane a*b
+    void next_point_on_plane(short a, short b);
+
+    //"iterates over every plane"
+    //sets "current" to the first position of a plane to iterate over
+    void next_plane_corner();
+
+    //helper function to determine the next plane corner and update the border for remaining planes
+    void set_plane_position_on_axis();
+};
+
+int operator-(PeriodIterator a, PeriodIterator b);
+
+PeriodIterator begin_PI(std::array<dim_t,3> pattern);
+PeriodIterator end_PI();
