@@ -70,6 +70,29 @@ CellContainer::CellContainer(double d_width, double d_height, double d_depth, do
         three_dimensions = true;
     }
 
+    //precalculate all the patterns
+    std::array<dim_t, 3> tmp{};
+    std::array<dim_t, 3> pattern{};
+
+    if(three_dimensions) {
+        setNext3dPattern(pattern, tmp);
+
+    } else {
+        setNext2dPattern(pattern, tmp);
+    }
+
+    while (tmp[0] != dim_t_res) {
+        patterns.emplace_back(pattern);
+
+        if(three_dimensions) {
+            setNext3dPattern(pattern, tmp);
+        } else {
+            setNext2dPattern(pattern, tmp);
+        }
+    }
+
+    patterns.shrink_to_fit();
+
     std::ostringstream out_str;
     out_str << "Domain cells x: 1 - " << (domain_max_dim[0]) <<  " y: 1 - " << (domain_max_dim[1]) << " z: 1 - "  << (domain_max_dim[2]) << std::endl;
     SPDLOG_INFO(out_str.str());
@@ -539,6 +562,7 @@ size_t CellContainer::size() {
 }
 
 std::array<dim_t, 3> CellContainer::domain_max_dim{};
+std::vector<std::array<dim_t,3>> CellContainer::patterns{};
 std::vector<std::vector<std::vector<std::vector<Particle*>>>> CellContainer::particles{};
 
 

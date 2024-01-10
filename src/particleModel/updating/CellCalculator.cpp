@@ -85,11 +85,11 @@ void CellCalculator::calculateV(){
 }
 
 void CellCalculator::calculateF(){
-  calculateLinkedCellF();
-
-  for(auto iter = begin_CI(); iter != end_CI();++iter){
-    finishF(&(*iter));
-  }
+    calculateLinkedCellF();
+    calculatePeriodicF();
+    for (auto iter = begin_CI(); iter != end_CI(); ++iter) {
+        finishF(&(*iter));
+    }
 }
 
 void CellCalculator::shiftF(){
@@ -143,6 +143,7 @@ void CellCalculator::calculateLinkedCellF() {
             current_cell[2] += pattern[2];
         }
 
+        /*
         //apply force between the last two cells of the path, the cell_1 being
         //the last one in the domain and cell_2 being the mirrored position of
         //the previously out of domain one
@@ -166,11 +167,46 @@ void CellCalculator::calculateLinkedCellF() {
                 }
             }
         }
+         */
 
         cellContainer.setNextPath(current_cell, pattern);
     }
 }
 
+void CellCalculator::calculatePeriodicF() {
+    for(std::array<dim_t,3> pattern : CellContainer::patterns) {
+
+        for (PeriodIterator it = begin_PI(pattern); it != end_PI(); ++it) {
+
+            std::array<dim_t, 3> current_cell = *it;
+            std::vector<Particle *> *cell_1 = &particles[current_cell[0] - pattern[0]]
+            [current_cell[1] - pattern[1]]
+            [current_cell[2] - pattern[2]];
+
+            std::array<double, 3> particle_offset{0, 0, 0};
+            std::array<double, 3> F_ij{};
+
+            if (mirror(current_cell, particle_offset)) {
+
+                std::vector<Particle *> *cell_2 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
+
+                for (auto &p_i: *cell_1) {
+                    for (auto &p_j: *cell_2) {
+
+                        if (inCutoffDistance(*p_i, *p_j, particle_offset)) {
+                            F_ij = force(*p_i, *p_j, particle_offset);
+
+                            for (int i = 0; i < 3; i++) {
+                                p_i->addF(i, F_ij[i]);
+                                p_j->addF(i, -F_ij[i]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 
 void CellCalculator::updateCells(instructions& cell_updates) {
@@ -458,9 +494,6 @@ void CellCalculator::applyThermostats(){
 }
 
 
-
-
-
 void CellCalculator::initializeFX() {
     std::array<dim_t, 3> current_position;
     instructions cell_updates;
@@ -570,3 +603,4 @@ void CellCalculator::calculateVX(Particle &particle, bool calculateV) {
     particle.setX(1, x_1);
     particle.setX(2, x_2);
 }
+

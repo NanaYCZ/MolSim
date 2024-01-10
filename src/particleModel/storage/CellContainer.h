@@ -198,10 +198,12 @@ private:
     std::vector<Particle*> halo_particles;
 
     static std::array<dim_t, 3> domain_max_dim;
+    static std::vector<std::array<dim_t,3>> patterns;
     static std::vector<std::vector<std::vector<std::vector<Particle*>>>> particles;
 
-    friend class CellIterator;
     friend class CellCalculator;
+    friend class CellIterator;
+    friend class PeriodIterator;
 
     /**
       * @brief helper method to set the next 3d pattern for "setNextPath(...)"
