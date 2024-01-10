@@ -21,6 +21,7 @@
 void runSimulation(CellContainer &container, CellCalculator &calculator,
                    const double end_time,const double delta_t,
                    const size_t write_frequency,std::optional<int> thermostats_frequency,
+                   std::optional<int> diffusion_frequency,std::optional<int> rdf_frequency,
                    bool performance_measurement);
 
 /**

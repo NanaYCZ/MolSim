@@ -14,6 +14,8 @@ void writeCheckpoint(std::list<Particle>& particles,const std::string filename){
     if (out_file.is_open()) {
         // Serialize list
         for(Particle& particle : particles){
+            
+
             out_file << particle << ' ' 
             << sigma_mixed[particle.getType()][particle.getType()] << ' '
             << epsilon_mixed[particle.getType()][particle.getType()] << ' ';
@@ -55,6 +57,19 @@ void readCheckpoint(std::list<std::tuple<Particle,double,double>>& particles,con
 void storeCheckpointparticles(CellContainer& container,const std::string filename){
     std::list<Particle> result_particles = container.to_list();
     Checkpointer::writeCheckpoint(result_particles,filename);
+    std::array<double,3> dom = container.getDomainBounds();
+    for(auto it = result_particles.begin();it != result_particles.end();){
+        Particle p = *it;
+        auto x = p.getX();
+        if(x[0] > dom[0] || x[0] < 0 ||
+           x[1] > dom[1] || x[1] < 0 ||
+           x[2] > dom[2] || x[2] < 0 ){
+            std::cout << "particle was out of bounds:\n" << p.toString() << std::endl; 
+            it = result_particles.erase(it);
+        }else{
+            it++;
+        }
+    }
 }
 
 

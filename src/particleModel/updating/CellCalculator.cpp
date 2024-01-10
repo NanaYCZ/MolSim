@@ -4,6 +4,9 @@
 #include <iostream>
 #include <spdlog/spdlog.h>
 #include <limits>
+#include <list>
+#include <algorithm>
+#include <cmath>
 
 double min_distance = 0.7;
 
@@ -11,10 +14,10 @@ std::vector<std::vector<double>> sigma_mixed{{1.0}};
 
 std::vector<std::vector<double>> epsilon_mixed{{5.0}};
 
-CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,
+CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,double r_l_,
       std::array<boundary_conditions,6> boundaries_cond, std::optional<double> target_temp_param,
        std::optional<double> max_temp_diff_param,double gravity_factor)
-    : cellContainer(cellContainer), gravity_factor(gravity_factor), delta_t(delta_t), cutoff(cutoff),
+    : cellContainer(cellContainer), gravity_factor(gravity_factor), delta_t(delta_t), cutoff(cutoff), r_l(r_l_),
     domain_bounds(cellContainer.getDomainBounds()), domain_max_dim(CellContainer::domain_max_dim),
     target_temp(target_temp_param), max_temp_diff(max_temp_diff_param), boundaries(boundaries_cond),
     particles(CellContainer::particles)
@@ -52,6 +55,10 @@ void CellCalculator::calculateX(){
             } else {
                 particle_ptr++;
             }
+
+            if(calculate_diffusion)
+                diffusion+= std::pow(ArrayUtils::L2Norm(new_x - old_x),2);
+
         }
         updateCells(cell_updates);
     }
@@ -222,7 +229,12 @@ void CellCalculator::updateCells(instructions& cell_updates) {
       }else{
         SPDLOG_INFO("new halo particle: " + (*particle_ptr).toString());
         //todo lock here
-        cellContainer.getHaloParticles().push_back(particle_ptr);
+        //just delete them because we don't have halo particles anyway
+        //cellContainer.getHaloParticles().push_back(particle_ptr);
+        auto& instances = cellContainer.particle_instances;
+        auto it = std::find(instances.begin(),instances.end(),*particle_ptr);
+        if(it != instances.end())
+            instances.erase(it);
       }
       
     }
@@ -299,7 +311,6 @@ bool CellCalculator::inCutoffDistance(Particle &p1, Particle &p2, const std::arr
 
 std::array<double,3> CellCalculator::force(const Particle &p_i, const Particle &p_j, const std::array<double,3> &offset) {
     const auto& x_i = p_i.getX(), x_j = p_j.getX();
-
     double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
     double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
 
@@ -313,26 +324,90 @@ std::array<double,3> CellCalculator::force(const Particle &p_i, const Particle &
     return prefactor * (x_i - x_j + offset);
 }
 
+std::array<double,3> CellCalculator::smoothed_force(const Particle &p_i, 
+                const Particle &p_j, const std::array<double,3> &offset) {
+    const auto& x_i = p_i.getX(), x_j = p_j.getX();
+    double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
+    double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
+    //make formula more readable, compiler will optimize away
+    double r_c = cutoff;
 
-std::array<double,3> CellCalculator::ghostParticleLennardJonesForce(const Particle &particle,std::array<double,3> ghost_position){
-  auto x = particle.getX();
+    double dx = x_i[0] - x_j[0] + offset[0];
+    double dy = x_i[1] - x_j[1] + offset[1];
+    double dz = x_i[2] - x_j[2] + offset[2];
 
-  double sigma = sigma_mixed[particle.getType()][particle.getType()];
-  double epsilon = epsilon_mixed[particle.getType()][particle.getType()];
+    double r_c_squared = r_c * r_c;
+    double scalar_product = dx * dx + dy * dy + dz * dz;
 
-  double norm = ArrayUtils::L2Norm(x - ghost_position);
-  norm = std::max(min_distance, norm);
+    /*instantly return 0 if r_c <= norm */
+    if(r_c_squared <= scalar_product)
+        return {0,0,0};
 
-  double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
+    double norm = std::sqrt(scalar_product);
+    //norm = std::max(min_distance, norm);
 
-  prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
+    /* r_l <= norm  < r_c */
+    if(r_l <= norm){
+        double norm_pow_6 = std::pow(norm,6), sigma_pow_6  = std::pow(sigma,6);
 
-  return prefactor * (x - ghost_position);
+        double prefactor = -(24 * sigma_pow_6 * epsilon * (r_c - norm)) / 
+                            (norm_pow_6 * norm_pow_6 * norm * norm  * std::pow((r_c - r_l),3) );
+        
+        prefactor *=    r_c_squared * (2 * sigma_pow_6 - norm_pow_6)
+                         + r_c * (3 * r_l - norm) * (norm_pow_6 - 2 * sigma_pow_6)
+                         + norm * (5 * r_l * sigma_pow_6 - 2 * r_l * norm_pow_6 
+                                  - 3 * sigma_pow_6 * norm + norm_pow_6 * norm);
+        
+        return prefactor * -1 * (x_i - x_j + offset);
+    }else /* norm <= r_l */ {
+        double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
+
+        prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
+
+        return prefactor * (x_i - x_j + offset);
+    }
 }
 
 
+std::vector<double> CellCalculator::radialDistributionFunction(double interval_size){
+    double max_dist = std::sqrt(std::pow(cellContainer.domain_bounds[0],2) + std::pow(cellContainer.domain_bounds[1],2));
+    if(cellContainer.hasThreeDimensions())
+        max_dist = std::sqrt(std::pow(max_dist,2) + std::pow(cellContainer.domain_bounds[2],2));
 
-void CellCalculator::applyThermostats(){
+    std::list<Particle>& instances = cellContainer.particle_instances;
+    //first the amount of particle pairs in that interval will be calculated
+    //afterwards the rdf statistic, therefore it uses double
+    std::vector<size_t> pairs_per_interval(max_dist / interval_size + 1,0.0);
+    std::vector<double> rdf_per_interval(max_dist / interval_size + 1,0.0);
+
+    for(auto p1 = instances.begin(); p1 != instances.end(); p1++){
+        for(auto p2 = std::next(p1);p2 != instances.end();  p2++){
+            double dist = ArrayUtils::L2Norm(p1->getX() - p2->getX());
+            size_t interval_index = static_cast<size_t>(dist / interval_size);
+            if(interval_index < pairs_per_interval.size())
+                //there is particle pair that has a distance that
+                //lies within intervals[interval_index]
+                pairs_per_interval[interval_index] +=1; 
+            else    
+                std::cout << "Err\n";
+        }
+    }
+
+
+
+    for(size_t i = 0; i < rdf_per_interval.size();i++ ){
+        //calculate rdf statistic for this interval
+        rdf_per_interval[i] = static_cast<double>(pairs_per_interval[i]) / 
+                    ( (4.0 * M_PI / 3.0) * 
+                      ( std::pow((i+1) * interval_size,3) - std::pow(i * interval_size,3)) );
+        
+    }
+
+    return rdf_per_interval;
+}
+
+
+double CellCalculator::currentTemp(){
   double kinetic_energy = 0;
   size_t amt = 0;
 
@@ -349,6 +424,11 @@ void CellCalculator::applyThermostats(){
   //calculate the current temperatur from the current kinetic energy in the system
   //assuming we only have two kinds of dimensions namely 2 or 3
   double current_temp = kinetic_energy/((cellContainer.hasThreeDimensions() ? 3 : 2) * amt * k_boltzman);
+  return current_temp;
+}
+
+void CellCalculator::applyThermostats(){
+  double current_temp = currentTemp();
   double next_temp;
   if(target_temp.has_value())
     next_temp = target_temp.value();  
@@ -489,175 +569,4 @@ void CellCalculator::calculateVX(Particle &particle, bool calculateV) {
     particle.setX(0, x_0);
     particle.setX(1, x_1);
     particle.setX(2, x_2);
-}
-
-
-/**
- * @brief add force from Ghost Particles for every particle in the cell
- * 
- * @param i corresonds to direction i = 0 means in x dir, i = 1 means in y dir, i = 2 means in z dir.
- *          Using an i that is not part of {0,1,2} is undefined behaviour.
-*/
-void CellCalculator::addGhostParticleForcesInDir_i(int i,double boundary,
-                                                std::vector<Particle*>& cell){
-  for(auto particle_ptr : cell){
-    Particle& particle = *particle_ptr;
-    std::array<double,3> x = particle.getX();
-    double distance = x[i] - boundary;
-    double ref_size = std::pow(2,1.0/6.0) * sigma_mixed[particle.getType()][particle.getType()];
-    if (std::abs(distance) < ref_size) {
-      // calculate repulsing force with Halo particle
-      double ghost_particle_i = x[i] - 2 * distance;
-      std::array<double,3> ghost_particle_x = x;
-      ghost_particle_x[i] = ghost_particle_i;
-      std::array<double,3> F_particle_ghost = ghostParticleLennardJonesForce(particle,ghost_particle_x);
-      particle.addF(F_particle_ghost);
-    }
-  }
-}
-
-/*
-function images coordinate system like this:
-
-  z ^ 
-    |  ^ x
-    | / 
-    |/--------> y
-
-*/
-void CellCalculator::applyReflectiveBoundaries() {
-    if(ghost_reflection_is_off) return;
-
-    dim_t z_max = cellContainer.hasThreeDimensions() ? domain_max_dim[2] : 1;
-    dim_t comparing_depth = cellContainer.getComparingdepth();
-
-    if (cellContainer.hasThreeDimensions()) {
-        //TOP SIDE
-        //boundaries[0] corresponds to boundary_conditions in positiveZ direction
-        if (boundaries[0] == boundary_conditions::ghost_reflective) {
-            auto iter = cellContainer.begin_custom(
-                    1, domain_max_dim[0], // iteration cuboid in x dim
-                    1, domain_max_dim[1], // iteration cuboid in y dim
-                    domain_max_dim[2] - comparing_depth, domain_max_dim[2]);  // iteration cuboid in z dim
-            for (; iter != cellContainer.end_custom(); ++iter) {
-                addGhostParticleForcesInDir_i(2, domain_bounds[2], *iter);
-            }
-        }
-
-        //BOTTOM SIDE
-        //boundaries[1] corresponds to boundary_conditions in negativeZ direction
-        if (boundaries[1] == boundary_conditions::ghost_reflective) {
-            auto iter = cellContainer.begin_custom(
-                    1, domain_max_dim[0], // iteration cuboid in x dim
-                    1, domain_max_dim[1], // iteration cuboid in y dim
-                    1, comparing_depth);  // iteration cuboid in z dim
-            for (; iter != cellContainer.end_custom(); ++iter) {
-                addGhostParticleForcesInDir_i(2, 0, *iter);
-            }
-        }
-    }
-
-    //BACK SIDE
-    /**
-     * custom iterator, iterates over the cells on this side:
-
-        /-------------/
-       / |###########/|
-      /  |##########/#|
-     |   |#########|##|
-     |   |#########|##|
-     |  /          | /
-     | /           |/
-     |-------------|
-
-    */
-    //boundaries[2] corresponds to boundary_conditions in positiveX direction
-    if (boundaries[2] == boundary_conditions::ghost_reflective) {
-        auto iter = cellContainer.begin_custom(
-                domain_max_dim[0] - comparing_depth, domain_max_dim[0], // iteration cuboid in x dim
-                1, domain_max_dim[1], // iteration cuboid in y dim
-                1, z_max);  // iteration cuboid in z dim
-        for (; iter != cellContainer.end_custom(); ++iter) {
-            addGhostParticleForcesInDir_i(0, domain_bounds[0], *iter);
-        }
-    }
-
-    //FRONT SIDE
-    /**
-     * custom iterator, iterates over the cells on this side:
-
-        /-------------/
-       / |           /|
-      /_____________/ |
-     |#############|  |
-     |#############|__|
-     |#############| /
-     |#############|/
-     |-------------|
-
-    */
-    //boundaries[3] corresponds to boundary_conditions in negativeX direction
-
-    if (boundaries[3] == boundary_conditions::ghost_reflective) {
-        auto iter = cellContainer.begin_custom(
-                1, comparing_depth, // iteration cuboid in x dim
-                1, domain_max_dim[1], // iteration cuboid in y dim
-                1, z_max);  // iteration cuboid in z dim
-
-        for (; iter != cellContainer.end_custom(); ++iter) {
-            addGhostParticleForcesInDir_i(0, 0, *iter);
-        }
-    }
-
-    //RIGHT SIDE / POSITIVE Y DIRECTION
-    /**
-     * custom iterator, iterates over the cells on this side:
-
-        /-------------/
-       / |           /|
-      /  |          /#|
-     |   |         |##|
-     |   |         |##|
-     |  /          |#/
-     | /           |/
-     |-------------|
-
-    */
-    //boundaries[4] corresponds to boundary_conditions in positiveY direction
-    if (boundaries[4] == boundary_conditions::ghost_reflective) {
-        auto iter = cellContainer.begin_custom(
-                1, domain_max_dim[0], // iteration cuboid in x dim
-                domain_max_dim[1] - comparing_depth, domain_max_dim[1], // iteration cuboid in y dim
-                1, z_max);  // iteration cuboid in z dim
-
-        for (; iter != cellContainer.end_custom(); ++iter) {
-            addGhostParticleForcesInDir_i(1, domain_bounds[1], *iter);
-        }
-    }
-
-    //LEFT SIDE / NEGATIVE Y DIRECTION
-    /**
-     * custom iterator, iterates over the cells on this side:
-
-        /-------------/
-       /#|           /|
-      /##|          / |
-     |###|         |  |
-     |###|         |  |
-     |##/          | /
-     |#/           |/
-     |-------------|
-
-    */
-    //boundaries[5] corresponds to boundary_conditions in negativeY direction
-    if (boundaries[5] == boundary_conditions::ghost_reflective) {
-        auto iter = cellContainer.begin_custom(
-                1, domain_max_dim[0], // iteration cuboid in x dim
-                1, comparing_depth, // iteration cuboid in y dim
-                1, z_max);  // iteration cuboid in z dim
-
-        for (; iter != cellContainer.end_custom(); ++iter) {
-            addGhostParticleForcesInDir_i(1, 0, *iter);
-        }
-    }
 }

@@ -86,6 +86,7 @@ int main(int argc, char *argsv[])
     auto logger = spdlog::basic_logger_mt("logger", "logs.txt");
     spdlog::set_level(logging_level);
 
+
     FileReader::ProgramArgs args = fileReader.readProgramArguments(filename);
     SPDLOG_INFO("Read:\n" + args.to_string());
 
@@ -99,7 +100,7 @@ int main(int argc, char *argsv[])
 
     CellContainer cellContainer(args.domain_dimensions[0],args.domain_dimensions[1],args.domain_dimensions[2],
                                 args.cut_off_radius,args.cell_size);
-    CellCalculator cellCalculator(cellContainer,args.delta_t,args.cut_off_radius, args.boundaries, 
+    CellCalculator cellCalculator(cellContainer,args.delta_t,args.cut_off_radius,1.9, args.boundaries, 
                                   args.target_temp.has_value() ? args.target_temp : args.init_temp,
                                   args.max_temp_diff,args.gravity_factor);
 
@@ -120,6 +121,7 @@ int main(int argc, char *argsv[])
 
     runSimulation(cellContainer,cellCalculator,args.t_end,args.delta_t,args.write_frequency,
                 args.calculate_thermostats ? std::optional<int>(args.thermo_stat_frequency) : std::nullopt,
+                std::nullopt,std::nullopt,
                 performance_measurement);
 
 

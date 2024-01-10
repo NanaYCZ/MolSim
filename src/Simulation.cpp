@@ -5,9 +5,19 @@
 #include "outputWriter/XYZWriter.h"
 #include <spdlog/spdlog.h>
 #include <iostream>
+#include <string>
+#include <sstream>
+#include <ostream>
+
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/spdlog.h>
+
+template <typename T>
+std::string print_vec(const std::vector<T>& vec);
 
 void runSimulation(CellContainer &container, CellCalculator& calculator, const double end_time,
-                   const double delta_t, const size_t write_frequency, std::optional<int> thermostats_frequency, bool performance_measurement) {
+                   const double delta_t, const size_t write_frequency, std::optional<int> thermostats_frequency,
+                   std::optional<int> diffusion_frequency,std::optional<int> rdf_frequency, bool performance_measurement) {
 
     outputWriter::VTKWriter writer;
     auto logger = spdlog::get("logger");
@@ -28,7 +38,14 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
     SPDLOG_LOGGER_DEBUG(logger, container.to_string());
     logger->flush();
 
-    //size_t before_size = container.size();
+    auto stat_logger = spdlog::basic_logger_mt("stat_log", "stat.txt");
+    
+    std::string rdf_log = "";
+    std::string diff_log = "";
+    std::string temp_log = "";
+
+
+    //size_t before_size = container.size();    
 
     // for this loop, we assume: current x, current f and current v are known
     if (performance_measurement)
@@ -40,7 +57,6 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
         SPDLOG_TRACE("Doing a Iteration with CellCalculator");
         //this applies Ghost Particle reflective boundary conditions, only 
         //if any of the boundaries is boundary_condition::ghost_reflective
-        calculator.applyReflectiveBoundaries();
  
         calculator.calculateX();
         calculator.calculateF();
@@ -61,6 +77,34 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
         if (thermostats_frequency.has_value() &&  iteration % thermostats_frequency.value() == 0) {
             calculator.applyThermostats();
         }
+        if(diffusion_frequency.has_value() && iteration % diffusion_frequency.value() == 0){
+            calculator.calculate_diffusion = true;
+            double temp = calculator.currentTemp();
+            temp_log += "(" + std::to_string(iteration/1000) + "," + std::to_string(temp) + ")\n";
+        }
+        if(diffusion_frequency.has_value() && (iteration-1) % diffusion_frequency.value() == 0){
+            double diffusion = calculator.diffusion / static_cast<double>(container.size());
+            diff_log += "(" + std::to_string((iteration-1)/1000) + "," + std::to_string(diffusion) + ")\n";
+            calculator.calculate_diffusion = false;
+            calculator.diffusion=0;
+        }
+
+        if(rdf_frequency.has_value() && iteration % rdf_frequency.value() == 0 ){
+            double interval_size = 1.0;
+            std::vector<double> stats = calculator.radialDistributionFunction(interval_size);
+            rdf_log += "for time: " + std::to_string(current_time) + " iter:" + std::to_string(iteration) + "\n";
+            for(size_t i = 0; i < stats.size();i++){
+                rdf_log+= "(" + std::to_string(i * interval_size + interval_size/2.0) + "," + 
+                            std::to_string(stats[i]) + ")";
+            }
+                     
+            // spdlog::info("At time: " + std::to_string(current_time) + " iteration: " + std::to_string(iteration) +
+            //            "\nthe rdf with an interval size of " + std::to_string(interval_size) +  
+            //             "yields:");
+            // std::cout << print_vec(stats) << "\n";           
+        }
+
+
 
         /// loading bar
         static int loading_factor = std::max(write_frequency * 5.0, std::ceil(end_time / (delta_t * 100)));
@@ -82,7 +126,15 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
         std::chrono::duration<double> perf_duration = perf_time_end - perf_time_start;
         std::cout << "The Computation took: " << perf_duration.count() << " seconds" << std::endl;
     }
+    if(diffusion_frequency.has_value()){
+        stat_logger->info("diffusion:\n" + diff_log);
+        stat_logger->info("temp:\n" + temp_log);
+    }
 
+    if(rdf_frequency.has_value())
+        stat_logger->info(rdf_log);
+
+        
     spdlog::info("[" + std::string(pos, '=') + ">] 100%\r");
     SPDLOG_INFO("output written. Terminating...\r");
 }
@@ -92,4 +144,19 @@ void plotParticles(CellContainer &container, int iteration) {
   std::string out_name("MD_vtk");
   outputWriter::XYZWriter writer;
   writer.plotParticles(container, out_name, iteration);
+}
+
+template <typename T>
+std::string print_vec(const std::vector<T>& vec) {
+    std::ostringstream o;
+    o << "[";
+    if (!vec.empty()) {
+        auto lastElement = vec.end() - 1;
+        for (auto it = vec.begin(); it != lastElement; ++it) {
+            o << *it << ", ";
+        }
+        o << *lastElement;
+    }
+    o << "]";
+    return o.str();
 }
