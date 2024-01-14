@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
 
-  <!-- Define elements -->
+
   <xs:element name="parameters">
     <xs:complexType>
       <xs:sequence>
@@ -15,7 +15,7 @@
   </xs:element>
 
 
-  <!-- Define types -->
+
   <xs:complexType name="outputParamsType">
     <xs:sequence>
       <xs:element name="baseName" type="xs:string" />
@@ -34,17 +34,24 @@
       <xs:element name="cutOffRadius" type="xs:double" />
       <xs:element name="cellSize" type="xs:double" />
       <xs:element name="gravityFactor" type="xs:double" minOccurs="0"/>
-      <!-- <xs:element name="rdfTimeInterval" type="xs:double" minOccurs="0"/> -->
+      <xs:element name="forceType" type="xs:string"/>
+      <xs:element name="Rdf" type="rdfType" minOccurs="0"/>
+      <xs:element name="diffusionStatFrequency" type="xs:int" minOccurs="0"/>
       <!-- specifying mean velocity and Thermostats at the same time is undefined behaviour-->
       <xs:element name="Thermostats" type="thermoStatsType" minOccurs="0"/>
       <xs:element name="boundaryConditions" type="boundaryConditionsType" />
       <xs:element name="domainDimensions" type="vector3DType" />
-      <!-- Add other simulation parameters here -->
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="rdfType">
+    <xs:sequence>
+      <xs:element name="rdfTimeInterval" type="xs:double"/>
+      <xs:element name="rdfStatFrequency" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
 
 
-  <!-- TODO make this optional -->
   <xs:complexType name="thermoStatsType">
     <xs:sequence>
       <xs:element name="initTemp" type="xs:double"  />

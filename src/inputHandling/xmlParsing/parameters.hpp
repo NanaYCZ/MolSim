@@ -565,6 +565,7 @@ namespace xml_schema
 //
 class outputParamsType;
 class simulationParamsType;
+class rdfType;
 class thermoStatsType;
 class vector3DType;
 class boundaryConditionsType;
@@ -1203,6 +1204,205 @@ class simulationParamsType: public ::xml_schema::type
   //@}
 
   /**
+   * @name forceType
+   *
+   * @brief Accessor and modifier functions for the %forceType
+   * required element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::string forceType_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< forceType_type, char > forceType_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const forceType_type&
+  forceType () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  forceType_type&
+  forceType ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  forceType (const forceType_type& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly
+   * instead of making a copy.
+   */
+  void
+  forceType (::std::unique_ptr< forceType_type > p);
+
+  //@}
+
+  /**
+   * @name Rdf
+   *
+   * @brief Accessor and modifier functions for the %Rdf
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::rdfType Rdf_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< Rdf_type > Rdf_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< Rdf_type, char > Rdf_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const Rdf_optional&
+  Rdf () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  Rdf_optional&
+  Rdf ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  Rdf (const Rdf_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  Rdf (const Rdf_optional& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  Rdf (::std::unique_ptr< Rdf_type > p);
+
+  //@}
+
+  /**
+   * @name diffusionStatFrequency
+   *
+   * @brief Accessor and modifier functions for the %diffusionStatFrequency
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ diffusionStatFrequency_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< diffusionStatFrequency_type > diffusionStatFrequency_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< diffusionStatFrequency_type, char > diffusionStatFrequency_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const diffusionStatFrequency_optional&
+  diffusionStatFrequency () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  diffusionStatFrequency_optional&
+  diffusionStatFrequency ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  diffusionStatFrequency (const diffusionStatFrequency_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  diffusionStatFrequency (const diffusionStatFrequency_optional& x);
+
+  //@}
+
+  /**
    * @name Thermostats
    *
    * @brief Accessor and modifier functions for the %Thermostats
@@ -1407,6 +1607,7 @@ class simulationParamsType: public ::xml_schema::type
                         const deltaT_type&,
                         const cutOffRadius_type&,
                         const cellSize_type&,
+                        const forceType_type&,
                         const boundaryConditions_type&,
                         const domainDimensions_type&);
 
@@ -1422,6 +1623,7 @@ class simulationParamsType: public ::xml_schema::type
                         const deltaT_type&,
                         const cutOffRadius_type&,
                         const cellSize_type&,
+                        const forceType_type&,
                         ::std::unique_ptr< boundaryConditions_type >,
                         ::std::unique_ptr< domainDimensions_type >);
 
@@ -1500,9 +1702,202 @@ class simulationParamsType: public ::xml_schema::type
   ::xsd::cxx::tree::one< cutOffRadius_type > cutOffRadius_;
   ::xsd::cxx::tree::one< cellSize_type > cellSize_;
   gravityFactor_optional gravityFactor_;
+  ::xsd::cxx::tree::one< forceType_type > forceType_;
+  Rdf_optional Rdf_;
+  diffusionStatFrequency_optional diffusionStatFrequency_;
   Thermostats_optional Thermostats_;
   ::xsd::cxx::tree::one< boundaryConditions_type > boundaryConditions_;
   ::xsd::cxx::tree::one< domainDimensions_type > domainDimensions_;
+
+  //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %rdfType schema type.
+ *
+ * @nosubgrouping
+ */
+class rdfType: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name rdfTimeInterval
+   *
+   * @brief Accessor and modifier functions for the %rdfTimeInterval
+   * required element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::double_ rdfTimeInterval_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< rdfTimeInterval_type, char, ::xsd::cxx::tree::schema_type::double_ > rdfTimeInterval_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const rdfTimeInterval_type&
+  rdfTimeInterval () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  rdfTimeInterval_type&
+  rdfTimeInterval ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  rdfTimeInterval (const rdfTimeInterval_type& x);
+
+  //@}
+
+  /**
+   * @name rdfStatFrequency
+   *
+   * @brief Accessor and modifier functions for the %rdfStatFrequency
+   * required element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::int_ rdfStatFrequency_type;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< rdfStatFrequency_type, char > rdfStatFrequency_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element.
+   *
+   * @return A constant reference to the element.
+   */
+  const rdfStatFrequency_type&
+  rdfStatFrequency () const;
+
+  /**
+   * @brief Return a read-write reference to the element.
+   *
+   * @return A reference to the element.
+   */
+  rdfStatFrequency_type&
+  rdfStatFrequency ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  rdfStatFrequency (const rdfStatFrequency_type& x);
+
+  //@}
+
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  rdfType (const rdfTimeInterval_type&,
+           const rdfStatFrequency_type&);
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  rdfType (const ::xercesc::DOMElement& e,
+           ::xml_schema::flags f = 0,
+           ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  rdfType (const rdfType& x,
+           ::xml_schema::flags f = 0,
+           ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual rdfType*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  /**
+   * @brief Copy assignment operator.
+   *
+   * @param x An instance to make a copy of.
+   * @return A reference to itself.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  rdfType&
+  operator= (const rdfType& x);
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~rdfType ();
+
+  // Implementation.
+  //
+
+  //@cond
+
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< rdfTimeInterval_type > rdfTimeInterval_;
+  ::xsd::cxx::tree::one< rdfStatFrequency_type > rdfStatFrequency_;
 
   //@endcond
 };

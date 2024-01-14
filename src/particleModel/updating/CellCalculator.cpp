@@ -15,17 +15,26 @@ std::vector<std::vector<double>> sigma_mixed{{1.0}};
 std::vector<std::vector<double>> epsilon_mixed{{5.0}};
 
 CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,double r_l_,
-      std::array<boundary_conditions,6> boundaries_cond, std::optional<double> target_temp_param,
-       std::optional<double> max_temp_diff_param,double gravity_factor)
+      std::array<boundary_conditions,6> boundaries_cond,std::string forceType,double gravity_factor)
     : cellContainer(cellContainer), gravity_factor(gravity_factor), delta_t(delta_t), cutoff(cutoff), r_l(r_l_),
-    domain_bounds(cellContainer.getDomainBounds()), domain_max_dim(CellContainer::domain_max_dim),
-    target_temp(target_temp_param), max_temp_diff(max_temp_diff_param), boundaries(boundaries_cond),
+    domain_bounds(cellContainer.getDomainBounds()), domain_max_dim(CellContainer::domain_max_dim), boundaries(boundaries_cond),
     particles(CellContainer::particles)
     {
     ghost_reflection_is_off = true;
     for(auto b : boundaries) {
         if(b == boundary_conditions::ghost_reflective) ghost_reflection_is_off = false;
     }
+
+    if(forceType == "smoothedLJ"){
+        force = forceSmoothedLennJonesPotentialFunction(sigma_mixed,epsilon_mixed,cutoff,r_l);
+    }else if(forceType == "LJ"){
+        force = forceLennJonesPotentialFunction(sigma_mixed,epsilon_mixed,cutoff);
+    }else if(forceType == "Gravity"){
+        force = forceSimpleGravitational(cutoff);
+    }else{
+        throw std::invalid_argument("Force Type was not correctly specified");
+    }
+
 }
 
 void CellCalculator::calculateX(){
@@ -55,9 +64,6 @@ void CellCalculator::calculateX(){
             } else {
                 particle_ptr++;
             }
-
-            if(calculate_diffusion)
-                diffusion+= std::pow(ArrayUtils::L2Norm(new_x - old_x),2);
 
         }
         updateCells(cell_updates);
@@ -345,153 +351,6 @@ bool CellCalculator::inCutoffDistance(Particle &p1, Particle &p2, const std::arr
     return dx * dx + dy * dy + dz * dz <= compare_distance;
 }
 
-std::array<double,3> CellCalculator::force(const Particle &p_i, const Particle &p_j, const std::array<double,3> &offset) {
-    const auto& x_i = p_i.getX(), x_j = p_j.getX();
-    double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
-    double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
-
-    double norm = ArrayUtils::L2Norm(x_i - x_j + offset);
-    norm = std::max(min_distance, norm);
-
-    double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
-
-    prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
-
-    return prefactor * (x_i - x_j + offset);
-}
-
-std::array<double,3> CellCalculator::smoothed_force(const Particle &p_i, 
-                const Particle &p_j, const std::array<double,3> &offset) {
-    const auto& x_i = p_i.getX(), x_j = p_j.getX();
-    double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
-    double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
-    //make formula more readable, compiler will optimize away
-    double r_c = cutoff;
-
-    double dx = x_i[0] - x_j[0] + offset[0];
-    double dy = x_i[1] - x_j[1] + offset[1];
-    double dz = x_i[2] - x_j[2] + offset[2];
-
-    double r_c_squared = r_c * r_c;
-    double scalar_product = dx * dx + dy * dy + dz * dz;
-
-    /*instantly return 0 if r_c <= norm */
-    if(r_c_squared <= scalar_product)
-        return {0,0,0};
-
-    double norm = std::sqrt(scalar_product);
-    //norm = std::max(min_distance, norm);
-
-    /* r_l <= norm  < r_c */
-    if(r_l <= norm){
-        double norm_pow_6 = std::pow(norm,6), sigma_pow_6  = std::pow(sigma,6);
-
-        double prefactor = -(24 * sigma_pow_6 * epsilon * (r_c - norm)) / 
-                            (norm_pow_6 * norm_pow_6 * norm * norm  * std::pow((r_c - r_l),3) );
-        
-        prefactor *=    r_c_squared * (2 * sigma_pow_6 - norm_pow_6)
-                         + r_c * (3 * r_l - norm) * (norm_pow_6 - 2 * sigma_pow_6)
-                         + norm * (5 * r_l * sigma_pow_6 - 2 * r_l * norm_pow_6 
-                                  - 3 * sigma_pow_6 * norm + norm_pow_6 * norm);
-        
-        return prefactor * -1 * (x_i - x_j + offset);
-    }else /* norm <= r_l */ {
-        double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
-
-        prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
-
-        return prefactor * (x_i - x_j + offset);
-    }
-}
-
-
-std::vector<double> CellCalculator::radialDistributionFunction(double interval_size){
-    double max_dist = std::sqrt(std::pow(cellContainer.domain_bounds[0],2) + std::pow(cellContainer.domain_bounds[1],2));
-    if(cellContainer.hasThreeDimensions())
-        max_dist = std::sqrt(std::pow(max_dist,2) + std::pow(cellContainer.domain_bounds[2],2));
-
-    std::list<Particle>& instances = cellContainer.particle_instances;
-    //first the amount of particle pairs in that interval will be calculated
-    //afterwards the rdf statistic, therefore it uses double
-    std::vector<size_t> pairs_per_interval(max_dist / interval_size + 1,0.0);
-    std::vector<double> rdf_per_interval(max_dist / interval_size + 1,0.0);
-
-    for(auto p1 = instances.begin(); p1 != instances.end(); p1++){
-        for(auto p2 = std::next(p1);p2 != instances.end();  p2++){
-            double dist = ArrayUtils::L2Norm(p1->getX() - p2->getX());
-            size_t interval_index = static_cast<size_t>(dist / interval_size);
-            if(interval_index < pairs_per_interval.size())
-                //there is particle pair that has a distance that
-                //lies within intervals[interval_index]
-                pairs_per_interval[interval_index] +=1; 
-            else    
-                std::cout << "Err\n";
-        }
-    }
-
-
-
-    for(size_t i = 0; i < rdf_per_interval.size();i++ ){
-        //calculate rdf statistic for this interval
-        rdf_per_interval[i] = static_cast<double>(pairs_per_interval[i]) / 
-                    ( (4.0 * M_PI / 3.0) * 
-                      ( std::pow((i+1) * interval_size,3) - std::pow(i * interval_size,3)) );
-        
-    }
-
-    return rdf_per_interval;
-}
-
-
-double CellCalculator::currentTemp(){
-  double kinetic_energy = 0;
-  size_t amt = 0;
-
-  for(auto iter = begin_CI(); iter != end_CI(); ++iter){
-    for(Particle* particle_ptr : *iter){
-      const std::array<double,3> &v = particle_ptr->getV();
-      double v_squared = v[0] * v[0]  + v[1] * v[1] + v[2] * v[2];
-      double m = particle_ptr->getM();
-      kinetic_energy += v_squared * m;
-      amt++;
-    }
-  }
-  double k_boltzman = 1;
-  //calculate the current temperatur from the current kinetic energy in the system
-  //assuming we only have two kinds of dimensions namely 2 or 3
-  double current_temp = kinetic_energy/((cellContainer.hasThreeDimensions() ? 3 : 2) * amt * k_boltzman);
-  return current_temp;
-}
-
-void CellCalculator::applyThermostats(){
-  double current_temp = currentTemp();
-  double next_temp;
-  if(target_temp.has_value())
-    next_temp = target_temp.value();  
-  else  
-    throw std::invalid_argument("applyThermostats was called, altough target temp was not provided ");
-  
-
-  //if the temperatur diffference would be too big cap it
-  double temp_diff = next_temp - current_temp;
-  if(max_temp_diff.has_value() && std::abs(temp_diff) > max_temp_diff){
-    next_temp = (std::signbit(temp_diff) ? -1 : 1) * max_temp_diff.value() + current_temp;
-  }
-
-
-  // the scaling factor to reach the target temperature
-  // assuming this is never negative because we only calculate with kelvin
-  double temp_scaling = sqrt(next_temp/current_temp);
-
-  //apply scaling
-  for(auto iter = begin_CI(); iter != end_CI(); ++iter){
-      for(Particle* particle_ptr : *iter){
-        std::array<double,3> v = particle_ptr->getV();
-        particle_ptr->setV(temp_scaling * v);
-      }
-  }
-
-}
 
 
 void CellCalculator::initializeFX() {

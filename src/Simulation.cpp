@@ -15,9 +15,10 @@
 template <typename T>
 std::string print_vec(const std::vector<T>& vec);
 
-void runSimulation(CellContainer &container, CellCalculator& calculator, const double end_time,
-                   const double delta_t, const size_t write_frequency, std::optional<int> thermostats_frequency,
-                   std::optional<int> diffusion_frequency,std::optional<int> rdf_frequency, bool performance_measurement) {
+void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoStats &thermoStats,
+                   const double end_time, const double delta_t, const size_t write_frequency, 
+                   std::optional<int> thermostats_frequency, std::optional<int> diffusion_frequency,
+                   std::optional<std::pair<double,int>> rdf_interval_and_frequency, bool performance_measurement) {
 
     outputWriter::VTKWriter writer;
     auto logger = spdlog::get("logger");
@@ -75,33 +76,26 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
 
         //thermostats_frequency.has_value() will be evaluated first
         if (thermostats_frequency.has_value() &&  iteration % thermostats_frequency.value() == 0) {
-            calculator.applyThermostats();
+            thermoStats.applyThermostats();
         }
         if(diffusion_frequency.has_value() && iteration % diffusion_frequency.value() == 0){
-            calculator.calculate_diffusion = true;
-            double temp = calculator.currentTemp();
-            temp_log += "(" + std::to_string(iteration/1000) + "," + std::to_string(temp) + ")\n";
         }
         if(diffusion_frequency.has_value() && (iteration-1) % diffusion_frequency.value() == 0){
-            double diffusion = calculator.diffusion / static_cast<double>(container.size());
+            double diffusion = thermoStats.diffusionCoeff();
             diff_log += "(" + std::to_string((iteration-1)/1000) + "," + std::to_string(diffusion) + ")\n";
-            calculator.calculate_diffusion = false;
-            calculator.diffusion=0;
+            //track the temperature as well
+            double temp = thermoStats.currentTemp();
+            temp_log += "(" + std::to_string(iteration/1000) + "," + std::to_string(temp) + ")\n";
         }
 
-        if(rdf_frequency.has_value() && iteration % rdf_frequency.value() == 0 ){
-            double interval_size = 1.0;
-            std::vector<double> stats = calculator.radialDistributionFunction(interval_size);
+        if(rdf_interval_and_frequency.has_value() && iteration % (rdf_interval_and_frequency.value().second) == 0 ){
+            double interval_size = rdf_interval_and_frequency.value().first;
+            std::vector<double> stats = thermoStats.radialDistributionFunction(interval_size);
             rdf_log += "for time: " + std::to_string(current_time) + " iter:" + std::to_string(iteration) + "\n";
             for(size_t i = 0; i < stats.size();i++){
                 rdf_log+= "(" + std::to_string(i * interval_size + interval_size/2.0) + "," + 
                             std::to_string(stats[i]) + ")";
             }
-                     
-            // spdlog::info("At time: " + std::to_string(current_time) + " iteration: " + std::to_string(iteration) +
-            //            "\nthe rdf with an interval size of " + std::to_string(interval_size) +  
-            //             "yields:");
-            // std::cout << print_vec(stats) << "\n";           
         }
 
 
@@ -131,8 +125,8 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, const d
         stat_logger->info("temp:\n" + temp_log);
     }
 
-    if(rdf_frequency.has_value())
-        stat_logger->info(rdf_log);
+    if(rdf_interval_and_frequency.has_value())
+        stat_logger->info("rdf:\n" + rdf_log);
 
         
     spdlog::info("[" + std::string(pos, '=') + ">] 100%\r");

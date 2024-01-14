@@ -100,28 +100,26 @@ int main(int argc, char *argsv[])
 
     CellContainer cellContainer(args.domain_dimensions[0],args.domain_dimensions[1],args.domain_dimensions[2],
                                 args.cut_off_radius,args.cell_size);
-    CellCalculator cellCalculator(cellContainer,args.delta_t,args.cut_off_radius,1.9, args.boundaries, 
-                                  args.target_temp.has_value() ? args.target_temp : args.init_temp,
-                                  args.max_temp_diff,args.gravity_factor);
+    CellCalculator cellCalculator(cellContainer,args.delta_t,args.cut_off_radius,1.9, args.boundaries,
+                                args.force_type, args.gravity_factor);
+    ThermoStats thermoStats(cellContainer,args.delta_t,
+                    args.target_temp.has_value() ? args.target_temp : args.init_temp,args.max_temp_diff);
+    
 
     addCuboids(cellContainer,args.cuboids);
     addSpheres(cellContainer,args.spheres,2);
 
     if(args.checkpoint_input_file.has_value()){
         Checkpointer::addCheckpointparticles(cellContainer,args.checkpoint_input_file.value());
-        //now apply Thermostats to the whole system again if additional predefined particles were read
-        //that changed the overall Temperature of the system
-        if(args.calculate_thermostats){
-            cellCalculator.applyThermostats();
-        }
+        
     }
 
     cellContainer.createPointers();
 
 
-    runSimulation(cellContainer,cellCalculator,args.t_end,args.delta_t,args.write_frequency,
+    runSimulation(cellContainer,cellCalculator,thermoStats,args.t_end,args.delta_t,args.write_frequency,
                 args.calculate_thermostats ? std::optional<int>(args.thermo_stat_frequency) : std::nullopt,
-                std::nullopt,std::nullopt,
+                args.diff_frequency,args.rdf_interval_and_frequency,
                 performance_measurement);
 
 
