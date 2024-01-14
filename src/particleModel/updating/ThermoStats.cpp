@@ -20,7 +20,7 @@ double ThermoStats::diffusionCoeff(){
     for(auto iter = begin_CI(); iter != end_CI(); ++iter){
         for(Particle* particle_ptr : *iter){
             Particle particle = *particle_ptr;
-            std::array<double, 3> old_f, v, new_x, diff;
+            std::array<double, 3> old_f, v, diff;
 
             old_f = particle.getOldF();
             v = particle.getV();
