@@ -55,6 +55,82 @@ command line arguments and what is being returned by the executable. This file s
 ### Task 4
 
 ### Task 5 Crystalization of Argon
+
+<div style="display: flex; justify-content: space-between;">
+  <video width="45%" controls>
+    <source src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5d9445db-8bd2-4bb0-961e-f622981e2e9c" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+  
+  <video width="45%" controls>
+    <source src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/e59e897d-79dc-464f-be7f-363602c931f3" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+========================TEST====================
+
+no_super small
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/43897fb6-0ffa-488c-8b92-ac7bbbc5afc2
+
+
+end result:
+
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/0074efa9-670c-432b-88bf-d59b9a9ed189
+
+
+
+
+super small:
+
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5d9445db-8bd2-4bb0-961e-f622981e2e9c
+
+end result:
+
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/e59e897d-79dc-464f-be7f-363602c931f3
+
+
+
+big:
+
+
+nosuper:
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/81474079-02d0-4f4b-8151-14f5bf76170c
+
+
+end result:
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/949404f3-937d-4bdd-b3bd-a65ee17bcbed
+
+
+
+
+super
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/cfedcf58-0556-4b97-b69f-92e9356e2cab
+
+end result:
+
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d8ed8fd5-2579-4ca3-9bbc-f83c3e4fc343
+
+
+
+
+
 - we tried the experiment with a bigger sphere of argon, to be able to really see the structures, that are forming
 - for the normal cooling until 0.5 (Simulation temp) or ~ 60 K we get the simulation below:
   
