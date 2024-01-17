@@ -16,6 +16,7 @@
     <deltaT>0.001</deltaT>
     <cutOffRadius>2.3</cutOffRadius>                                          
     <cellSize>2.3</cellSize>
+    <forceType>smoothedLJ</forceType>
     <Thermostats>
         <initTemp>3.0</initTemp>
         <targetTemp>0.5</targetTemp>
