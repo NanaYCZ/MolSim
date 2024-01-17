@@ -55,34 +55,29 @@ command line arguments and what is being returned by the executable. This file s
 ### Task 4
 
 ### Task 5 Crystalization of Argon
+- For this task we implemented the smoothed Lennard-Jones potential, the function to calculate the diffusion coefficient and the radial distribution function. Then we did several different simulations and analyzed them.
+#### Implementation
+-  In the XML input file, the user now has to specify the type of force, with which the simulation should run in `forceType`. There is now a optional `RDF` component, that if specified has to contain the interval size i.e. the accuracy of the radial distribution function and the frequency with which the rdf is calculated. A frequency of x means that every x-th iteration, the rdf is calculated. Similarly there is an optional frequency for the calculation of the diffusion coefficient. If no frequency is given for the diffusion coefficient, it will not be calculated. 
 
-<div style="display: flex; justify-content: space-between;">
-  <video width="45%" controls>
-    <source src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5d9445db-8bd2-4bb0-961e-f622981e2e9c" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-  
-  <video width="45%" controls>
-    <source src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/e59e897d-79dc-464f-be7f-363602c931f3" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
-</div>
+#### Simulations
 
-========================TEST====================
-
-no_super small
+- First we did the simulation of the normal cooling until 0.5 (simulation temperature) of the equilibrated Argon. Below is the video of the simulation, the end result we obtained and then the statistics we calculated 
 
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/43897fb6-0ffa-488c-8b92-ac7bbbc5afc2
 
 
-end result:
-
-
-
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/0074efa9-670c-432b-88bf-d59b9a9ed189
 
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/21c30879-77c5-4ad9-ac5e-c46da0db562d" width="470">
 
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/4791f932-c57d-4313-9506-5f38e8830c08" width="435">
+
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/af285819-e437-4e65-8719-78cc7942cd4d" width="470">
+
+- when looking at the simulation and the end result it is possible to see that a certain structure is forming, but it is hard to determine what it looks like, because we are looking at a relatively small example 
+- the diffusion coefficient is linearly decreasing over time. This makes sense, because we are linearly decreasing the temperature as well and with lower temperature of the system, we would expect less movement or activity. In order to somewhat verify the diffusion we also measured the temperature during the simulation and the plots are very similar. This fits due to the temperature being a function of the velocities and the diffusion coefficient being a function of the movement of the particles in the last time step and $v = \frac{ x(t_1) - x_(t_0) }{\delta t}$ .
+- the rdf shows, that with proceeding time and therefore also decreasing temperature, the expected distances of two particle decrease. Expecially distances in the interval 1.3 ~ 1.4 become far more prevalent. Apart from that it is visible, that the distribution function is oscillating more with decreased temperature. These oscillations mean that there is a higher amount of particles with a   In general the rdf seems to fit as the sources we could find show a similar rdf and trend for decreasing temperature [^1].    
 
 
 super small:
@@ -134,21 +129,15 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d8ed8fd5-2579-4ca3-9
 - we tried the experiment with a bigger sphere of argon, to be able to really see the structures, that are forming
 - for the normal cooling until 0.5 (Simulation temp) or ~ 60 K we get the simulation below:
   
-https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d393d2cb-52a8-4fa5-b62b-fb46dfc92b57
 
 - yielding the end result:
 
 
 
-https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/46a3aea0-dfee-42dc-8e0e-d73c41a344ab
 
 
 
-
-
-
-
-
+[^1]: http://rkt.chem.ox.ac.uk/lectures/liqsolns/liquids.html
 
 
 ### Misc
