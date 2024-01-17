@@ -57,11 +57,12 @@ command line arguments and what is being returned by the executable. This file s
 ### Task 5 Crystalization of Argon
 - For this task we implemented the smoothed Lennard-Jones potential, the function to calculate the diffusion coefficient and the radial distribution function. Then we did several different simulations and analyzed them.
 #### Implementation
--  In the XML input file, the user now has to specify the type of force, with which the simulation should run in `forceType`. There is now a optional `RDF` component, that if specified has to contain the interval size i.e. the accuracy of the radial distribution function and the frequency with which the rdf is calculated. A frequency of x means that every x-th iteration, the rdf is calculated. Similarly there is an optional frequency for the calculation of the diffusion coefficient. If no frequency is given for the diffusion coefficient, it will not be calculated. 
+-  In the XML input file, the user now has to specify the type of force, with which the simulation should run in `forceType`. There is now a optional `RDF` component, that if specified has to contain the interval size i.e. the accuracy of the radial distribution function and the frequency with which the rdf is calculated. A frequency of x means that every x-th iteration, the rdf is calculated. Similarly there is an optional frequency for the calculation of the diffusion coefficient. If no frequency is given for the diffusion coefficient, it will not be calculated.
+- We implemented the diffusion coefficient by iterating over all particles and for every particle we calculate the next position X of the particle, just like it happens in calculateX(). Then we take the difference between this newly calculated X and the actual position of the particle and use that for calculating the diffusion coefficient. But we don't update the particle position and therefore don't change any particle. This is simple and modularized, as it does not interfer with the actual simulation, way of implementing the function. The rdf is implemented by dividing the maximal possible distance two particle can have into intervals of a given size and for each interval counting the number of particles that have a distance in this interval.
 
-#### Simulations
+#### Simulation of cooling Argon
 
-- First we did the simulation of the normal cooling until 0.5 (simulation temperature) of the equilibrated Argon. Below is the video of the simulation, the end result we obtained and then the statistics we calculated 
+- Starting with an equlilibrated fluid of Argon at a temperature of 3.0 (simulation temperature), the fluid was cooled until a temperature of 0.5 (simulation temperature). Below is the video of the simulation, the end result we obtained and then the statistics we calculated 
 
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/43897fb6-0ffa-488c-8b92-ac7bbbc5afc2
@@ -77,17 +78,15 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/0074efa9-670c-432b-8
 
 - when looking at the simulation and the end result it is possible to see that a certain structure is forming, but it is hard to determine what it looks like, because we are looking at a relatively small example 
 - the diffusion coefficient is linearly decreasing over time. This makes sense, because we are linearly decreasing the temperature as well and with lower temperature of the system, we would expect less movement or activity. In order to somewhat verify the diffusion we also measured the temperature during the simulation and the plots are very similar. This fits due to the temperature being a function of the velocities and the diffusion coefficient being a function of the movement of the particles in the last time step and $v = \frac{ x(t_1) - x_(t_0) }{\delta t}$ .
-- the rdf shows, that with proceeding time and therefore also decreasing temperature, the expected distances of two particle decrease. Expecially distances in the interval 1.3 ~ 1.4 become far more prevalent. Apart from that it is visible, that the distribution function is oscillating more with decreased temperature. These oscillations mean that there is a higher amount of particles with a   In general the rdf seems to fit as the sources we could find show a similar rdf and trend for decreasing temperature [^1].    
+- the rdf shows, that with proceeding time and therefore also decreasing temperature, the expected distances of two particle decrease. Expecially distances in the interval 1.3 ~ 1.4 become far more prevalent. Apart from that it is visible, that the distribution function is oscillating more with decreased temperature. These oscillations mean that there a certain distances that are far more prevalent than others. Maybe this is the case, because the crystalized Argon organizes in lattices of face-centered cubics [^1]. Then instead of the equilibrated fluid of the beginning, there is a clear structure, in which the molecules organize. In such a regular repeating grid structure it would make sense, that there are only a few certain distances e.g. the distance to the direct neighbours of the cuboid that occur often, whereas other distances are practically impossible due to the grid structure. In general the rdf seems to fit as the sources we could find show a similar rdf and trend of the rdf for decreasing temperature [^2].    
 
 
-super small:
 
+#### Simulation of super cooling Argon
 
+- Starting with an equlilibrated fluid of Argon at a temperature of 3.0 (simulation temperature), the fluid was super cooled until a temperature of 0.02 (simulation temperature). Below is the video of the simulation, the end result we obtained and then the statistics we calculated.
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5d9445db-8bd2-4bb0-961e-f622981e2e9c
-
-end result:
-
 
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/e59e897d-79dc-464f-be7f-363602c931f3
@@ -136,8 +135,8 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d8ed8fd5-2579-4ca3-9
 
 
 
-
-[^1]: http://rkt.chem.ox.ac.uk/lectures/liqsolns/liquids.html
+[^1]: https://en.wikipedia.org/wiki/Argon
+[^2]: http://rkt.chem.ox.ac.uk/lectures/liqsolns/liquids.html
 
 
 ### Misc
