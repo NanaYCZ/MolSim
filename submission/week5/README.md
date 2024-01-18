@@ -58,11 +58,11 @@ command line arguments and what is being returned by the executable. This file s
 - For this task we implemented the smoothed Lennard-Jones potential, the function to calculate the diffusion coefficient and the radial distribution function. Then we did several different simulations and analyzed them.
 #### Implementation
 -  In the XML input file, the user now has to specify the type of force, with which the simulation should run in `forceType`. There is now a optional `RDF` component, that if specified has to contain the interval size i.e. the accuracy of the radial distribution function and the frequency with which the rdf is calculated. A frequency of x means that every x-th iteration, the rdf is calculated. Similarly there is an optional frequency for the calculation of the diffusion coefficient. If no frequency is given for the diffusion coefficient, it will not be calculated.
-- We implemented the diffusion coefficient by iterating over all particles and for every particle we calculate the next position X of the particle, just like it happens in calculateX(). Then we take the difference between this newly calculated X and the actual position of the particle and use that for calculating the diffusion coefficient. But we don't update the particle position and therefore don't change any particle. This is simple and modularized, as it does not interfer with the actual simulation, way of implementing the function. The rdf is implemented by dividing the maximal possible distance two particle can have into intervals of a given size and for each interval counting the number of particles that have a distance in this interval.
+- We implemented the diffusion coefficient by iterating over all particles and for every particle we calculate the next position X of the particle, as it would be done in calculateX(). Then we take the difference between this new X and the actual position of the particle and use that for calculating the diffusion coefficient. We don't update the particle position and therefore don't change any particle. This is a simple and modularized, as it does not interfer with the actual simulation, way of implementing the function. The rdf is implemented by dividing the maximal possible distance two particle can have into intervals of a given size and for each interval counting the number of particle pairs that have a distance in this interval.
 
 #### Simulation of cooling Argon
 
-- Starting with an equlilibrated fluid of Argon at a temperature of 3.0 (simulation temperature), the fluid was cooled until a temperature of 0.5 (simulation temperature). Below is the video of the simulation, the end result we obtained and then the statistics we calculated 
+- Starting with an equlilibrated fluid of Argon at a temperature of 3.0 (simulation temperature), the fluid was cooled until a temperature of 0.5 (simulation temperature). Below is the video of the simulation, the end result we obtained and  the statistics we calculated 
 
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/43897fb6-0ffa-488c-8b92-ac7bbbc5afc2
@@ -91,7 +91,16 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/5d9445db-8bd2-4bb0-9
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/e59e897d-79dc-464f-be7f-363602c931f3
 
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/9623a37f-f080-4d15-acf4-236cd8368f2f" width="470">
 
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/24a33f3f-d081-44e1-bb00-4bb176e9c029" width="460">
+
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/7e317c00-a6cb-4992-a435-a5d159b5e9f7" width="470">
+
+- again it is possible to see a distinct structure forming in the simulation, but it is hard to recognize a certain structure in this  example
+- the rdf seems to have a similar trend to the rdf of the normal cooling simulation, except that the oscillations of the distribution are even more visible. Compared to the rdf at time=10 and the rdf at time=30, which are really smooth functions, the rdf at time=50 and later shows a clear oscillation. Again this might be due to a regular repeating structure forming, altough it is difficult to find information on the structure of Argon in an amorphous glass state.
+- the diffusion coefficient and the temperature plot show an intersting behaviour. At a temperature of $\approx$ 0.6 and time $\approx$ 33 the cooling slows down and the slope of the temperature function is less steep then before. This roughly fits the freezing point of Argon, which is at 83.81 K and therefore at $\frac{83.81}{120} \approx 0.698$ (simulation temperature). Looking at the data, the phase transition from liquid to solid happens at time $\approx$ 31. The phase transition from gaseous to liquid state is hard to see in the simulation or data, because Argon only is a liquid between 83.81 K and 87.302 K or 0.6984 and 0.7275 (simulation temp.). Therefore the Argon in our simulation is only fluid at time $\approx$ 30. At first the slower cooling of the Argon from time $\approx$ 30 onwards is unexpected, as we are applying the same linear cooling with our Thermostat throughout the simulation. The slower cooling might be due to 
+the crystallization 
 
 big:
 
