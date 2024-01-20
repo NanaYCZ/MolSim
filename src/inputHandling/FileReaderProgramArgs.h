@@ -194,9 +194,6 @@ struct FileReader::CuboidData {
             case boundary_conditions::periodic:
                 condition_name = "periodic";
                 break;
-            case boundary_conditions::ghost_reflective:
-                condition_name = "ghost_reflective";
-                break;
             default:
                 condition_name = "undefined";
 

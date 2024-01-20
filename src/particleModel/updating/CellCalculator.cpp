@@ -20,10 +20,6 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
     domain_bounds(cellContainer.getDomainBounds()), domain_max_dim(CellContainer::domain_max_dim), boundaries(boundaries_cond),
     particles(CellContainer::particles)
     {
-    ghost_reflection_is_off = true;
-    for(auto b : boundaries) {
-        if(b == boundary_conditions::ghost_reflective) ghost_reflection_is_off = false;
-    }
 
     if(forceType == "smoothedLJ"){
         force = forceSmoothedLennJonesPotentialFunction(sigma_mixed,epsilon_mixed,cutoff,r_l);
@@ -34,7 +30,6 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
     }else{
         throw std::invalid_argument("Force Type was not correctly specified");
     }
-
 }
 
 void CellCalculator::calculateX(){

@@ -7,7 +7,6 @@
 enum class boundary_conditions{
     outflow,
     reflective,
-    ghost_reflective,
     periodic
 };
 
@@ -126,7 +125,6 @@ private:
 
     //{positive_z,negative_z,positive_x,negative_x,positive_y,negative_y}
     std::array<boundary_conditions,6> boundaries;
-    bool ghost_reflection_is_off;
 
     std::vector<std::vector<std::vector<std::vector<Particle*>>>> &particles;
 
