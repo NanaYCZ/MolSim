@@ -15,6 +15,7 @@
     <cutOffRadius>3.0</cutOffRadius>
     <cellSize>1.5</cellSize>
     <gravityFactor>-12.44</gravityFactor>
+    <forceType>LJ</forceType>
     <Thermostats>
       <initTemp>40</initTemp>
       <thermoStatFrequency>1000</thermoStatFrequency>

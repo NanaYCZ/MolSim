@@ -558,7 +558,7 @@ std::list<Particle> CellContainer::to_list(){
 
 
 size_t CellContainer::size() {
-    return particle_amount - halo_particles.size();
+    return particle_instances.size();
 }
 
 std::array<dim_t, 3> CellContainer::domain_max_dim{};

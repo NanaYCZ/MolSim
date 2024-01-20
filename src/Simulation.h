@@ -1,6 +1,7 @@
 #pragma once
 
 #include "particleModel/updating/CellCalculator.h"
+#include "particleModel/updating/ThermoStats.h"
 
 /**
  * @brief start of the particle simulation
@@ -18,10 +19,12 @@
  * @param performance_measurement bool to set the performance measuring of the simulation
  */
 
-void runSimulation(CellContainer &container, CellCalculator &calculator,
+void runSimulation(CellContainer &container, CellCalculator &calculator, ThermoStats &thermoStats,
                    const double end_time,const double delta_t,
-                   const size_t write_frequency,std::optional<int> thermostats_frequency,
-                   bool performance_measurement);
+                   const size_t write_frequency, std::optional<int> thermostats_frequency = std::nullopt,
+                   std::optional<int> diffusion_frequency = std::nullopt,
+                   std::optional<std::pair<double,int>> rdf_interval_and_frequency = std::nullopt,
+                   bool performance_measurement = false);
 
 /**
 * @brief plot the particles to a xyz-file

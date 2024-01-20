@@ -16,6 +16,7 @@
     <cutOffRadius>2.5</cutOffRadius>                                          
     <cellSize>2.5</cellSize>
     <gravityFactor>-12.44</gravityFactor>
+    <forceType>LJ</forceType>
     <boundaryConditions>
         <boundaryConditionsPositiveZ>reflective</boundaryConditionsPositiveZ>
         <boundaryConditionsNegativeZ>reflective</boundaryConditionsNegativeZ>

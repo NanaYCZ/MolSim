@@ -71,7 +71,11 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
     auto sim_params = params->simulationParameters();
     auto cuboids = params->cuboids();
     auto spheres = params->spheres();
+    auto rdf_params = sim_params.Rdf();
     auto boundary_conditions_xml = sim_params.boundaryConditions();
+
+
+
     boundary_conditions positive_z, negative_z ,positive_x, negative_x , positive_y , negative_y;
 
     set_boundary_conditional(positive_z,boundary_conditions_xml.boundaryConditionsPositiveZ());
@@ -89,6 +93,15 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
     args.cut_off_radius = sim_params.cutOffRadius();
     args.cell_size = sim_params.cellSize();
     args.gravity_factor = sim_params.gravityFactor().present() ? sim_params.gravityFactor().get() : 0;
+    args.force_type = sim_params.forceType();
+
+    if(sim_params.diffusionStatFrequency().present())
+        args.diff_frequency =  sim_params.diffusionStatFrequency().get();
+
+    if(sim_params.Rdf().present()){
+        auto rdf = sim_params.Rdf().get();
+        args.rdf_interval_and_frequency = std::pair(rdf.rdfTimeInterval(),rdf.rdfStatFrequency());
+    }
     if(sim_params.Thermostats().present()){
         auto thermo = sim_params.Thermostats().get();
 

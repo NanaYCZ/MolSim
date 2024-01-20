@@ -245,6 +245,84 @@ gravityFactor (const gravityFactor_optional& x)
   this->gravityFactor_ = x;
 }
 
+const simulationParamsType::forceType_type& simulationParamsType::
+forceType () const
+{
+  return this->forceType_.get ();
+}
+
+simulationParamsType::forceType_type& simulationParamsType::
+forceType ()
+{
+  return this->forceType_.get ();
+}
+
+void simulationParamsType::
+forceType (const forceType_type& x)
+{
+  this->forceType_.set (x);
+}
+
+void simulationParamsType::
+forceType (::std::unique_ptr< forceType_type > x)
+{
+  this->forceType_.set (std::move (x));
+}
+
+const simulationParamsType::Rdf_optional& simulationParamsType::
+Rdf () const
+{
+  return this->Rdf_;
+}
+
+simulationParamsType::Rdf_optional& simulationParamsType::
+Rdf ()
+{
+  return this->Rdf_;
+}
+
+void simulationParamsType::
+Rdf (const Rdf_type& x)
+{
+  this->Rdf_.set (x);
+}
+
+void simulationParamsType::
+Rdf (const Rdf_optional& x)
+{
+  this->Rdf_ = x;
+}
+
+void simulationParamsType::
+Rdf (::std::unique_ptr< Rdf_type > x)
+{
+  this->Rdf_.set (std::move (x));
+}
+
+const simulationParamsType::diffusionStatFrequency_optional& simulationParamsType::
+diffusionStatFrequency () const
+{
+  return this->diffusionStatFrequency_;
+}
+
+simulationParamsType::diffusionStatFrequency_optional& simulationParamsType::
+diffusionStatFrequency ()
+{
+  return this->diffusionStatFrequency_;
+}
+
+void simulationParamsType::
+diffusionStatFrequency (const diffusionStatFrequency_type& x)
+{
+  this->diffusionStatFrequency_.set (x);
+}
+
+void simulationParamsType::
+diffusionStatFrequency (const diffusionStatFrequency_optional& x)
+{
+  this->diffusionStatFrequency_ = x;
+}
+
 const simulationParamsType::Thermostats_optional& simulationParamsType::
 Thermostats () const
 {
@@ -321,6 +399,46 @@ void simulationParamsType::
 domainDimensions (::std::unique_ptr< domainDimensions_type > x)
 {
   this->domainDimensions_.set (std::move (x));
+}
+
+
+// rdfType
+// 
+
+const rdfType::rdfTimeInterval_type& rdfType::
+rdfTimeInterval () const
+{
+  return this->rdfTimeInterval_.get ();
+}
+
+rdfType::rdfTimeInterval_type& rdfType::
+rdfTimeInterval ()
+{
+  return this->rdfTimeInterval_.get ();
+}
+
+void rdfType::
+rdfTimeInterval (const rdfTimeInterval_type& x)
+{
+  this->rdfTimeInterval_.set (x);
+}
+
+const rdfType::rdfStatFrequency_type& rdfType::
+rdfStatFrequency () const
+{
+  return this->rdfStatFrequency_.get ();
+}
+
+rdfType::rdfStatFrequency_type& rdfType::
+rdfStatFrequency ()
+{
+  return this->rdfStatFrequency_.get ();
+}
+
+void rdfType::
+rdfStatFrequency (const rdfStatFrequency_type& x)
+{
+  this->rdfStatFrequency_.set (x);
 }
 
 
@@ -1205,6 +1323,7 @@ simulationParamsType (const tEnd_type& tEnd,
                       const deltaT_type& deltaT,
                       const cutOffRadius_type& cutOffRadius,
                       const cellSize_type& cellSize,
+                      const forceType_type& forceType,
                       const boundaryConditions_type& boundaryConditions,
                       const domainDimensions_type& domainDimensions)
 : ::xml_schema::type (),
@@ -1213,6 +1332,9 @@ simulationParamsType (const tEnd_type& tEnd,
   cutOffRadius_ (cutOffRadius, this),
   cellSize_ (cellSize, this),
   gravityFactor_ (this),
+  forceType_ (forceType, this),
+  Rdf_ (this),
+  diffusionStatFrequency_ (this),
   Thermostats_ (this),
   boundaryConditions_ (boundaryConditions, this),
   domainDimensions_ (domainDimensions, this)
@@ -1224,6 +1346,7 @@ simulationParamsType (const tEnd_type& tEnd,
                       const deltaT_type& deltaT,
                       const cutOffRadius_type& cutOffRadius,
                       const cellSize_type& cellSize,
+                      const forceType_type& forceType,
                       ::std::unique_ptr< boundaryConditions_type > boundaryConditions,
                       ::std::unique_ptr< domainDimensions_type > domainDimensions)
 : ::xml_schema::type (),
@@ -1232,6 +1355,9 @@ simulationParamsType (const tEnd_type& tEnd,
   cutOffRadius_ (cutOffRadius, this),
   cellSize_ (cellSize, this),
   gravityFactor_ (this),
+  forceType_ (forceType, this),
+  Rdf_ (this),
+  diffusionStatFrequency_ (this),
   Thermostats_ (this),
   boundaryConditions_ (std::move (boundaryConditions), this),
   domainDimensions_ (std::move (domainDimensions), this)
@@ -1248,6 +1374,9 @@ simulationParamsType (const simulationParamsType& x,
   cutOffRadius_ (x.cutOffRadius_, f, this),
   cellSize_ (x.cellSize_, f, this),
   gravityFactor_ (x.gravityFactor_, f, this),
+  forceType_ (x.forceType_, f, this),
+  Rdf_ (x.Rdf_, f, this),
+  diffusionStatFrequency_ (x.diffusionStatFrequency_, f, this),
   Thermostats_ (x.Thermostats_, f, this),
   boundaryConditions_ (x.boundaryConditions_, f, this),
   domainDimensions_ (x.domainDimensions_, f, this)
@@ -1264,6 +1393,9 @@ simulationParamsType (const ::xercesc::DOMElement& e,
   cutOffRadius_ (this),
   cellSize_ (this),
   gravityFactor_ (this),
+  forceType_ (this),
+  Rdf_ (this),
+  diffusionStatFrequency_ (this),
   Thermostats_ (this),
   boundaryConditions_ (this),
   domainDimensions_ (this)
@@ -1336,6 +1468,45 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!this->gravityFactor_)
       {
         this->gravityFactor_.set (gravityFactor_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // forceType
+    //
+    if (n.name () == "forceType" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< forceType_type > r (
+        forceType_traits::create (i, f, this));
+
+      if (!forceType_.present ())
+      {
+        this->forceType_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // Rdf
+    //
+    if (n.name () == "Rdf" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< Rdf_type > r (
+        Rdf_traits::create (i, f, this));
+
+      if (!this->Rdf_)
+      {
+        this->Rdf_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // diffusionStatFrequency
+    //
+    if (n.name () == "diffusionStatFrequency" && n.namespace_ ().empty ())
+    {
+      if (!this->diffusionStatFrequency_)
+      {
+        this->diffusionStatFrequency_.set (diffusionStatFrequency_traits::create (i, f, this));
         continue;
       }
     }
@@ -1413,6 +1584,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
+  if (!forceType_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "forceType",
+      "");
+  }
+
   if (!boundaryConditions_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -1446,6 +1624,9 @@ operator= (const simulationParamsType& x)
     this->cutOffRadius_ = x.cutOffRadius_;
     this->cellSize_ = x.cellSize_;
     this->gravityFactor_ = x.gravityFactor_;
+    this->forceType_ = x.forceType_;
+    this->Rdf_ = x.Rdf_;
+    this->diffusionStatFrequency_ = x.diffusionStatFrequency_;
     this->Thermostats_ = x.Thermostats_;
     this->boundaryConditions_ = x.boundaryConditions_;
     this->domainDimensions_ = x.domainDimensions_;
@@ -1456,6 +1637,118 @@ operator= (const simulationParamsType& x)
 
 simulationParamsType::
 ~simulationParamsType ()
+{
+}
+
+// rdfType
+//
+
+rdfType::
+rdfType (const rdfTimeInterval_type& rdfTimeInterval,
+         const rdfStatFrequency_type& rdfStatFrequency)
+: ::xml_schema::type (),
+  rdfTimeInterval_ (rdfTimeInterval, this),
+  rdfStatFrequency_ (rdfStatFrequency, this)
+{
+}
+
+rdfType::
+rdfType (const rdfType& x,
+         ::xml_schema::flags f,
+         ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  rdfTimeInterval_ (x.rdfTimeInterval_, f, this),
+  rdfStatFrequency_ (x.rdfStatFrequency_, f, this)
+{
+}
+
+rdfType::
+rdfType (const ::xercesc::DOMElement& e,
+         ::xml_schema::flags f,
+         ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  rdfTimeInterval_ (this),
+  rdfStatFrequency_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void rdfType::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // rdfTimeInterval
+    //
+    if (n.name () == "rdfTimeInterval" && n.namespace_ ().empty ())
+    {
+      if (!rdfTimeInterval_.present ())
+      {
+        this->rdfTimeInterval_.set (rdfTimeInterval_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // rdfStatFrequency
+    //
+    if (n.name () == "rdfStatFrequency" && n.namespace_ ().empty ())
+    {
+      if (!rdfStatFrequency_.present ())
+      {
+        this->rdfStatFrequency_.set (rdfStatFrequency_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!rdfTimeInterval_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "rdfTimeInterval",
+      "");
+  }
+
+  if (!rdfStatFrequency_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "rdfStatFrequency",
+      "");
+  }
+}
+
+rdfType* rdfType::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class rdfType (*this, f, c);
+}
+
+rdfType& rdfType::
+operator= (const rdfType& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->rdfTimeInterval_ = x.rdfTimeInterval_;
+    this->rdfStatFrequency_ = x.rdfStatFrequency_;
+  }
+
+  return *this;
+}
+
+rdfType::
+~rdfType ()
 {
 }
 

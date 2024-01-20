@@ -1,5 +1,6 @@
 #pragma once
 
+#include "utils/ForceCalculations.h"
 #include "particleModel/storage/CellContainer.h"
 #include <optional>
 
@@ -36,10 +37,8 @@ typedef std::vector<std::tuple<Particle*, std::array<dim_t,3>>> instructions;
 class CellCalculator {
 
 public:
-    CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,
-                   std::array<boundary_conditions,6> boundaries_cond, std::optional<double> target_temp = std::nullopt, 
-                   std::optional<double> max_temp_diff_param = std::nullopt,
-                   double gravity_factor = 0);
+    CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,double r_l_,
+                   std::array<boundary_conditions,6> boundaries_cond, std::string forceType, double gravity_factor = 0);
 
     /**
      * @brief initializes the force and updates the position to remain the calculation order
@@ -76,42 +75,6 @@ public:
      * and then iterate over all cells for V again.
      */
     void calculateWithinFVX();
-
-    /**
-     * 
-     * @brief calculates reflective boundary conditions with Ghost Particles
-     * 
-     * ! only acts on Particles if any boundary is boundary_condition::ghost_reflective !
-     * 
-     * This method assumes, that at the moment it is called all particles are within the 
-     * domain boundaries. If a particle has coordinates outside the domain it is undefined behaviour.
-     * applyBoundaries iterates over every side of the cuboid (that represents the valid domain) and 
-     * applies boundary conditions the boundary conditions specified in the 'boundaries' member
-     * of the CellCalculator class.
-     * If we are not simulating with three dimensions, the claculation of boundary conditions
-     * for the top and bottom of the domain do not happen (positive/ negative z direction).
-     * 
-     * If the boundary conditions are 'outflow', then just no 
-     * boundary conditions are applied in that direction.
-     * The outflow is automatically realized by updateCells, which deletes
-     * Particles from the cellContainer, if they have moved outside the boundary.
-     * (the particles are moved into the halo_particles vector)
-     * 
-     * If the boundary conditions are reflective, applyReflectiveBoundaries uses Ghost Partilces to create
-     * opposing forces for particles in the direction of that boundary side. 
-     * 
-     * (for imagination(how i think):
-     * 
-     *  z ^   ^
-     *    |  / x
-     *    | /
-     *    |/_________ > y
-     * )
-     * 
-     * 
-     * 
-    */
-    void applyReflectiveBoundaries();
 
     /**
      * @brief applies a Thermostat iteration to the CellContainer of this CellCalculator
@@ -167,9 +130,8 @@ public:
         return domain_bounds;
     }
 
-    std::array<double,3> force(const Particle &p_i, const Particle &p_j, const std::array<double,3> &offset);
+    ForceCalculation force;
 
-    std::array<double,3> ghostParticleLennardJonesForce(const Particle &particle,std::array<double,3> ghost_position);
 
 
 private:
@@ -177,20 +139,15 @@ private:
     const double gravity_factor;
     const double delta_t;
     const double cutoff;
+    const double r_l;
     std::array<double,3> domain_bounds;
     std::array<dim_t, 3> domain_max_dim;
-
-    std::optional<double> target_temp;
-    std::optional<double> max_temp_diff;
 
     //{positive_z,negative_z,positive_x,negative_x,positive_y,negative_y}
     std::array<boundary_conditions,6> boundaries;
     bool ghost_reflection_is_off;
 
     std::vector<std::vector<std::vector<std::vector<Particle*>>>> &particles;
-
-    void addGhostParticleForcesInDir_i(int i,double boundary,
-                                    std::vector<Particle*>& particles);
 
 
     /**
