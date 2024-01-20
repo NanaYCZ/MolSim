@@ -62,21 +62,6 @@ public:
     CustomIterator end_custom();
 
     /**
-     * @brief provides an iteration over the paths that sum up to all the linked cell combinations
-     *
-     * each call sets one "start" and one "pattern" into the given parameters, this is called by the
-     * "calcualteLinkedCellF()" method in the "CellCalculator" class. Read there to get details of
-     * the underlying algorithm.
-     * This method creates non-overlapping "paths" that can be processed simultaneously per pattern,
-     * thereby allowing parallelisation without using locks, with the hope of improving performance.
-     * It indicates the end of the iterations by setting "start[0]" value to reserved value "dim_t_res".
-     *
-     * @param start array to set the start position to or indicate the end
-     * @param pattern array to set the pattern in which to move across the cells
-     */
-    void setNextPath(std::array<dim_t, 3> &start, std::array<dim_t, 3> &pattern);
-
-    /**
      * @brief creates a particle instance with the given parameters
      *
      * stores the particle in particle_instances, and increments particle_amount.
@@ -136,27 +121,6 @@ public:
     std::array<double,3> getDomainBounds(){
         return domain_bounds;
     }
-
-    double getCellSize(){
-        return cell_size;
-    }
-
-    double getCutOfRadius(){
-        return cut_of_radius;
-    }
-
-    dim_t getComparingdepth(){
-        return comparing_depth;
-    }
-
-    std::vector<Particle*>& getHaloParticles(){
-        return halo_particles;
-    }
-
-    bool is_valid_domain_cell(dim_t x, dim_t y, dim_t z){
-        return (1 <= x && x <= domain_max_dim[0] &&  1 <= y && y <= domain_max_dim[1] && 1 <= z && z <= domain_max_dim[2]);
-    }
-
 
     /**
     * @brief allocates a cell position in the domain for the given position
