@@ -38,9 +38,11 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
 }
 
 void CellCalculator::calculateX(){
+    instructions cell_updates;
+
     //todo omp here
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
-        instructions cell_updates;
+
 
         //iterate trough particles of cell
         for (auto particle_ptr = (*cell).begin(); particle_ptr != (*cell).end();) {
@@ -60,16 +62,16 @@ void CellCalculator::calculateX(){
             cellContainer.allocateCellFromPosition(new_x, new_cell);
 
             if (new_cell[0] != cell.x || new_cell[1] != cell.y || new_cell[2] != cell.z) {
-                //todo updateCells into applyBoundaries and moveParticles/new updateCells
-                cell_updates.emplace_back(*particle_ptr, new_cell);
+
+                applyBoundaries(*particle_ptr, new_cell, cell_updates);
                 particle_ptr = (*cell).erase(particle_ptr);
             } else {
                 particle_ptr++;
             }
 
         }
-        updateCells(cell_updates);
     }
+    updateCells(cell_updates);
 }
 
 
@@ -193,61 +195,54 @@ void CellCalculator::calculatePeriodicF() {
     }
 }
 
+void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3>& new_cell_position, instructions& cell_updates) {
+    //second method for reflective boundaries
+    const std::array<double,3> &x = particle_ptr->getX();
+    const std::array<double,3> &v = particle_ptr->getV();
+    //this map is necessary, because in the boundaries member, the order is
+    //{positive_z,negative_z,positive_x,negative_x,positive_y,negative_y}
+    //but here
+    //{positive_x,negative_y,negative_z,positive_x,positive_y,positive_z}
+    // is wanted
+    static std::array<unsigned short,6> map_boundaries{3,5,1,2,4,0};//{neg_X, neg_Y, neg_Z, pos_X, pos_Y, pos_Z}
 
-void CellCalculator::updateCells(instructions& cell_updates) {
-    for(auto ins : cell_updates){
+    for (int i = 0; i < 3; ++i) {
+        //check if position is outside the domain
+        if(x[i] < 0) {
+            //check negative boundaries: 0 -> neg_X, 1 -> neg_Y, 2 -> neg_Z
+            if(boundaries[map_boundaries[i]] == boundary_conditions::reflective) {
+                //apply reflection in pos direction
+                particle_ptr->setX(i, -x[i]);
+                particle_ptr->setV(i, -v[i]);
+            } else if(boundaries[map_boundaries[i]] == boundary_conditions::periodic){
+                //apply periodic in pos direction
+                particle_ptr->addX(i,domain_bounds[i]);
+            }
+        } //check if position is outside the domain
+        else if(domain_bounds[i] < x[i]) {
+            //check positive boundaries: 3 -> pos_X, 4 -> pos_Y, 5 -> pos_Z
+            if(boundaries[map_boundaries[i+3]] == boundary_conditions::reflective) {
+                //apply reflection in neg direction
+                particle_ptr->setX(i, 2 * domain_bounds[i] - x[i]);
+                particle_ptr->setV(i, -v[i]);
 
-      Particle* particle_ptr = std::get<0>(ins);
-      std::array<dim_t, 3> new_cell_position = std::get<1>(ins);
+            } else if(boundaries[map_boundaries[i+3]] == boundary_conditions::periodic) {
+                //apply periodic in neg direction
+                particle_ptr->addX(i,-domain_bounds[i]);
+            }
+        }
+    }
 
-  
-      //second method for reflective boundaries
-      const std::array<double,3> &x = particle_ptr->getX();
-      const std::array<double,3> &v = particle_ptr->getV();
-      //this map is necessary, because in the boundaries member, the order is
-      //{positive_z,negative_z,positive_x,negative_x,positive_y,negative_y}
-      //but here 
-      //{positive_x,negative_y,negative_z,positive_x,positive_y,positive_z}
-      // is wanted
-      static std::array<unsigned short,6> map_boundaries{3,5,1,2,4,0};//{neg_X, neg_Y, neg_Z, pos_X, pos_Y, pos_Z}
+    cellContainer.allocateCellFromPosition(x, new_cell_position);
 
-      for (int i = 0; i < 3; ++i) {
-          //check if position is outside the domain
-          if(x[i] < 0) {
-              //check negative boundaries: 0 -> neg_X, 1 -> neg_Y, 2 -> neg_Z
-              if(boundaries[map_boundaries[i]] == boundary_conditions::reflective) {
-                  //apply reflection in pos direction
-                  particle_ptr->setX(i, -x[i]);
-                  particle_ptr->setV(i, -v[i]);
-              } else if(boundaries[map_boundaries[i]] == boundary_conditions::periodic){
-                  //apply periodic in pos direction
-                  particle_ptr->addX(i,domain_bounds[i]);
-              } 
-          } //check if position is outside the domain
-          else if(domain_bounds[i] < x[i]) {
-              //check positive boundaries: 3 -> pos_X, 4 -> pos_Y, 5 -> pos_Z
-              if(boundaries[map_boundaries[i+3]] == boundary_conditions::reflective) {
-                  //apply reflection in neg direction
-                  particle_ptr->setX(i, 2 * domain_bounds[i] - x[i]);
-                  particle_ptr->setV(i, -v[i]);
+    if( 0 < new_cell_position[0] &&  new_cell_position[0] <= domain_max_dim[0] &&
+        0 < new_cell_position[1] &&  new_cell_position[1] <= domain_max_dim[1] &&
+        0 < new_cell_position[2] && new_cell_position[2] <= domain_max_dim[2]) {
 
-              } else if(boundaries[map_boundaries[i+3]] == boundary_conditions::periodic) {
-                  //apply periodic in neg direction
-                  particle_ptr->addX(i,-domain_bounds[i]);
-              } 
-          }
-      }
+        //todo lock here
+        cell_updates.emplace_back(particle_ptr, new_cell_position);
 
-      cellContainer.allocateCellFromPosition(x, new_cell_position);
-
-      if( 0 < new_cell_position[0] &&  new_cell_position[0] <= domain_max_dim[0] &&
-            0 < new_cell_position[1] &&  new_cell_position[1] <= domain_max_dim[1] &&
-            0 < new_cell_position[2] && new_cell_position[2] <= domain_max_dim[2]) {
-
-          std::vector<Particle*> *new_cell = &particles[new_cell_position[0]][new_cell_position[1]][new_cell_position[2]];
-          //todo delegate movement
-          new_cell->push_back(particle_ptr);
-      }else{
+    }else{
         SPDLOG_INFO("new halo particle: " + (*particle_ptr).toString());
         //todo lock here
         //just delete them because we don't have halo particles anyway
@@ -256,8 +251,19 @@ void CellCalculator::updateCells(instructions& cell_updates) {
         auto it = std::find(instances.begin(),instances.end(),*particle_ptr);
         if(it != instances.end())
             instances.erase(it);
-      }
-      
+    }
+}
+
+void CellCalculator::updateCells(instructions& cell_updates) {
+    //todo omp here vs simply sequential?
+    for(auto ins : cell_updates){
+
+      Particle* particle_ptr = std::get<0>(ins);
+      std::array<dim_t, 3>& new_cell_position = std::get<1>(ins);
+
+      std::vector<Particle*> *new_cell = &particles[new_cell_position[0]][new_cell_position[1]][new_cell_position[2]];
+      //todo lock here
+      new_cell->push_back(particle_ptr);
     }
 }
 

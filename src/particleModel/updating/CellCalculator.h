@@ -23,7 +23,7 @@ extern std::vector<std::vector<double>> epsilon_mixed;
  * a tuple contains the index of a particle within it's cell, the current cell it's
  * located and the new cell to move it into.
  */
-typedef std::vector<std::tuple<Particle*, std::array<dim_t,3>>> instructions;
+typedef std::vector<std::tuple<Particle*, std::array<dim_t,3>&>> instructions;
 
 /**
  * @class CellCalculator
@@ -167,6 +167,8 @@ private:
      * @param cell_updates list of instructions to change the location of particles
      */
     void updateCells(instructions& cell_updates);
+
+    void applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3>& new_cell_position, instructions& cell_updates);
 
     /**
      * @brief helper method calculate the Velocity and Position
