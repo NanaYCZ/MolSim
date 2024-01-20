@@ -100,67 +100,9 @@ CellContainer::CellContainer(double d_width, double d_height, double d_depth, do
 
 CellContainer::~CellContainer() {}
 
-void CellContainer::setNextCell(std::array<dim_t, 3> &next_position) {
-    static dim_t x = 1;
-    static dim_t y = 1;
-    static dim_t z = 1;
-
-    //previous call set x to reserved value, indicating the end
-    if(x == dim_t_res) {
-        next_position[0] = dim_t_res;
-        x = 1;
-        y = 1;
-        z = 1;
-        return;
-    }
-
-    while(particles[x][y][z].empty()) {
-
-        if(x < domain_max_dim[0]) {
-            ++x;
-
-        }else if(y < domain_max_dim[1]) {
-            x = 1;
-            ++y;
-
-        } else if(z < domain_max_dim[2]) {
-            x = 1;
-            y = 1;
-            ++z;
-
-        } else {
-            //done
-            next_position[0] = dim_t_res;
-            x = 1;
-            y = 1;
-            z = 1;
-            return;
-        }
-    }
-
-    next_position[0] = x;
-    next_position[1] = y;
-    next_position[2] = z;
-
-    if (x < domain_max_dim[0]) {
-        ++x;
-    }else if (y < domain_max_dim[1]) {
-        x = 1;
-        ++y;
-    } else if (z < domain_max_dim[2]) {
-        x = 1;
-        y = 1;
-        ++z;
-    } else {
-        //done
-        x = dim_t_res;
-    }
-}
-
 enum direction_status {
     first_subset, second_subset, third_subset
 };
-
 
 void CellContainer::setNext3dPattern(std::array<dim_t, 3> &pattern, std::array<dim_t, 3> &start) {
     static direction_status status = first_subset;
@@ -258,130 +200,6 @@ void CellContainer::setNext2dPattern(std::array<dim_t, 3> &pattern, std::array<d
     }
 }
 
-void CellContainer::setNextPath(std::array<dim_t, 3> &start, std::array<dim_t, 3> &pattern) {
-    static std::array<dim_t, 3> current_pattern{0,0,0};
-    static std::array<dim_t, 3> begin{1,1,1};
-    static std::array<dim_t, 3> end(domain_max_dim);
-    static dim_t tmp_x = 0;
-    static dim_t tmp_y = 0;
-    static dim_t tmp_z = 0;
-    static dim_t s_x, s_y, s_z;
-
-    if(tmp_x == 0 && tmp_y == 0 && tmp_z == 0) {
-        //get next pattern
-
-        if(three_dimensions) {
-            setNext3dPattern(current_pattern, start);
-        } else {
-            setNext2dPattern(current_pattern, start);
-        }
-
-        tmp_x = current_pattern[0];
-        tmp_y = current_pattern[1];
-        tmp_z = current_pattern[2];
-        s_x = 1;
-        s_y = 1;
-        s_z = 1;
-        begin = {1,1,1};
-        end = domain_max_dim;
-    }
-
-    pattern[0] = current_pattern[0];
-    pattern[1] = current_pattern[1];
-    pattern[2] = current_pattern[2];
-
-    //get next start
-    if(tmp_x != 0) {
-        start[1] = s_y;
-        start[2] = s_z;
-
-        if(0 < tmp_x) {
-            start[0] = tmp_x;
-            begin[0] = current_pattern[0] + 1;
-        } else {
-            start[0] = tmp_x + domain_max_dim[0] + 1;
-            end[0] = domain_max_dim[0] + current_pattern[0];
-        }
-
-        if(s_y < end[1]) {
-            ++s_y;
-
-        } else if(s_z < end[2]) {
-            s_y = 1;
-            ++s_z;
-
-        } else {
-            s_y = 1;
-            s_z = 1;
-
-            if(0 < tmp_x) {
-                s_x = begin[0];
-                --tmp_x;
-            } else {
-                ++tmp_x;
-            }
-        }
-    } else if(tmp_y != 0) {
-        start[0] = s_x;
-        start[2] = s_z;
-
-        if(0 < tmp_y) {
-            start[1] = tmp_y;
-            begin[1] = current_pattern[1] + 1;
-        } else {
-            start[1] = tmp_y + domain_max_dim[1] + 1;
-            end[1] = domain_max_dim[1] + current_pattern[1];
-        }
-
-        if(s_x < end[0]) {
-            ++s_x;
-
-        } else if(s_z < end[2]) {
-            s_x = begin[0];
-            ++s_z;
-
-        } else {
-            s_x = begin[0];
-            s_z = 1;
-
-            if(0 < tmp_y) {
-                s_y = begin[1];
-                --tmp_y;
-            } else {
-                ++tmp_y;
-            }
-        }
-    } else if(tmp_z != 0) {
-        start[0] = s_x;
-        start[1] = s_y;
-
-        if(0 < tmp_z) {
-            start[2] = tmp_z;
-        } else {
-            start[2] = tmp_z + domain_max_dim[2] + 1;
-        }
-
-        if(s_x < end[0]) {
-            ++s_x;
-
-        } else if(s_y < end[1]) {
-            s_x = begin[0];
-            ++s_y;
-
-        } else {
-            s_x = begin[0];
-            s_y = begin[1];
-
-            if(0 < tmp_z) {
-                --tmp_z;
-            } else {
-                ++tmp_z;
-            }
-        }
-    }
-}
-
-
 CellContainer::CustomIterator CellContainer::begin_custom(dim_t low_x, dim_t upp_x,
                                                           dim_t low_y, dim_t upp_y,
                                                           dim_t low_z, dim_t upp_z){
@@ -401,15 +219,6 @@ CellContainer::Iterator CellContainer::end(){
     //corresponds to last index
     return Iterator(*this,-1,1,1);
 }
-
-std::vector<Particle*>::iterator CellContainer::begin_halo(){
-    return halo_particles.begin();
-}
-
-std::vector<Particle*>::iterator CellContainer::end_halo(){
-    return halo_particles.end();
-}
-
 
 void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg) {
     addParticle(x_arg, v_arg, m_arg, sigma_mixed[0][0], epsilon_mixed[0][0]);
@@ -498,51 +307,44 @@ void CellContainer::createPointers(){
 
 void CellContainer::plotParticles(outputWriter::VTKWriter &writer) {
     std::array<dim_t, 3> current_position;
-  
-    setNextCell(current_position);
 
-    while(current_position[0] != dim_t_res) {
-        std::vector<Particle*> *current_cell = &particles[current_position[0]][current_position[1]][current_position[2]];
-
-        for(Particle* particle : *current_cell){
-            writer.plotParticle(*particle);
-        }
-        setNextCell(current_position);
+    for(Particle& particle : particle_instances){
+        writer.plotParticle(particle);
     }
 }
 
 
 std::string CellContainer::to_string() {
-  std::ostringstream out_str;  
+    std::ostringstream out_str;
 
     size_t amt = 0;
 
-  out_str << "The actual domain has  \n" <<  particles.size() <<  " cells in x dir. \n" << particles[0].size() << " cells in y dir. \n"  << particles[0][0].size() << " cells in z dir." << std::endl;
-  out_str << "The actual domain is from  \nx: 1 - " << (domain_max_dim[0]) <<  "(domain_max_dim[0])\ny: 1 - " << (domain_max_dim[1]) << "(domain_max_dim[1])\nz: 1 - "  << (domain_max_dim[2]) << "(domain_max_dim[2])" << std::endl;
-    out_str << "Are we in 3d?: " <<  (three_dimensions ? "Yes" : "No") << std::endl;
-    out_str << "cell_size: " <<  cell_size << std::endl;
-    out_str << "comparing_depth: " <<  comparing_depth << std::endl;
-    out_str << "domain_bounds [0]:" << domain_bounds[0] << " [1]:" << domain_bounds[1] << " [2]:" << domain_bounds[2]  << std::endl;
+    out_str << "The actual domain has  \n" << particles.size() << " cells in x dir. \n" << particles[0].size()
+            << " cells in y dir. \n" << particles[0][0].size() << " cells in z dir." << std::endl;
+    out_str << "The actual domain is from  \nx: 1 - " << (domain_max_dim[0]) << "(domain_max_dim[0])\ny: 1 - "
+            << (domain_max_dim[1]) << "(domain_max_dim[1])\nz: 1 - " << (domain_max_dim[2]) << "(domain_max_dim[2])"
+            << std::endl;
+    out_str << "Are we in 3d?: " << (three_dimensions ? "Yes" : "No") << std::endl;
+    out_str << "cell_size: " << cell_size << std::endl;
+    out_str << "comparing_depth: " << comparing_depth << std::endl;
+    out_str << "domain_bounds [0]:" << domain_bounds[0] << " [1]:" << domain_bounds[1] << " [2]:" << domain_bounds[2]
+            << std::endl;
 
-  std::array<dim_t, 3> current_position;
-  setNextCell(current_position);  
-  while(current_position[0] != dim_t_res){
-    out_str << "The cell with index x=" << current_position[0] << " y=" << current_position[1] << " z=" << current_position[2] << std::endl;
-    out_str << "Has the following Particles: " << std::endl;
+    for (CellIterator it = begin_CI(); it != end_CI(); ++it) {
+        out_str << "The cell with index x=" << it.position()[0] << " y=" << it.position()[1] << " z="
+                << it.position()[2] << std::endl;
+        out_str << "Has the following Particles: " << std::endl;
 
-    std::vector<Particle*>* cell = &particles[current_position[0]][current_position[1]][current_position[2]];
-    for(auto* particle : *cell){
-      out_str << (*particle).toString() << std::endl;
-      amt++;
+        for (auto *particle: *it) {
+            out_str << (*particle).toString() << std::endl;
+            amt++;
+        }
+        out_str << "\n\n";
     }
-    out_str << "\n\n";
-    setNextCell(current_position);  
-  }
-
 
     out_str << "in total amt: " << size() << std::endl;
 
-  return out_str.str();
+    return out_str.str();
 }
 
 

@@ -61,26 +61,6 @@ public:
 
     CustomIterator end_custom();
 
-
-    /**
-     * @returns Iterator that iterates over all particles that went outside the domain boundary / are in the halo 
-     * 
-    */
-    std::vector<Particle*>::iterator begin_halo();
-
-    std::vector<Particle*>::iterator end_halo();
-
-    /**
-     * @brief provides an iteration over the non empty domain cells based on the consumer-producer pattern
-     *
-     * each call sets one iteration into "next_position" until all the domain cells got covered.
-     * Indicates the end with the reserved value "dim_t_res".
-     * Implemented for parallelisation-friendliness.
-     *
-     * @param next_position array to set the next position or "dim_t_res" to.
-     */
-    void setNextCell(std::array<dim_t, 3> &next_position);
-
     /**
      * @brief provides an iteration over the paths that sum up to all the linked cell combinations
      *
@@ -195,7 +175,6 @@ private:
     size_t particle_amount = 0;
 
     std::list<Particle> particle_instances;
-    std::vector<Particle*> halo_particles;
 
     static std::array<dim_t, 3> domain_max_dim;
     static std::vector<std::array<dim_t,3>> patterns;
@@ -204,7 +183,7 @@ private:
     friend class ThermoStats;
     friend class CellCalculator;
     friend class CellIterator;
-    friend class PeriodIterator;
+    friend class StartPointIterator;
 
     /**
       * @brief helper method to set the next 3d pattern for "setNextPath(...)"
