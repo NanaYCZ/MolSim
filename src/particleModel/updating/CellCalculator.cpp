@@ -3,10 +3,8 @@
 #include "utils/ArrayUtils.h"
 #include <iostream>
 #include <spdlog/spdlog.h>
-#include <limits>
 #include <list>
 #include <algorithm>
-#include <cmath>
 
 double min_distance = 0.7;
 
@@ -35,9 +33,8 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
 void CellCalculator::calculateX(){
     instructions cell_updates;
 
-    //todo omp here
+    #pragma omp parallel for default(none) shared(cell_updates) schedule(dynamic)
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
-
 
         //iterate trough particles of cell
         for (auto particle_ptr = (*cell).begin(); particle_ptr != (*cell).end();) {
@@ -63,16 +60,17 @@ void CellCalculator::calculateX(){
             } else {
                 particle_ptr++;
             }
-
         }
     }
+
     updateCells(cell_updates);
 }
 
 
 
 void CellCalculator::calculateV(){
-    //todo omp here
+
+    #pragma omp parallel for default(none)
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
         for (auto particle_ptr: *cell) {
             Particle &particle = *particle_ptr;
@@ -93,13 +91,16 @@ void CellCalculator::calculateV(){
 void CellCalculator::calculateF(){
     calculateLinkedCellF();
     calculatePeriodicF();
-    //todo omp here
+
+    #pragma omp parallel for default(none) schedule(dynamic)
     for (auto iter = begin_CI(); iter != end_CI(); ++iter) {
         finishF(&(*iter));
     }
 }
 
 void CellCalculator::shiftF(){
+
+    #pragma omp parallel for default(none)
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
         for (auto particle_ptr: *cell) {
             particle_ptr->shiftF();
@@ -109,23 +110,24 @@ void CellCalculator::shiftF(){
 
 void CellCalculator::calculateLinkedCellF() {
     for(std::array<dim_t,3> pattern : CellContainer::patterns) {
-        //todo omp here
-        std::array<dim_t, 3> current_cell{};
-        std::array<double, 3> F_ij{};
-        std::vector<Particle*>* cell_1;
-        std::vector<Particle*>* cell_2;
 
+        #pragma omp parallel for default(none) shared(pattern) schedule(dynamic)
         for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
+            std::array<double, 3> F_ij{};
+            std::vector<Particle*>* cell_1;
+            std::vector<Particle*>* cell_2;
 
-            current_cell = *it;
+            std::array<dim_t, 3> current_cell = *it;
+
             cell_1 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
             current_cell[0] += pattern[0];
             current_cell[1] += pattern[1];
             current_cell[2] += pattern[2];
 
             while (0 < current_cell[0] && 0 < current_cell[1] && 0 < current_cell[2] &&
-                   current_cell[0] <= domain_max_dim[0]
-                   && current_cell[1] <= domain_max_dim[1] && current_cell[2] <= domain_max_dim[2]) {
+                   current_cell[0] <= domain_max_dim[0] &&
+                   current_cell[1] <= domain_max_dim[1] &&
+                   current_cell[2] <= domain_max_dim[2]) {
 
                 cell_2 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
 
@@ -143,8 +145,7 @@ void CellCalculator::calculateLinkedCellF() {
                     }
                 }
 
-                //cell_1 = cell_2?
-                cell_1 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
+                cell_1 = cell_2;
                 current_cell[0] += pattern[0];
                 current_cell[1] += pattern[1];
                 current_cell[2] += pattern[2];
@@ -155,7 +156,8 @@ void CellCalculator::calculateLinkedCellF() {
 
 void CellCalculator::calculatePeriodicF() {
     for(std::array<dim_t,3> pattern : CellContainer::patterns) {
-        //todo omp here
+
+        #pragma omp parallel for default(none) shared(pattern)
         for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
 
             std::array<dim_t, 3> current_cell = it.outside();
@@ -232,31 +234,35 @@ void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3
         0 < new_cell_position[1] &&  new_cell_position[1] <= domain_max_dim[1] &&
         0 < new_cell_position[2] && new_cell_position[2] <= domain_max_dim[2]) {
 
-        //todo lock here
-        cell_updates.emplace_back(particle_ptr, new_cell_position);
+        #pragma omp critical
+        {
+            cell_updates.emplace_back(particle_ptr, new_cell_position);
+        }
 
     }else{
         SPDLOG_INFO("new halo particle: " + (*particle_ptr).toString());
-        //todo lock here
         //just delete them because we don't have halo particles anyway
         //cellContainer.getHaloParticles().push_back(particle_ptr);
-        auto& instances = cellContainer.particle_instances;
-        auto it = std::find(instances.begin(),instances.end(),*particle_ptr);
-        if(it != instances.end())
-            instances.erase(it);
+        #pragma omp critical
+        {
+            auto &instances = cellContainer.particle_instances;
+            auto it = std::find(instances.begin(), instances.end(), *particle_ptr);
+            if (it != instances.end())
+                instances.erase(it);
+        }
     }
 }
 
 void CellCalculator::updateCells(instructions& cell_updates) {
-    //todo omp here vs simply sequential?
+    //todo omp vs sequential?
     for(auto ins : cell_updates){
 
-      Particle* particle_ptr = std::get<0>(ins);
-      std::array<dim_t, 3>& new_cell_position = std::get<1>(ins);
+        std::array<dim_t, 3> &new_cell_position = std::get<1>(ins);
 
-      std::vector<Particle*> *new_cell = &particles[new_cell_position[0]][new_cell_position[1]][new_cell_position[2]];
-      //todo lock here
-      new_cell->push_back(particle_ptr);
+        std::vector<Particle *> *new_cell = &particles[new_cell_position[0]][new_cell_position[1]][new_cell_position[2]];
+
+        //todo lock here?
+        new_cell->push_back(std::get<0>(ins));
     }
 }
 
