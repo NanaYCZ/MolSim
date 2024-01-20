@@ -41,14 +41,6 @@ public:
                    std::array<boundary_conditions,6> boundaries_cond, std::string forceType, double gravity_factor = 0);
 
     /**
-     * @brief initializes the force and updates the position to remain the calculation order
-     *
-     * we set the calculation order inside the while loop to F - V - X, that's why we have to
-     * calculate X before the loop in order to keep the pattern F - X - F - V - X - F - V - X...
-     */
-    void initializeFX();
-
-    /**
      * @brief calculate the forces acting between the particles in two cells each, along given paths
      *
      * in order to consider all the particles in cutoff distance, we have to look at a certain amount
@@ -64,17 +56,6 @@ public:
     void calculateLinkedCellF();
 
     void calculatePeriodicF();
-
-    /**
-     * @brief calculate the forces not covered in "calculateLinkedCellF()", V, X and update the cells
-     *
-     * We applied a new order of calculating because V and X can be calculated independently from
-     * other particles as long as the force of them is all up-to-date. This means that after we
-     * finished the force calculation within a cell, we can keep the cell and calculate V and X
-     * on top. This is more elegant than having to iterate over all cells for X, then F + cell pairs
-     * and then iterate over all cells for V again.
-     */
-    void calculateWithinFVX();
 
     /**
      * @brief applies a Thermostat iteration to the CellContainer of this CellCalculator
@@ -169,17 +150,6 @@ private:
     void updateCells(instructions& cell_updates);
 
     void applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3>& new_cell_position, instructions& cell_updates);
-
-    /**
-     * @brief helper method calculate the Velocity and Position
-     *
-     * in order to keep "calculateWithinFVX()" and "initializeFX()" clean, we moved
-     * the functionality to calculate the two attributes V and X into this method.
-     *
-     * @param particle the particle to update the attributes of
-     * @param calculateV to make it applicable for both calculations "FVX" and "FX"
-     */
-    void calculateVX(Particle& particle, bool calculateV);
 
     /**
      * @brief helper method to calculate the forces not covered in "calculateLinkedCellF()"
