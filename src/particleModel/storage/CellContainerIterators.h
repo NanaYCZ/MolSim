@@ -196,6 +196,8 @@ public:
 
     CellIterator &operator++();
 
+    std::array<dim_t,3> position();
+
     std::vector<Particle*>& operator*() const;
 
     //for sequential iterations
@@ -224,17 +226,19 @@ enum state_PI {
     finished = -2
 };
 
-class PeriodIterator {
+class StartPointIterator {
 public:
-    PeriodIterator(std::array<dim_t, 3> pattern);
+    StartPointIterator(std::array<dim_t, 3> pattern);
 
-    PeriodIterator();
+    StartPointIterator();
 
-    PeriodIterator &operator+=(int p);
+    StartPointIterator &operator+=(int p);
 
-    PeriodIterator operator++();
+    StartPointIterator operator++();
 
-    bool operator!=(PeriodIterator other);
+    bool operator!=(StartPointIterator other);
+
+    std::array<dim_t, 3> outside();
 
     std::array<dim_t,3> operator*();
 
@@ -264,7 +268,7 @@ public:
     void set_plane_position_on_axis();
 };
 
-int operator-(PeriodIterator a, PeriodIterator b);
+int operator-(StartPointIterator a, StartPointIterator b);
 
-PeriodIterator begin_PI(std::array<dim_t,3> pattern);
-PeriodIterator end_PI();
+StartPointIterator begin_SI(std::array<dim_t,3> pattern);
+StartPointIterator end_SI();

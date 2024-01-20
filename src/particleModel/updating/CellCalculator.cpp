@@ -107,63 +107,61 @@ void CellCalculator::shiftF(){
     }
 }
 
-
 void CellCalculator::calculateLinkedCellF() {
-    static std::array<dim_t, 3> current_cell;
-    static std::array<dim_t, 3> pattern;
-    std::vector<Particle*>* cell_1;
-    std::vector<Particle*>* cell_2;
-    std::array<double, 3> F_ij{};
+    for(std::array<dim_t,3> pattern : CellContainer::patterns) {
+        //todo omp here
+        std::array<dim_t, 3> current_cell{};
+        std::array<double, 3> F_ij{};
+        std::vector<Particle*>* cell_1;
+        std::vector<Particle*>* cell_2;
 
-    //write new path inside current/start and pattern
-    cellContainer.setNextPath(current_cell, pattern);
+        for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
 
-    //todo make start & pattern iterator
-    while(current_cell[0] != dim_t_res) {
-        cell_1 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
-        current_cell[0] += pattern[0];
-        current_cell[1] += pattern[1];
-        current_cell[2] += pattern[2];
-
-        while(0 < current_cell[0] && 0 < current_cell[1] && 0 < current_cell[2] && current_cell[0] <= domain_max_dim[0]
-              && current_cell[1] <= domain_max_dim[1] && current_cell[2] <= domain_max_dim[2]) {
-
-            cell_2 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
-
-            for(auto & p_i : *cell_1) {
-                for(auto & p_j : *cell_2) {
-
-                    if(inCutoffDistance(*p_i, *p_j, {0, 0, 0})) {
-                        F_ij = force(*p_i, *p_j, {0, 0, 0});
-
-                        for (int i = 0; i < 3; i++) {
-                            p_i->addF(i, F_ij[i]);
-                            p_j->addF(i, -F_ij[i]);
-                        }
-                    }
-                }
-            }
-
+            current_cell = *it;
             cell_1 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
             current_cell[0] += pattern[0];
             current_cell[1] += pattern[1];
             current_cell[2] += pattern[2];
-        }
 
-        cellContainer.setNextPath(current_cell, pattern);
+            while (0 < current_cell[0] && 0 < current_cell[1] && 0 < current_cell[2] &&
+                   current_cell[0] <= domain_max_dim[0]
+                   && current_cell[1] <= domain_max_dim[1] && current_cell[2] <= domain_max_dim[2]) {
+
+                cell_2 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
+
+                for (auto &p_i: *cell_1) {
+                    for (auto &p_j: *cell_2) {
+
+                        if (inCutoffDistance(*p_i, *p_j, {0, 0, 0})) {
+                            F_ij = force(*p_i, *p_j, {0, 0, 0});
+
+                            for (int i = 0; i < 3; i++) {
+                                p_i->addF(i, F_ij[i]);
+                                p_j->addF(i, -F_ij[i]);
+                            }
+                        }
+                    }
+                }
+
+                //cell_1 = cell_2?
+                cell_1 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
+                current_cell[0] += pattern[0];
+                current_cell[1] += pattern[1];
+                current_cell[2] += pattern[2];
+            }
+        }
     }
 }
 
 void CellCalculator::calculatePeriodicF() {
     for(std::array<dim_t,3> pattern : CellContainer::patterns) {
-
         //todo omp here
-        for (PeriodIterator it = begin_PI(pattern); it != end_PI(); ++it) {
+        for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
 
-            std::array<dim_t, 3> current_cell = *it;
+            std::array<dim_t, 3> current_cell = it.outside();
             std::vector<Particle *> *cell_1 = &particles[current_cell[0] - pattern[0]]
-            [current_cell[1] - pattern[1]]
-            [current_cell[2] - pattern[2]];
+                                                        [current_cell[1] - pattern[1]]
+                                                        [current_cell[2] - pattern[2]];
 
             std::array<double, 3> particle_offset{0, 0, 0};
             std::array<double, 3> F_ij{};

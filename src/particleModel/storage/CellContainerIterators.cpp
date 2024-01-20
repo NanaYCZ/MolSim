@@ -106,9 +106,12 @@ CellIterator &CellIterator::operator++() {
     return *this;
 }
 
+std::array<dim_t,3> CellIterator::position() {
+    return {x,y,z};
+}
+
 std::vector<Particle*>& CellIterator::operator*() const {
-    std::vector<Particle*>& ret = CellContainer::particles[x][y][z];
-    return ret;
+    return CellContainer::particles[x][y][z];
 }
 
 bool CellIterator::operator!=(CellIterator other) const {
@@ -151,7 +154,7 @@ CellIterator end_CI() {
 }
 
 
-PeriodIterator::PeriodIterator(std::array<dim_t, 3> pattern) : progress(pattern){
+StartPointIterator::StartPointIterator(std::array<dim_t, 3> pattern) : progress(pattern){
     next_index();
     total = std::abs(pattern[0]) * CellContainer::domain_max_dim[1] * CellContainer::domain_max_dim[2] +
             std::abs(pattern[1]) * (CellContainer::domain_max_dim[0] - std::abs(pattern[0])) *
@@ -160,33 +163,37 @@ PeriodIterator::PeriodIterator(std::array<dim_t, 3> pattern) : progress(pattern)
             (CellContainer::domain_max_dim[1] - std::abs(pattern[1]));
 }
 
-PeriodIterator::PeriodIterator() : progress({0,0,0}), plane_axis(finished), total(0) {}
+StartPointIterator::StartPointIterator() : progress({0, 0, 0}), plane_axis(finished), total(0) {}
 
-PeriodIterator &PeriodIterator::operator+=(int p) {
+StartPointIterator &StartPointIterator::operator+=(int p) {
     for (int i = 0; i < p; ++i) {
         next_index();
     }
     return *this;
 }
 
-PeriodIterator PeriodIterator::operator++() {
+StartPointIterator StartPointIterator::operator++() {
     next_index();
     return *this;
 }
 
-bool PeriodIterator::operator!=(PeriodIterator other) {
+bool StartPointIterator::operator!=(StartPointIterator other) {
     return progress[0] != other.progress[0] ||
            progress[1] != other.progress[1] ||
            progress[2] != other.progress[2] ||
            plane_axis != other.plane_axis;
 }
 
-std::array<dim_t, 3> PeriodIterator::operator*() {
+std::array<dim_t, 3> StartPointIterator::outside() {
     return {current[0] + mapping[0], current[1] + mapping[1], current[2] + mapping[2]};
 }
 
+std::array<dim_t, 3> StartPointIterator::operator*() {
+    return current;
+}
+
 //"iterates over every point of every plane"
-void PeriodIterator::next_index() {
+void StartPointIterator::next_index() {
     switch (plane_axis) {
         case x_axis: {
             next_point_on_plane(1, 2);
@@ -212,7 +219,7 @@ void PeriodIterator::next_index() {
 }
 
 //"iterates over every point of a plane"
-void PeriodIterator::next_point_on_plane(short a, short b) {
+void StartPointIterator::next_point_on_plane(short a, short b) {
     if (current[a] < max[a]) {
         ++current[a];
 
@@ -228,7 +235,7 @@ void PeriodIterator::next_point_on_plane(short a, short b) {
 }
 
 //"iterates over every plane"
-void PeriodIterator::next_plane_corner() {
+void StartPointIterator::next_plane_corner() {
     if (progress[0] != 0) {
         plane_axis = x_axis;
 
@@ -265,7 +272,7 @@ void PeriodIterator::next_plane_corner() {
     }
 }
 
-void PeriodIterator::set_plane_position_on_axis() {
+void StartPointIterator::set_plane_position_on_axis() {
     if (progress[plane_axis] < 0) {
         //position of the next plane on axis
         current[plane_axis] = CellContainer::domain_max_dim[plane_axis] + progress[plane_axis] + 1;
@@ -285,12 +292,12 @@ void PeriodIterator::set_plane_position_on_axis() {
 }
 
 
-int operator-(PeriodIterator a, PeriodIterator b) { return b.total; }
+int operator-(StartPointIterator a, StartPointIterator b) { return b.total; }
 
-PeriodIterator begin_PI(std::array<dim_t,3> pattern) {
+StartPointIterator begin_SI(std::array<dim_t,3> pattern) {
     return {pattern};
 }
 
-PeriodIterator end_PI() {
+StartPointIterator end_SI() {
     return {};
 }
