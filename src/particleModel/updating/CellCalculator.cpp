@@ -26,6 +26,7 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
 }
 
 void CellCalculator::calculateX(){
+    //todo omp here
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
         instructions cell_updates;
 
@@ -47,6 +48,7 @@ void CellCalculator::calculateX(){
             cellContainer.allocateCellFromPosition(new_x, new_cell);
 
             if (new_cell[0] != cell.x || new_cell[1] != cell.y || new_cell[2] != cell.z) {
+                //todo updateCells into applyBoundaries and moveParticles/new updateCells
                 cell_updates.emplace_back(*particle_ptr, new_cell);
                 particle_ptr = (*cell).erase(particle_ptr);
             } else {
@@ -60,6 +62,7 @@ void CellCalculator::calculateX(){
 
 
 void CellCalculator::calculateV(){
+    //todo omp here
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
         for (auto particle_ptr: *cell) {
             Particle &particle = *particle_ptr;
@@ -80,6 +83,7 @@ void CellCalculator::calculateV(){
 void CellCalculator::calculateF(){
     calculateLinkedCellF();
     calculatePeriodicF();
+    //todo omp here
     for (auto iter = begin_CI(); iter != end_CI(); ++iter) {
         finishF(&(*iter));
     }
@@ -136,32 +140,6 @@ void CellCalculator::calculateLinkedCellF() {
             current_cell[2] += pattern[2];
         }
 
-        /*
-        //apply force between the last two cells of the path, the cell_1 being
-        //the last one in the domain and cell_2 being the mirrored position of
-        //the previously out of domain one
-        std::array<double,3> particle_offset{0,0,0};
-        if(mirror(current_cell, particle_offset)) {
-
-            //todo lock/delegate mirrored
-            cell_2 = &particles[current_cell[0]][current_cell[1]][current_cell[2]];
-
-            for(auto & p_i : *cell_1) {
-                for(auto & p_j : *cell_2) {
-
-                    if(inCutoffDistance(*p_i, *p_j, particle_offset)) {
-                        F_ij = force(*p_i, *p_j, particle_offset);
-
-                        for (int i = 0; i < 3; i++) {
-                            p_i->addF(i, F_ij[i]);
-                            p_j->addF(i, -F_ij[i]);
-                        }
-                    }
-                }
-            }
-        }
-         */
-
         cellContainer.setNextPath(current_cell, pattern);
     }
 }
@@ -169,6 +147,7 @@ void CellCalculator::calculateLinkedCellF() {
 void CellCalculator::calculatePeriodicF() {
     for(std::array<dim_t,3> pattern : CellContainer::patterns) {
 
+        //todo omp here
         for (PeriodIterator it = begin_PI(pattern); it != end_PI(); ++it) {
 
             std::array<dim_t, 3> current_cell = *it;
@@ -253,7 +232,7 @@ void CellCalculator::updateCells(instructions& cell_updates) {
             0 < new_cell_position[2] && new_cell_position[2] <= domain_max_dim[2]) {
 
           std::vector<Particle*> *new_cell = &particles[new_cell_position[0]][new_cell_position[1]][new_cell_position[2]];
-          //todo lock here
+          //todo delegate movement
           new_cell->push_back(particle_ptr);
       }else{
         SPDLOG_INFO("new halo particle: " + (*particle_ptr).toString());
