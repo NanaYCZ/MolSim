@@ -17,6 +17,11 @@
     <cutOffRadius>2.3</cutOffRadius>                                          
     <cellSize>2.3</cellSize>
     <forceType>smoothedLJ</forceType>
+    <Rdf>
+      <rdfTimeInterval>0.05</rdfTimeInterval>
+      <rdfStatFrequency>10000</rdfStatFrequency>
+    </Rdf>
+    <diffusionStatFrequency>1000</diffusionStatFrequency>
     <Thermostats>
         <initTemp>3.0</initTemp>
         <targetTemp>0.5</targetTemp>

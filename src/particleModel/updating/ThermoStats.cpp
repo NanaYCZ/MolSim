@@ -13,27 +13,74 @@ ThermoStats::ThermoStats(CellContainer& container, double delta_t_param,
          max_temp_diff(max_temp_diff_param) { }
 
 
+double ThermoStats::getPotentialEnergy(){
+  double sum = 0;
+  auto& instances = cellContainer.getInstances();
+
+  for(auto p1 = instances.begin(); p1 != instances.end(); p1++){
+        for(auto p2 = std::next(p1);p2 != instances.end();  p2++){
+            double dist = ArrayUtils::L2Norm(p1->getX() - p2->getX());
+            sum +=  4 * (std::pow(1/dist,12) - std::pow(1/dist,6));
+        }
+    }
+
+  return sum;
+}
+
+double square(std::array<double,3> x1, std::array<double,3> x2){
+  return (x1[0] * x2[0] + x1[1] * x2[1] + x1[2] * x2[2]);
+}
+
+double ThermoStats::getPressure(){
+  double sum = 0;
+  auto& instances = cellContainer.getInstances();
+
+  for(auto p1 = instances.begin(); p1 != instances.end(); p1++){
+      sum += (p1->getM() * square(p1->getV(),p1->getV()) +  square(p1->getF(),p1->getX()));
+  }
+
+  return sum;
+}
+
+void ThermoStats::initDiffCoeff(){
+  //std::cout << "Start init diffcoeff\n";
+  old_particle_positions = {};
+  std::list<Particle>& particles = cellContainer.getInstances();
+  for(Particle& particle : particles){
+    old_particle_positions.push_back(std::make_pair(&particle,particle.getX()));
+  }
+  //std::cout << "End init diffcoeff\n";
+}
+
 double ThermoStats::diffusionCoeff(){
+  //std::cout << "Start diffcoeff\n";
     double sum = 0;
     size_t amt = 0;
 
     for(auto iter = begin_CI(); iter != end_CI(); ++iter){
         for(Particle* particle_ptr : *iter){
-            Particle particle = *particle_ptr;
-            std::array<double, 3> old_f, v, diff;
-
-            old_f = particle.getOldF();
-            v = particle.getV();
-            double mass = particle.getM();
-
-            //in the next time step, the difference between the current and the new x will be:
-            diff = delta_t * v + (delta_t * delta_t / (2 * mass)) * old_f;
-
-            sum += ArrayUtils::L2Norm(diff);
-            amt++;
+            auto it = std::find_if(old_particle_positions.begin(),old_particle_positions.end(),
+                                  [particle_ptr](std::pair<Particle*,std::array<double,3>> ptr_pos){return ptr_pos.first == particle_ptr;});
+            if(it == old_particle_positions.end()){
+              throw std::runtime_error("position of a particle was not correctly stored for diffusion coefficient");
+            }else{
+              std::array<double,3> old_pos,current_pos,remove_periodic,diff;
+              old_pos = it->second;
+              current_pos = particle_ptr->getX();
+              remove_periodic = cellContainer.getDomainBounds();
+              std::array<int,3> crossed_periodic = particle_ptr->getBoundariesCrossed();
+              remove_periodic[0] = remove_periodic[0] * static_cast<double>(crossed_periodic[0]);
+              remove_periodic[1] = remove_periodic[1] * static_cast<double>(crossed_periodic[1]);
+              remove_periodic[2] = remove_periodic[2] * static_cast<double>(crossed_periodic[2]);
+              diff = current_pos - (remove_periodic + old_pos);
+              sum += std::pow(ArrayUtils::L2Norm(diff),2);
+              amt++;
+              particle_ptr->setPeriodicZero();
+            }
         }
-    }
-
+    } 
+    initDiffCoeff();
+    //std::cout << "end diffcoeff\n";
     return sum / static_cast<double>(amt);
 }
 

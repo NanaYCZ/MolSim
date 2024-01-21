@@ -49,6 +49,7 @@ void CellCalculator::calculateX(){
 
             new_x = old_x + delta_t * v + (delta_t * delta_t / (2 * mass)) * old_f;
             particle.setX(new_x);
+            //std::cout << new_x << " nex\n";
 
             std::array<dim_t, 3> new_cell;
             cellContainer.allocateCellFromPosition(new_x, new_cell);
@@ -211,7 +212,11 @@ void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3
                 particle_ptr->setV(i, -v[i]);
             } else if(boundaries[map_boundaries[i]] == boundary_conditions::periodic){
                 //apply periodic in pos direction
+                // auto msg = "Crossed, x: " +  ArrayUtils::to_string(particle_ptr->getX()) + " boundaries: " + 
+                //                                ArrayUtils::to_string(particle_ptr->getBoundariesCrossed()) + "\n";
+                // std::cout << msg;
                 particle_ptr->addX(i,domain_bounds[i]);
+                particle_ptr->incBoundariesCrossedI(i);
             }
         } //check if position is outside the domain
         else if(domain_bounds[i] < x[i]) {
@@ -220,10 +225,14 @@ void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3
                 //apply reflection in neg direction
                 particle_ptr->setX(i, 2 * domain_bounds[i] - x[i]);
                 particle_ptr->setV(i, -v[i]);
-
+            
             } else if(boundaries[map_boundaries[i+3]] == boundary_conditions::periodic) {
                 //apply periodic in neg direction
+                // auto msg = "Crossed, x: " +  ArrayUtils::to_string(particle_ptr->getX()) + " boundaries: " + 
+                //                                ArrayUtils::to_string(particle_ptr->getBoundariesCrossed()) + "\n";
+                // std::cout << msg;
                 particle_ptr->addX(i,-domain_bounds[i]);
+                particle_ptr->decBoundariesCrossedI(i);
             }
         }
     }

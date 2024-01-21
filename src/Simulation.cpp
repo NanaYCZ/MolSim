@@ -43,6 +43,8 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     
     std::string rdf_log = "";
     std::string diff_log = "";
+    std::string pot_log = "";
+    std::string pres_log = "";
     std::string temp_log = "";
 
 
@@ -78,14 +80,15 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
         if (thermostats_frequency.has_value() &&  iteration % thermostats_frequency.value() == 0) {
             thermoStats.applyThermostats();
         }
+        
         if(diffusion_frequency.has_value() && iteration % diffusion_frequency.value() == 0){
-        }
-        if(diffusion_frequency.has_value() && (iteration-1) % diffusion_frequency.value() == 0){
             double diffusion = thermoStats.diffusionCoeff();
-            diff_log += "(" + std::to_string((iteration-1)/1000) + "," + std::to_string(diffusion) + ")\n";
+            diff_log += "(" + std::to_string((iteration)/1000.0) + "," + std::to_string(diffusion) + ")\n";
+            pot_log += std::to_string((iteration)/1000.0) + " " + std::to_string(thermoStats.getPotentialEnergy()) + "\n";
+            pres_log += std::to_string((iteration)/1000.0) + " " + std::to_string(thermoStats.getPressure()) + "\n";
             //track the temperature as well
             double temp = thermoStats.currentTemp();
-            temp_log += "(" + std::to_string(iteration/1000) + "," + std::to_string(temp) + ")\n";
+            temp_log += "(" + std::to_string(iteration/1000.0) + "," + std::to_string(temp) + ")\n";
         }
 
         if(rdf_interval_and_frequency.has_value() && iteration % (rdf_interval_and_frequency.value().second) == 0 ){
@@ -123,6 +126,8 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     if(diffusion_frequency.has_value()){
         stat_logger->info("diffusion:\n" + diff_log);
         stat_logger->info("temp:\n" + temp_log);
+        stat_logger->info("potential_energy:\n" + pot_log);
+        stat_logger->info("pressure:\n" + pres_log);
     }
 
     if(rdf_interval_and_frequency.has_value())

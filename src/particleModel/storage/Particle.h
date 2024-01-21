@@ -12,6 +12,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include "utils/ArrayUtils.h"
 
 class Particle {
 private:
@@ -53,6 +54,8 @@ private:
     */
     bool secondIsOld = true;
 
+    std::array<int,3> boundaries_crossed;
+
 public:
     explicit Particle(int type = 0);
 
@@ -66,6 +69,20 @@ public:
 
     virtual ~Particle();
 
+    std::array<int,3>& getBoundariesCrossed(){return boundaries_crossed;}
+    int& getBoundariesCrossed(int i){return boundaries_crossed[i];};
+    void incBoundariesCrossedI(int i){
+        //std::cout << "Called periodic inc\n"; 
+        boundaries_crossed[i]+=1;
+        // std::cout << "cross: " << boundaries_crossed << "\n";
+        }
+    void decBoundariesCrossedI(int i){
+        //std::cout << "Called periodic inc\n";
+        boundaries_crossed[i]-=1; 
+        //std::cout << "cross: " << boundaries_crossed << "\n";
+        };
+    void setPeriodicZero(){boundaries_crossed = {0,0,0};};
+
     const std::array<double, 3> &getX() const;
 
     const std::array<double, 3> &getV() const;
@@ -77,6 +94,7 @@ public:
     double getM() const;
 
     int getType() const;
+
 
 
     void setX(int index, double value);

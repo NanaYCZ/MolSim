@@ -5,27 +5,7 @@
 #include "particleModel/updating/CellCalculator.h"
 #include "utils/ArrayUtils.h"
 
-/**
- * @brief
- */
-TEST(test_CellCalculation,test_periodic){
-    CellContainer periodic{10, 10, 10, 2, 2};
-    CellContainer not_periodic{10, 100, 10, 2, 2};
 
-    std::array<double,3> x1{5,5,5};
-    std::array<double,3> x2{5,6.1225,5};
-    std::array<double,3> x3{5,7.245,5};
-    std::array<double,3> v{0,5,0};
-    double m = 1;
-    //std::array<
-
-    periodic.addParticle(x1,v,m);
-    periodic.addParticle(x2,v,m);
-    periodic.addParticle(x3,v,m);
-    not_periodic.addParticle(x1,v,m);
-    not_periodic.addParticle(x2,v,m);
-    not_periodic.addParticle(x3,v,m);
-}
 
 /**
  * @brief First a CellContainer an CellCalculator are created, then three particles
@@ -42,10 +22,10 @@ TEST(test_CellCalculation,test_periodic){
 */
 TEST(test_CellCalculation, test_periodic_forces){
     CellContainer container{10, 10, 0, 2, 2};
-    CellCalculator calculator(container,0.0014,2.0,
+    CellCalculator calculator(container,0.0014,2.0,1.9,
         {boundary_conditions::periodic,boundary_conditions::periodic,
         boundary_conditions::periodic,boundary_conditions::periodic,
-        boundary_conditions::periodic,boundary_conditions::periodic});
+        boundary_conditions::periodic,boundary_conditions::periodic},"LJ");
 
 
     //particle p1 in corner 
@@ -69,7 +49,8 @@ TEST(test_CellCalculation, test_periodic_forces){
     //should calculate forces for the appropriate particles
     calculator.calculateF();
 
-    std::vector<Particle>& particles = container.getInstances();
+    std::list<Particle>& instances = container.getInstances();
+    std::vector<Particle> particles(instances.begin(),instances.end());
 
     for(auto& particle : particles){
         //forces should not be zero for all particles
@@ -104,10 +85,10 @@ TEST(test_CellCalculation, test_periodic_forces){
 */  
 TEST(test_CellCalculation, test_periodic_reappearing){
     CellContainer container{10, 10, 0, 2, 2};
-    CellCalculator calculator(container,0.0014,2.0,
+    CellCalculator calculator(container,0.0014,2.0,1.9,
         {boundary_conditions::periodic,boundary_conditions::periodic,
         boundary_conditions::periodic,boundary_conditions::periodic,
-        boundary_conditions::periodic,boundary_conditions::periodic});
+        boundary_conditions::periodic,boundary_conditions::periodic},"LJ");
 
 
     //all particles will automatically be intialized with force={0,0,0}
@@ -129,7 +110,8 @@ TEST(test_CellCalculation, test_periodic_reappearing){
     // the respective other side within one step already
     calculator.calculateX();
 
-    std::vector<Particle>& particles = container.getInstances();
+    std::list<Particle>& instances = container.getInstances();
+    std::vector<Particle> particles(instances.begin(),instances.end());
 
 
     // test if the particle p1 was moved to the opposite side of 
@@ -155,10 +137,10 @@ TEST(test_CellCalculation, test_periodic_reappearing){
 */
 TEST(test_CellCalculation, test_periodic_corner){
     CellContainer container{10, 10, 0, 2, 2};
-    CellCalculator calculator(container,0.0014,2.0,
+    CellCalculator calculator(container,0.0014,2.0,1.9,
         {boundary_conditions::periodic,boundary_conditions::periodic,
         boundary_conditions::periodic,boundary_conditions::periodic,
-        boundary_conditions::periodic,boundary_conditions::periodic});
+        boundary_conditions::periodic,boundary_conditions::periodic},"LJ");
 
 
     //all particles will automatically be intialized with force={0,0,0}
@@ -175,7 +157,8 @@ TEST(test_CellCalculation, test_periodic_corner){
     // the respective other sides within one step already
     calculator.calculateX();
 
-    std::vector<Particle>& particles = container.getInstances();
+        std::list<Particle>& instances = container.getInstances();
+    std::vector<Particle> particles(instances.begin(),instances.end());
 
 
     // test if the particle p1 was moved to the opposite side of 

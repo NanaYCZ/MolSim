@@ -6,6 +6,7 @@
 #include "particleModel/storage/CellContainer.h"
 #include "particleModel/storage/CellContainerIterators.h"
 #include "particleModel/updating/CellCalculator.h"
+#include "particleModel/updating/ThermoStats.h"
 #include "utils/ArrayUtils.h"
 
 /**
@@ -49,10 +50,11 @@ double getTemp(CellContainer& container){
  */
 TEST(test_Thermo_Stat,test_basic){
     CellContainer container(15,15,0,3.0,3.0);
-    CellCalculator calculator(container,0.0014,3.0,
+    CellCalculator calculator(container,0.0014,3.0,1.9,
         {boundary_conditions::outflow,boundary_conditions::outflow,
         boundary_conditions::outflow,boundary_conditions::outflow,
-        boundary_conditions::outflow,boundary_conditions::outflow},30.0);
+        boundary_conditions::outflow,boundary_conditions::outflow},"LJ");
+    ThermoStats thermoStats(container,0.0014,30.0);
 
     container.addParticle({1,1,0},{2,2,2},3);
     container.addParticle({6,5,0},{2,2,2},4);
@@ -64,7 +66,7 @@ TEST(test_Thermo_Stat,test_basic){
 
     
     //after this call the Temperature of the system should be 30 (because it's the target temperature)
-    calculator.applyThermostats();
+    thermoStats.applyThermostats();
 
     //particles afterwards
 
@@ -85,11 +87,12 @@ TEST(test_Thermo_Stat,test_basic){
  */
 TEST(test_Thermo_Stat,test_heating){
     CellContainer container(50,50,0,3.0,3.0);
-    CellCalculator calculator(container,0.0014,3.0,
+    CellCalculator calculator(container,0.0014,3.0,1.9,
         {boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective
-        },100.0,5.0);  
+        },"LJ");  
+    ThermoStats thermoStats(container,0.0014,100.0,5.0);
 
 
     //have some particles to simulate
@@ -108,14 +111,16 @@ TEST(test_Thermo_Stat,test_heating){
     std::cout << "The Temperature before the simulation is: " << temp << std::endl; 
     //This will be 40
 
-    calculator.initializeFX();
+    calculator.calculateF();
+    calculator.shiftF();
 
 
     for(int i = 0; i < 20; i++){
-        calculator.applyReflectiveBoundaries();
-        calculator.calculateLinkedCellF();
-        calculator.calculateWithinFVX();
-        calculator.applyThermostats();
+        calculator.calculateX();
+        calculator.calculateF();
+        calculator.calculateV();
+        calculator.shiftF();
+        thermoStats.applyThermostats();
         temp = getTemp(container);
         std::cout << "The current Temperature is: " << temp << std::endl; 
     }
@@ -138,12 +143,13 @@ TEST(test_Thermo_Stat,test_heating){
  */
 TEST(test_Thermo_Stat,test_cooling){
     CellContainer container(50,50,0,3.0,3.0);
-    CellCalculator calculator(container,0.0014,3.0,
+    CellCalculator calculator(container,0.0014,3.0,1.9,
         {boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective
-        },20.0,1.0);  
+        },"LJ");  
 
+    ThermoStats thermoStats(container,0.0014,20.0,1.0);
     //max_temp_diff is 5 and target_temp is 20
     //so in every Thermostat iteration, the temperature is increased by one maximum
 
@@ -164,14 +170,16 @@ TEST(test_Thermo_Stat,test_cooling){
     std::cout << "The Temperature before the simulation is: " << temp << std::endl; 
     //This will be 40
 
-    calculator.initializeFX();
+    calculator.calculateF();
+    calculator.shiftF();
 
 
-    for(int i = 0; i < 30; i++){
-        calculator.applyReflectiveBoundaries();
-        calculator.calculateLinkedCellF();
-        calculator.calculateWithinFVX();
-        calculator.applyThermostats();
+    for(int i = 0; i < 20; i++){
+        calculator.calculateX();
+        calculator.calculateF();
+        calculator.calculateV();
+        calculator.shiftF();
+        thermoStats.applyThermostats();
         temp = getTemp(container);
         std::cout << "The current Temperature is: " << temp << std::endl; 
     }
@@ -224,6 +232,9 @@ TEST(test_Thermo_Stat,test_initial_Temp){
         2.0,            //cell size
         0.0,            //gravity factor
         30.0,       //initial temp
+        "LJ",
+        std::nullopt,
+        std::nullopt,
         std::nullopt,       //max temp diff
         std::nullopt,       //target temp
         50,          //thermostat write frequency
@@ -239,6 +250,8 @@ TEST(test_Thermo_Stat,test_initial_Temp){
         {cuboid},      // spheres
         {sphere}       // cuboids
     };
+
+    std::cout << args.to_string() << std::endl;
 
     CellContainer cellContainer(args.domain_dimensions[0],args.domain_dimensions[1],args.domain_dimensions[2],args.cut_off_radius,args.cell_size);
 

@@ -15,8 +15,8 @@ cmake_minimum_required(VERSION 3.10)
 
 
 
-# set(TEST_WEEK4 week4_test)
-# file(GLOB_RECURSE SOURCES_WEEK4 "${CMAKE_CURRENT_SOURCE_DIR}/week4/*.cpp")
+set(TEST_WEEK4 week4_test)
+file(GLOB_RECURSE SOURCES_WEEK4 "${CMAKE_CURRENT_SOURCE_DIR}/week4/*.cpp")
 
 set(TEST_WEEK5 week5_test)
 file(GLOB_RECURSE SOURCES_WEEK5 "${CMAKE_CURRENT_SOURCE_DIR}/week5/*.cpp")
@@ -29,7 +29,7 @@ file(GLOB_RECURSE SOURCES_WEEK5 "${CMAKE_CURRENT_SOURCE_DIR}/week5/*.cpp")
 
 # add_executable(${TEST_WEEK3} ${SOURCES_WEEK3})
 
-# add_executable(${TEST_WEEK4} ${SOURCES_WEEK4})
+add_executable(${TEST_WEEK4} ${SOURCES_WEEK4})
 
 add_executable(${TEST_WEEK5} ${SOURCES_WEEK5})
 
@@ -37,7 +37,7 @@ add_executable(${TEST_WEEK5} ${SOURCES_WEEK5})
 # Link with necessary libraries (e.g., gtest and your project's source files)
 # target_link_libraries(${TEST_WEEK2} PRIVATE GTest::gtest_main GTest::gmock GTest::gmock_main MolSim_testing)
 # target_link_libraries(${TEST_WEEK3} PRIVATE GTest::gtest_main GTest::gmock GTest::gmock_main MolSim_testing)
-# target_link_libraries(${TEST_WEEK4} PRIVATE GTest::gtest_main GTest::gmock GTest::gmock_main MolSim_testing)
+target_link_libraries(${TEST_WEEK4} PRIVATE GTest::gtest_main GTest::gmock GTest::gmock_main MolSim_testing)
 target_link_libraries(${TEST_WEEK5} PRIVATE GTest::gtest_main GTest::gmock GTest::gmock_main MolSim_testing)
 
 
@@ -56,12 +56,12 @@ target_link_libraries(${TEST_WEEK5} PRIVATE GTest::gtest_main GTest::gmock GTest
 #         ${PROJECT_SOURCE_DIR}/src
 # )
 
-# target_include_directories(${TEST_WEEK4}
-#         PUBLIC
-#         ${PROJECT_SOURCE_DIR}/libs/libxsd
-#         PRIVATE
-#         ${PROJECT_SOURCE_DIR}/src
-# )
+target_include_directories(${TEST_WEEK4}
+        PUBLIC
+        ${PROJECT_SOURCE_DIR}/libs/libxsd
+        PRIVATE
+        ${PROJECT_SOURCE_DIR}/src
+)
 
 target_include_directories(${TEST_WEEK5}
         PUBLIC
@@ -82,10 +82,10 @@ target_include_directories(${TEST_WEEK5}
 #     COMMAND ${TEST_WEEK3}
 # )
 
-# add_test(
-#     NAME ${TEST_WEEK4}
-#     COMMAND ${TEST_WEEK4}
-# )
+add_test(
+    NAME ${TEST_WEEK4}
+    COMMAND ${TEST_WEEK4}
+)
 
 add_test(
     NAME ${TEST_WEEK5}

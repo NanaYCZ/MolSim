@@ -26,10 +26,16 @@ class ThermoStats{
         */
         void applyThermostats();
 
+        double getPotentialEnergy();
+
+        double getPressure();
+
 
         std::vector<double> radialDistributionFunction(double interval_size);
 
         double diffusionCoeff();
+
+        void initDiffCoeff();
 
 
     private:
@@ -39,5 +45,7 @@ class ThermoStats{
 
         std::optional<double> target_temp;
         std::optional<double> max_temp_diff;
+
+        std::list<std::pair<Particle*,std::array<double,3>>> old_particle_positions = {};
 
 };

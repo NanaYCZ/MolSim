@@ -24,7 +24,7 @@ CellContainer::CellContainer(double d_width, double d_height, double d_depth, do
     if(isApproximatelyEqual(std::fmod(d_depth, cell_size), 0.0)) {
         --domain_max_dim[2];
     }
-
+    particles = {};
     particles.resize(static_cast<dim_t>(domain_max_dim[0] + 2),
                      std::vector<std::vector<std::vector<Particle*>>>(
                              static_cast<dim_t>(domain_max_dim[1] + 2),
@@ -33,6 +33,11 @@ CellContainer::CellContainer(double d_width, double d_height, double d_depth, do
                              )
                      )
     );
+
+    for(auto cells = begin_CI(); cells != end_CI(); ++cells){
+        auto& current_cell = *cells;
+        current_cell = {};
+    }
 
     if (cell_size < r_cutoff) {
         comparing_depth = std::ceil(r_cutoff / cell_size);
@@ -296,18 +301,17 @@ bool CellContainer::isApproximatelyEqual(double a, double b, double epsilon) {
 
 void CellContainer::createPointers(){
     for(Particle& particle : particle_instances){
-        static std::array<dim_t , 3> pos;
+        std::array<dim_t , 3> pos;
         std::array<double,3> x_arg = particle.getX();
         allocateCellFromPosition(x_arg, pos);
         particles.at(pos[0]).at(pos[1]).at(pos[2]).push_back(&particle);
         particle_amount++;
+        //std::cout << "new pointer ------\n";
     }
 }
 
 
 void CellContainer::plotParticles(outputWriter::VTKWriter &writer) {
-    std::array<dim_t, 3> current_position;
-
     for(Particle& particle : particle_instances){
         writer.plotParticle(particle);
     }
