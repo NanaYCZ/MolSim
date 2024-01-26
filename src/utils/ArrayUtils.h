@@ -149,14 +149,14 @@ inline Container elementWisePairOp(const Container &lhs, const Container &rhs,
  * @return sum_i (lhs[i] * rhs[i]).
  */
     template <class Container>
-    inline auto scalarProduct(const Container &lhs, const Container &rhs) {
+    inline typename Container::value_type scalarProduct(const Container &lhs, const Container &rhs) {
         Container ret = lhs;
         auto retIter = std::begin(ret);
         auto lhsIter = std::cbegin(lhs);
         const auto lhsEnd = std::cend(lhs);
         auto rhsIter = std::cbegin(rhs);
         const auto rhsEnd = std::cend(rhs);
-        auto sum = 0;
+        typename Container::value_type sum = 0;
 
         for (; lhsIter != lhsEnd and rhsIter != rhsEnd;
                ++lhsIter, ++rhsIter, ++retIter) {

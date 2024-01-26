@@ -41,34 +41,29 @@ using ForceCalculation = std::function<std::array<double, 3>(const Particle &, c
  *
  * (offset is always applied, when the difference between the positions of p_i and p_j is calculated)
  *
- * @param p_i Particle \f$ i \f$ for force calculation
- * @param p_j Particle \f$ j \f$ for force calculation
+ * @param sigma_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param epsilon_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param cutoff upper cutoff radius for the force
  *
  * @return Three-dimensional vector that corresponds to \f$ f_{ij} \f$
  */
 ForceCalculation inline forceSimpleGravitational(double cutoff){
         return [cutoff](const Particle &p_i, const Particle &p_j, const std::array<double,3> &offset) -> std::array<double,3> {
         double m_i = p_i.getM(), m_j = p_j.getM();
-
         std::array<double, 3> x_i = p_i.getX(), x_j = p_j.getX();
 
         double r_c = cutoff;
-
-        double dx = x_i[0] - x_j[0] + offset[0];
-        double dy = x_i[1] - x_j[1] + offset[1];
-        double dz = x_i[2] - x_j[2] + offset[2];
-
         double r_c_squared = r_c * r_c;
-        double scalar_product = dx * dx + dy * dy + dz * dz;
+
+        std::array<double, 3> delta_x = x_i - x_j + offset;
+        double scalar_product = ArrayUtils::scalarProduct(delta_x,delta_x);
 
         /*instantly return 0 if r_c <= norm */
-        if(r_c_squared <= scalar_product)
-            return {0,0,0};
-        else{
-
-        double prefactor = (m_i * m_j) / std::pow(std::sqrt(scalar_product), 3);
-
-        return prefactor * -1 * (x_i - x_j + offset);
+        if(r_c_squared <= scalar_product) {
+            return {0, 0, 0};
+        }else{
+            double prefactor = (m_i * m_j) / std::pow(std::sqrt(scalar_product), 3);
+            return prefactor * -1 * (x_i - x_j + offset);
         }
   };
 }
@@ -88,8 +83,9 @@ ForceCalculation inline forceSimpleGravitational(double cutoff){
  * (offset is always applied, when the difference between the positions of p_i and p_j is calculated)
  *
  *
- * @param p_i Particle \f$ i \f$ for force calculation
- * @param p_j Particle \f$ j \f$ for force calculation
+ * @param sigma_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param epsilon_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param cutoff upper cutoff radius for the force
  *
  * @return Three-dimensional vector that corresponds to \f$ f_{ij} \f$
  */
@@ -102,13 +98,12 @@ ForceCalculation inline forceLennJonesPotentialFunction(std::vector<std::vector<
         double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
         //make formula more readable, compiler will optimize away
         double r_c = cutoff;
-
-        double dx = x_i[0] - x_j[0] + offset[0];
-        double dy = x_i[1] - x_j[1] + offset[1];
-        double dz = x_i[2] - x_j[2] + offset[2];
-
         double r_c_squared = r_c * r_c;
-        double scalar_product = dx * dx + dy * dy + dz * dz;
+
+        std::array<double, 3> delta_x = x_i - x_j + offset;
+        double scalar_product = ArrayUtils::scalarProduct(delta_x,delta_x);
+        std::cout << "delta_x: " << ArrayUtils::to_string(delta_x) << "\n";
+        std::cout << "scalar_prod: " << scalar_product << "\n";
 
         /*instantly return 0 if r_c <= norm */
         if(r_c_squared <= scalar_product)
@@ -117,8 +112,11 @@ ForceCalculation inline forceLennJonesPotentialFunction(std::vector<std::vector<
         double norm = std::sqrt(scalar_product);
 
         double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
+        std::cout << "norm: " << norm << "\n";
+        std::cout << "prefac1: " << prefactor << "\n";
 
         prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
+        std::cout << "prefac2: " << prefactor << "\n";
 
         return prefactor * (x_i - x_j + offset);
 
@@ -150,7 +148,7 @@ ForceCalculation inline forceLennJonesPotentialFunction(std::vector<std::vector<
  * \f$ \( r_l \) \f$ is the lower cutoff radius
  * \f$ \( r_c \) \f$ is the upper cutoff radius
  *
- * the offset that is used in the function is required for force calculations of periodic particles
+ * (offset is always applied, when the difference between the positions of p_i and p_j is calculated)
  *
  * @param sigma_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
  * @param epsilon_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
@@ -168,13 +166,10 @@ ForceCalculation inline forceSmoothedLennJonesPotentialFunction(std::vector<std:
     double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
     //make formula more readable, compiler will optimize away
     double r_c = cutoff;
-
-    double dx = x_i[0] - x_j[0] + offset[0];
-    double dy = x_i[1] - x_j[1] + offset[1];
-    double dz = x_i[2] - x_j[2] + offset[2];
-
     double r_c_squared = r_c * r_c;
-    double scalar_product = dx * dx + dy * dy + dz * dz;
+
+    std::array<double, 3> delta_x = x_i - x_j + offset;
+    double scalar_product = ArrayUtils::scalarProduct(delta_x,delta_x);
 
     /*instantly return 0 if r_c <= norm */
     if(r_c_squared <= scalar_product)
@@ -187,15 +182,23 @@ ForceCalculation inline forceSmoothedLennJonesPotentialFunction(std::vector<std:
     if(r_l < norm){
         double norm_pow_6 = std::pow(norm,6), sigma_pow_6  = std::pow(sigma,6);
 
+
+        //corresponds to -(24 * sigma^6 * epsilon * (r_c - norm)) / (norm^14 * (r_c - r_l)^3)
+        //but makes some optimization to avoid unnecessary expensive powers
         double prefactor = -(24 * sigma_pow_6 * epsilon * (r_c - norm)) / 
                             (norm_pow_6 * norm_pow_6 * norm * norm  * std::pow((r_c - r_l),3) );
-        
+
+        //corresponds to r_c^2 * (2 * sigma^6 - norm^6)
+        //             + r_c * (3 * r_l - norm) (norm^6 - 2 * sigma^6)
+        //             + norm * (5 * r_l * sigma^6 - 2 * r_l *  norm^6 - 3 * sigma^6 * norm + norm^7)
         prefactor *=    r_c_squared * (2 * sigma_pow_6 - norm_pow_6)
                          + r_c * (3 * r_l - norm) * (norm_pow_6 - 2 * sigma_pow_6)
                          + norm * (5 * r_l * sigma_pow_6 - 2 * r_l * norm_pow_6 
                                   - 3 * sigma_pow_6 * norm + norm_pow_6 * norm);
         
-        return prefactor * -1 * (x_i - x_j + offset);
+        return prefactor * -1 * (x_i - x_j + offset); //make clear that here the x_j - x_i is returned
+                                                      //but still the offset is applied in the correct direction,
+                                                      //by multiplying by -1
     }else /* norm <= r_l */ {
         double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
 
