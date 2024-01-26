@@ -15,7 +15,7 @@ TEST(test_Rdf,test_basic){
     container.addParticle({0,2,0},{0,0,0},4);
     container.addParticle({0,0,2},{0,0,0},7);
 
-    std::vector<double> rdf = thermoStats.radialDistributionFunction(0.1);
+    std::vector<double> rdf = thermoStats.getRadialDistributionFunction(0.1);
     //-> there should be 6 entries be counted in the 28th "backet"
     //because there are 6 pairs with the distance 2.828 -> they belong in 2.8 - 2.9 bucket
 
