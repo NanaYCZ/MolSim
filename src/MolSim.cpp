@@ -117,7 +117,7 @@ int main(int argc, char *argsv[])
     cellContainer.createPointers();
 
     if(args.diff_frequency.has_value())
-        thermoStats.initDiffCoeff();
+        thermoStats.initDiffusionCoefficient();
 
 
     runSimulation(cellContainer,cellCalculator,thermoStats,args.t_end,args.delta_t,args.write_frequency,

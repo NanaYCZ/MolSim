@@ -136,6 +136,36 @@ inline Container elementWisePairOp(const Container &lhs, const Container &rhs,
   return ret;
 }
 
+
+/**
+ * Computes the scalar product of two containers
+ *
+ * If the containers differ in size the F is only applied to as many elements as
+ * are in the smaller container.
+ *
+ * @tparam Container Type for both containers.
+ * @param lhs
+ * @param rhs
+ * @return sum_i (lhs[i] * rhs[i]).
+ */
+    template <class Container>
+    inline auto scalarProduct(const Container &lhs, const Container &rhs) {
+        Container ret = lhs;
+        auto retIter = std::begin(ret);
+        auto lhsIter = std::cbegin(lhs);
+        const auto lhsEnd = std::cend(lhs);
+        auto rhsIter = std::cbegin(rhs);
+        const auto rhsEnd = std::cend(rhs);
+        auto sum = 0;
+
+        for (; lhsIter != lhsEnd and rhsIter != rhsEnd;
+               ++lhsIter, ++rhsIter, ++retIter) {
+            sum += (*lhsIter) * (*rhsIter);
+        }
+
+        return sum;
+    }
+
 /**
  * Applies a binary function F to with a scalar to every element in a container.
  *
@@ -161,6 +191,9 @@ inline Container elementWiseScalarOp(const Scalar &lhs, const Container &rhs,
 
   return ret;
 }
+
+
+
 
 /**
  * Calculates the L2 norm for a given container.

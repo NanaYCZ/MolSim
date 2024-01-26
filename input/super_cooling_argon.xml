@@ -5,7 +5,7 @@
   <!-- Output Parameters -->
   <outputParameters>
     <baseName>out</baseName>
-    <writeFrequency>25</writeFrequency>
+    <writeFrequency>20</writeFrequency>
     <checkpointInputFileName>fluid_task5_checkpoint.txt</checkpointInputFileName>
   </outputParameters>
 
@@ -16,6 +16,12 @@
     <deltaT>0.001</deltaT>
     <cutOffRadius>2.3</cutOffRadius>                                          
     <cellSize>2.3</cellSize>
+    <forceType>smoothedLJ</forceType>
+    <Rdf>
+      <rdfTimeInterval>0.05</rdfTimeInterval>
+      <rdfStatFrequency>10000</rdfStatFrequency>
+    </Rdf>
+    <diffusionStatFrequency>1000</diffusionStatFrequency>
     <Thermostats>
         <initTemp>3.0</initTemp>
         <targetTemp>0.02</targetTemp>

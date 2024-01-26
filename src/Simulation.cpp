@@ -53,6 +53,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     // for this loop, we assume: current x, current f and current v are known
     if (performance_measurement)
         perf_time_start = std::chrono::high_resolution_clock::now();
+    
 
     while (current_time < end_time) {
         SPDLOG_TRACE(std::to_string(current_time));
@@ -82,7 +83,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
         }
         
         if(diffusion_frequency.has_value() && iteration % diffusion_frequency.value() == 0){
-            double diffusion = thermoStats.diffusionCoeff();
+            double diffusion = thermoStats.getDiffusionCoefficient();
             diff_log += "(" + std::to_string((iteration)/1000.0) + "," + std::to_string(diffusion) + ")\n";
             pot_log += std::to_string((iteration)/1000.0) + " " + std::to_string(thermoStats.getPotentialEnergy()) + "\n";
             pres_log += std::to_string((iteration)/1000.0) + " " + std::to_string(thermoStats.getPressure()) + "\n";
@@ -93,7 +94,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
 
         if(rdf_interval_and_frequency.has_value() && iteration % (rdf_interval_and_frequency.value().second) == 0 ){
             double interval_size = rdf_interval_and_frequency.value().first;
-            std::vector<double> stats = thermoStats.radialDistributionFunction(interval_size);
+            std::vector<double> stats = thermoStats.getRadialDistributionFunction(interval_size);
             rdf_log += "for time: " + std::to_string(current_time) + " iter:" + std::to_string(iteration) + "\n";
             for(size_t i = 0; i < stats.size();i++){
                 rdf_log+= "(" + std::to_string(i * interval_size + interval_size/2.0) + "," + 
