@@ -12,6 +12,8 @@ enum class boundary_conditions{
 
 extern double min_distance;
 
+extern int schedule_size;
+
 extern std::vector<std::vector<double>> sigma_mixed;
 
 extern std::vector<std::vector<double>> epsilon_mixed;

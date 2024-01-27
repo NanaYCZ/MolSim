@@ -8,9 +8,8 @@
 #include <string>
 #include <sstream>
 #include <ostream>
-
+#include <omp.h>
 #include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/spdlog.h>
 
 template <typename T>
 std::string print_vec(const std::vector<T>& vec);
@@ -32,6 +31,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     size_t barWidth, pos;
 
     SPDLOG_INFO("Starting Simulation");
+    SPDLOG_INFO("max threads: " + std::to_string(omp_get_max_threads()));
     calculator.calculateF();
     calculator.shiftF();
 

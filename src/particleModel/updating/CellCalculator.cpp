@@ -8,6 +8,8 @@
 
 double min_distance = 0.7;
 
+int schedule_size = 16;
+
 std::vector<std::vector<double>> sigma_mixed{{1.0}};
 
 std::vector<std::vector<double>> epsilon_mixed{{5.0}};
@@ -33,7 +35,7 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
 void CellCalculator::calculateX(){
     instructions cell_updates;
 
-    #pragma omp parallel for default(none) shared(cell_updates) schedule(dynamic)
+    #pragma omp parallel for default(none) shared(cell_updates, schedule_size) schedule(static,schedule_size)
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
 
         //iterate trough particles of cell
@@ -45,9 +47,11 @@ void CellCalculator::calculateX(){
             old_f = particle.getOldF();
             v = particle.getV();
             old_x = particle.getX();
+
             double mass = particle.getM();
 
             new_x = old_x + delta_t * v + (delta_t * delta_t / (2 * mass)) * old_f;
+
             particle.setX(new_x);
             //std::cout << new_x << " nex\n";
 
@@ -71,7 +75,7 @@ void CellCalculator::calculateX(){
 
 void CellCalculator::calculateV(){
 
-    #pragma omp parallel for default(none)
+    #pragma omp parallel for default(none) shared(schedule_size) schedule(static,schedule_size)
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
         for (auto particle_ptr: *cell) {
             Particle &particle = *particle_ptr;
@@ -101,7 +105,7 @@ void CellCalculator::calculateF(){
 
 void CellCalculator::shiftF(){
 
-    #pragma omp parallel for default(none)
+    #pragma omp parallel for default(none) shared(schedule_size) schedule(static,schedule_size)
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
         for (auto particle_ptr: *cell) {
             particle_ptr->shiftF();
@@ -158,7 +162,7 @@ void CellCalculator::calculateLinkedCellF() {
 void CellCalculator::calculatePeriodicF() {
     for(std::array<dim_t,3> pattern : CellContainer::patterns) {
 
-        #pragma omp parallel for default(none) shared(pattern)
+        #pragma omp parallel for default(none) shared(pattern, schedule_size) schedule(static,schedule_size)
         for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
 
             std::array<dim_t, 3> current_cell = it.outside();

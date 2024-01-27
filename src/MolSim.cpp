@@ -10,6 +10,7 @@
 #include <spdlog/spdlog.h>
 #include <unistd.h>
 #include <optional>
+#include <omp.h>
 
 
 
@@ -52,7 +53,7 @@ int main(int argc, char *argsv[])
         switch (opt)
         {
             case 'l':
-                log_mode = std::string(optarg); 
+                log_mode = std::string(optarg);
                 if(log_mode=="off"){
                     logging_level = spdlog::level::off;
                 }else if(log_mode=="trace"){
@@ -86,12 +87,14 @@ int main(int argc, char *argsv[])
     auto logger = spdlog::basic_logger_mt("logger", "logs.txt");
     spdlog::set_level(logging_level);
 
+    //todo set via input file
+    omp_set_num_threads(1);
 
     FileReader::ProgramArgs args = fileReader.readProgramArguments(filename);
     SPDLOG_INFO("Read:\n" + args.to_string());
 
     //check if initial velocities need to be initialized according to initialTemp
-    // modifies the cuboid / spheres structs such that their mean velocities 
+    // modifies the cuboid / spheres structs such that their mean velocities
     // fit the Temperature and the Maxwell-Boltzmann-Distribution is applied
     // with the correct arguments
     if(args.calculate_thermostats){
@@ -104,14 +107,14 @@ int main(int argc, char *argsv[])
                                 args.force_type, args.gravity_factor);
     ThermoStats thermoStats(cellContainer,args.delta_t,
                     args.target_temp.has_value() ? args.target_temp : args.init_temp,args.max_temp_diff);
-    
+
 
     addCuboids(cellContainer,args.cuboids);
     addSpheres(cellContainer,args.spheres,2);
 
     if(args.checkpoint_input_file.has_value()){
         Checkpointer::addCheckpointparticles(cellContainer,args.checkpoint_input_file.value());
-        
+
     }
 
     cellContainer.createPointers();
