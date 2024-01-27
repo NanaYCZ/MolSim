@@ -10,6 +10,12 @@ enum class boundary_conditions{
     periodic
 };
 
+enum class concurrency_strategy{
+    serial,
+    first_method,
+    second_method
+};
+
 extern double min_distance;
 
 extern int schedule_size;
@@ -38,8 +44,9 @@ typedef std::vector<std::tuple<Particle*, std::array<dim_t,3>>> instructions;
 class CellCalculator {
 
 public:
-    CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,double r_l_,
-                   std::array<boundary_conditions,6> boundaries_cond, std::string forceType, double gravity_factor = 0);
+    CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff, double r_l_,
+                   std::array<boundary_conditions,6> boundaries_cond, std::string forceType,
+                   double gravity_factor = 0, concurrency_strategy strategy = concurrency_strategy::serial);
 
     /**
      * @brief calculate the forces acting between the particles in two cells each, along given paths
@@ -130,6 +137,7 @@ private:
 
     std::vector<std::vector<std::vector<std::vector<Particle*>>>> &particles;
 
+    concurrency_strategy parallelization;
 
     /**
      * @brief helper method to change the location of particles within the cell structure

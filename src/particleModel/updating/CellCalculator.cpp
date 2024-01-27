@@ -14,13 +14,13 @@ std::vector<std::vector<double>> sigma_mixed{{1.0}};
 
 std::vector<std::vector<double>> epsilon_mixed{{5.0}};
 
-CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,double r_l_,
-      std::array<boundary_conditions,6> boundaries_cond,std::string forceType,double gravity_factor)
+CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,
+                               double r_l_, std::array<boundary_conditions,6> boundaries_cond,
+                               std::string forceType,double gravity_factor, concurrency_strategy strategy)
     : cellContainer(cellContainer), gravity_factor(gravity_factor), delta_t(delta_t), cutoff(cutoff), r_l(r_l_),
     domain_bounds(cellContainer.getDomainBounds()), domain_max_dim(CellContainer::domain_max_dim), boundaries(boundaries_cond),
-    particles(CellContainer::particles)
+    particles(CellContainer::particles), parallelization(strategy)
     {
-
     if(forceType == "smoothedLJ"){
         force = forceSmoothedLennJonesPotentialFunction(sigma_mixed,epsilon_mixed,cutoff,r_l);
     }else if(forceType == "LJ"){
@@ -35,7 +35,10 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
 void CellCalculator::calculateX(){
     instructions cell_updates;
 
-    #pragma omp parallel for default(none) shared(cell_updates, schedule_size) schedule(static,schedule_size)
+    #pragma omp parallel for default(none) shared(cell_updates, schedule_size) \
+                            schedule(static,schedule_size) \
+                            if(parallelization == concurrency_strategy::first_method)
+
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
 
         //iterate trough particles of cell
@@ -75,7 +78,10 @@ void CellCalculator::calculateX(){
 
 void CellCalculator::calculateV(){
 
-    #pragma omp parallel for default(none) shared(schedule_size) schedule(static,schedule_size)
+    #pragma omp parallel for default(none) shared(schedule_size) \
+                            schedule(static,schedule_size) \
+                            if(parallelization == concurrency_strategy::first_method)
+
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
         for (auto particle_ptr: *cell) {
             Particle &particle = *particle_ptr;
@@ -97,7 +103,9 @@ void CellCalculator::calculateF(){
     calculateLinkedCellF();
     calculatePeriodicF();
 
-    #pragma omp parallel for default(none) schedule(dynamic)
+    #pragma omp parallel for default(none) schedule(dynamic) \
+                            if(parallelization == concurrency_strategy::first_method)
+
     for (auto iter = begin_CI(); iter != end_CI(); ++iter) {
         finishF(&(*iter));
     }
@@ -105,7 +113,10 @@ void CellCalculator::calculateF(){
 
 void CellCalculator::shiftF(){
 
-    #pragma omp parallel for default(none) shared(schedule_size) schedule(static,schedule_size)
+    #pragma omp parallel for default(none) shared(schedule_size) \
+                            schedule(static,schedule_size) \
+                            if(parallelization == concurrency_strategy::first_method)
+
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
         for (auto particle_ptr: *cell) {
             particle_ptr->shiftF();
@@ -116,7 +127,10 @@ void CellCalculator::shiftF(){
 void CellCalculator::calculateLinkedCellF() {
     for(std::array<dim_t,3> pattern : CellContainer::patterns) {
 
-        #pragma omp parallel for default(none) shared(pattern) schedule(dynamic)
+        #pragma omp parallel for default(none) shared(pattern) \
+                                schedule(dynamic) \
+                            if(parallelization == concurrency_strategy::first_method)
+
         for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
             std::array<double, 3> F_ij{};
             std::vector<Particle*>* cell_1;
@@ -162,7 +176,10 @@ void CellCalculator::calculateLinkedCellF() {
 void CellCalculator::calculatePeriodicF() {
     for(std::array<dim_t,3> pattern : CellContainer::patterns) {
 
-        #pragma omp parallel for default(none) shared(pattern, schedule_size) schedule(static,schedule_size)
+        #pragma omp parallel for default(none) shared(pattern, schedule_size) \
+                                schedule(static,schedule_size) \
+                            if(parallelization == concurrency_strategy::first_method)
+
         for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
 
             std::array<dim_t, 3> current_cell = it.outside();
