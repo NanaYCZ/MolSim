@@ -157,6 +157,31 @@ private:
 
     void applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3>& new_cell_position, instructions& cell_updates);
 
+    std::array<double,3> force_exp(const Particle &p_i, const Particle &p_j, const std::array<double,3> &offset) {
+        const auto& x_i = p_i.getX(), x_j = p_j.getX();
+        double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
+        double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
+        //make formula more readable, compiler will optimize away
+        double r_c = cutoff;
+        double r_c_squared = r_c * r_c;
+
+        std::array<double, 3> delta_x = x_i - x_j + offset;
+        double scalar_product = ArrayUtils::scalarProduct(delta_x,delta_x);
+
+        /*instantly return 0 if r_c <= norm */
+        if(r_c_squared <= scalar_product)
+            return {0,0,0};
+
+        double norm = std::sqrt(scalar_product);
+
+        double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
+
+        prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
+
+        return prefactor * (x_i - x_j + offset);
+
+    };
+
     /**
      * @brief helper method to calculate the forces not covered in "calculateLinkedCellF()"
      *

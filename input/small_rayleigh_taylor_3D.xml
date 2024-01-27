@@ -11,7 +11,7 @@
 
     <!-- Simulation Parameters -->
     <simulationParameters>
-        <tEnd>100</tEnd>
+        <tEnd>20</tEnd>
         <deltaT>0.0005</deltaT>
         <cutOffRadius>3.6</cutOffRadius>
         <cellSize>1.8</cellSize>

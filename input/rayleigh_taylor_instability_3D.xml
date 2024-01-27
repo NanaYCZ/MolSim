@@ -11,12 +11,16 @@
 
     <!-- Simulation Parameters -->
     <simulationParameters>
-        <tEnd>100</tEnd>
+        <tEnd>20</tEnd>
         <deltaT>0.0005</deltaT>
         <cutOffRadius>3.6</cutOffRadius>
         <cellSize>1.8</cellSize>
         <gravityFactor>-12.44</gravityFactor>
         <forceType>LJ</forceType>
+        <parallelizationVersion>
+            <first_method>
+            </first_method>
+        </parallelizationVersion>
         <Thermostats>
             <initTemp>40</initTemp>
             <thermoStatFrequency>1000</thermoStatFrequency>
@@ -30,9 +34,9 @@
             <boundaryConditionsNegativeY>reflective</boundaryConditionsNegativeY>
         </boundaryConditions>
         <domainDimensions>
-            <x>60</x>
-            <y>60</y>
-            <z>60</z>
+            <x>15</x>
+            <y>30</y>
+            <z>15</z>
         </domainDimensions>
     </simulationParameters>
 
@@ -49,9 +53,9 @@
             <z>0</z>
         </velocity>
         <dimensions>
-            <x>50</x>
-            <y>20</y>
-            <z>50</z>
+            <x>10</x>
+            <y>5</y>
+            <z>10</z>
         </dimensions>
         <mass>1</mass>
         <meshWidth>1.2</meshWidth>
@@ -62,7 +66,7 @@
     <cuboids>
         <position>
             <x>0.6</x>
-            <y>24.6</y>
+            <y>10.6</y>
             <z>0.6</z>
         </position>
         <velocity>
@@ -71,9 +75,9 @@
             <z>0</z>
         </velocity>
         <dimensions>
-            <x>50</x>
-            <y>20</y>
-            <z>50</z>
+            <x>10</x>
+            <y>5</y>
+            <z>10</z>
         </dimensions>
         <mass>2</mass>
         <meshWidth>1.2</meshWidth>

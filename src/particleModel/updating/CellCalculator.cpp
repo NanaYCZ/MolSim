@@ -152,7 +152,7 @@ void CellCalculator::calculateLinkedCellF() {
                     for (auto &p_j: *cell_2) {
 
 
-                            F_ij = force(*p_i, *p_j, {0, 0, 0});
+                            F_ij = force_exp(*p_i, *p_j, {0, 0, 0});
 
                             for (int i = 0; i < 3; i++) {
                                 p_i->addF(i, F_ij[i]);
@@ -196,7 +196,7 @@ void CellCalculator::calculatePeriodicF() {
                     for (auto &p_j: *cell_2) {
 
 
-                            F_ij = force(*p_i, *p_j, particle_offset);
+                            F_ij = force_exp(*p_i, *p_j, particle_offset);
 
                             for (int i = 0; i < 3; i++) {
                                 p_i->addF(i, F_ij[i]);
@@ -209,6 +209,8 @@ void CellCalculator::calculatePeriodicF() {
         }
     }
 }
+
+
 
 void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3>& new_cell_position, instructions& cell_updates) {
     //second method for reflective boundaries
@@ -338,7 +340,7 @@ void CellCalculator::finishF(std::vector<Particle*> *current_cell) {
             p_j = *it2;
 
 
-                F_ij = force(*p_i, *p_j, {0, 0, 0});
+                F_ij = force_exp(*p_i, *p_j, {0, 0, 0});
 
                 for (int i = 0; i < 3; i++) {
                     p_i->addF(i, F_ij[i]);
