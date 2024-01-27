@@ -49,6 +49,11 @@ command line arguments and what is being returned by the executable. This file s
 
 ### Task 2 
 
+#### Performance
+- we measured and profiled the performance of the execution of our parallel version with Intel's Vtune profiler. Measurements were performed within a Linux environment on an AMD Ryzen 7 5700U without VTK output and logging enabled. We used gcc with the optimization level -O3 and a smaller version of the rayleigh-taylor instability in 3D. When using the Threading analysis of Vtune, we can see, that thoughout the execution, our programs makes use of the 16 logical cores, that the AMD Ryzen 7 5700U has.
+- 
+![grafik](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/cfcfd114-47d9-4a5a-9a1e-2832b122c5df)
+ 
 
 ### Task 3 
 
