@@ -7,19 +7,17 @@
 #include <algorithm>
 
 double min_distance = 0.7;
-
 int schedule_size = 16;
 
 std::vector<std::vector<double>> sigma_mixed{{1.0}};
-
 std::vector<std::vector<double>> epsilon_mixed{{5.0}};
 
 CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,
                                double r_l_, std::array<boundary_conditions,6> boundaries_cond,
                                std::string forceType,double gravity_factor, concurrency_strategy strategy)
-    : cellContainer(cellContainer), gravity_factor(gravity_factor), delta_t(delta_t), cutoff(cutoff), r_l(r_l_),
+    : parallelization(strategy), cellContainer(cellContainer), gravity_factor(gravity_factor), delta_t(delta_t), cutoff(cutoff), r_l(r_l_),
     domain_bounds(cellContainer.getDomainBounds()), domain_max_dim(CellContainer::domain_max_dim), boundaries(boundaries_cond),
-    particles(CellContainer::particles), parallelization(strategy)
+    particles(CellContainer::particles)
     {
     if(forceType == "smoothedLJ"){
         force = forceSmoothedLennJonesPotentialFunction(sigma_mixed,epsilon_mixed,cutoff,r_l);
@@ -297,7 +295,7 @@ void CellCalculator::updateCells(instructions& cell_updates) {
 }
 
 //mirror the last position back into the domain, return true if all boundaries successful
-bool CellCalculator::mirror(std::array<dim_t,3> &position, std::array<double,3> &offset) {
+inline bool CellCalculator::mirror(std::array<dim_t,3> &position, std::array<double,3> &offset) {
     static std::array<unsigned short,6> map_boundaries{3,5,1,2,4,0};//{neg_X, neg_Y, neg_Z, pos_X, pos_Y, pos_Z}
     bool mirrored_fully = true;
     //this map is necessary, because in the boundaries member, the order is

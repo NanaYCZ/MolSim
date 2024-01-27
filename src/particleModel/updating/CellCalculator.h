@@ -120,7 +120,7 @@ public:
     }
 
     ForceCalculation force;
-
+    concurrency_strategy parallelization;
 
 
 private:
@@ -136,8 +136,6 @@ private:
     std::array<boundary_conditions,6> boundaries;
 
     std::vector<std::vector<std::vector<std::vector<Particle*>>>> &particles;
-
-    concurrency_strategy parallelization;
 
     /**
      * @brief helper method to change the location of particles within the cell structure
@@ -182,5 +180,5 @@ private:
      * used to implement the periodic boundaries, writes the changed distance of the
      * particles through the mirroring in the offset for further calculations
      */
-    bool mirror(std::array<dim_t,3> &position, std::array<double,3> &offset);
+    inline bool mirror(std::array<dim_t,3> &position, std::array<double,3> &offset);
 };

@@ -276,7 +276,7 @@ void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 
 }
 
 
-void CellContainer::allocateCellFromPosition(const std::array<double, 3> &x, std::array<dim_t , 3> &cell_position) {
+inline void CellContainer::allocateCellFromPosition(const std::array<double, 3> &x, std::array<dim_t , 3> &cell_position) {
     cell_position[0] = std::floor(x[0] / cell_size + 1);
     cell_position[1] = std::floor(x[1] / cell_size + 1);
     cell_position[2] = std::floor(x[2] / cell_size + 1);

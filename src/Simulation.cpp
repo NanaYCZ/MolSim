@@ -31,7 +31,8 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     size_t barWidth, pos;
 
     SPDLOG_INFO("Starting Simulation");
-    SPDLOG_INFO("max threads: " + std::to_string(omp_get_max_threads()));
+    if(calculator.parallelization == concurrency_strategy::first_method)
+        SPDLOG_INFO("max threads: " + std::to_string(omp_get_max_threads()));
     calculator.calculateF();
     calculator.shiftF();
 

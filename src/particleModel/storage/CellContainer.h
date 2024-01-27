@@ -128,7 +128,7 @@ public:
     * @param x particle position to map a cell position to
     * @param cell_position array to write the results into
     */
-    void allocateCellFromPosition(const std::array<double, 3> &x, std::array<dim_t , 3> &cell_position);
+    inline void allocateCellFromPosition(const std::array<double, 3> &x, std::array<dim_t , 3> &cell_position);
 
 private:
     bool three_dimensions;

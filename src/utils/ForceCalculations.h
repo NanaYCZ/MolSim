@@ -102,8 +102,6 @@ ForceCalculation inline forceLennJonesPotentialFunction(std::vector<std::vector<
 
         std::array<double, 3> delta_x = x_i - x_j + offset;
         double scalar_product = ArrayUtils::scalarProduct(delta_x,delta_x);
-        std::cout << "delta_x: " << ArrayUtils::to_string(delta_x) << "\n";
-        std::cout << "scalar_prod: " << scalar_product << "\n";
 
         /*instantly return 0 if r_c <= norm */
         if(r_c_squared <= scalar_product)
@@ -112,11 +110,8 @@ ForceCalculation inline forceLennJonesPotentialFunction(std::vector<std::vector<
         double norm = std::sqrt(scalar_product);
 
         double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
-        std::cout << "norm: " << norm << "\n";
-        std::cout << "prefac1: " << prefactor << "\n";
 
         prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
-        std::cout << "prefac2: " << prefactor << "\n";
 
         return prefactor * (x_i - x_j + offset);
 
