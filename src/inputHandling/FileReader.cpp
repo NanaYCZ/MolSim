@@ -92,9 +92,22 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
     args.cell_size = sim_params.cellSize();
     args.gravity_factor = sim_params.gravityFactor().present() ? sim_params.gravityFactor().get() : 0;
     args.force_type = sim_params.forceType();
-    args.parallelization_version = sim_params.parallelizationVersion().present() ?
-                                   std::make_optional<std::string>(sim_params.parallelizationVersion().get())
-                                   : std::nullopt;
+    if(sim_params.parallelizationVersion().present()){
+        if(sim_params.parallelizationVersion().get().serial().present()){
+            args.parallelization_version = concurrency_strategy::serial;
+        }else if(sim_params.parallelizationVersion().get().first_method().present()){
+            args.parallelization_version = concurrency_strategy::first_method;
+            if(sim_params.parallelizationVersion().get().first_method().get().numThreads().present())
+            args.choose_amount_threads = sim_params.parallelizationVersion().get().first_method().get().numThreads().get();
+        }else if(sim_params.parallelizationVersion().get().first_method().present()){
+            args.parallelization_version = concurrency_strategy::second_method;
+            if(sim_params.parallelizationVersion().get().second_method().get().numThreads().present())
+                args.choose_amount_threads =  sim_params.parallelizationVersion().get().second_method().get().numThreads().get();
+            //spdlog::info("The second method can be choosen, but at the moment it does not differ from the first");
+        }else{
+            spdlog::info("The Strategy for Parallelization you provided does not exist");
+        }
+    }
 
     if(sim_params.diffusionStatFrequency().present())
         args.diff_frequency =  sim_params.diffusionStatFrequency().get();

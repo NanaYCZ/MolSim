@@ -432,6 +432,100 @@ domainDimensions (::std::unique_ptr< domainDimensions_type > x)
 }
 
 
+// parallelizationSettingsType
+// 
+
+const parallelizationSettingsType::serial_optional& parallelizationSettingsType::
+serial () const
+{
+  return this->serial_;
+}
+
+parallelizationSettingsType::serial_optional& parallelizationSettingsType::
+serial ()
+{
+  return this->serial_;
+}
+
+void parallelizationSettingsType::
+serial (const serial_type& x)
+{
+  this->serial_.set (x);
+}
+
+void parallelizationSettingsType::
+serial (const serial_optional& x)
+{
+  this->serial_ = x;
+}
+
+void parallelizationSettingsType::
+serial (::std::unique_ptr< serial_type > x)
+{
+  this->serial_.set (std::move (x));
+}
+
+const parallelizationSettingsType::first_method_optional& parallelizationSettingsType::
+first_method () const
+{
+  return this->first_method_;
+}
+
+parallelizationSettingsType::first_method_optional& parallelizationSettingsType::
+first_method ()
+{
+  return this->first_method_;
+}
+
+void parallelizationSettingsType::
+first_method (const first_method_type& x)
+{
+  this->first_method_.set (x);
+}
+
+void parallelizationSettingsType::
+first_method (const first_method_optional& x)
+{
+  this->first_method_ = x;
+}
+
+void parallelizationSettingsType::
+first_method (::std::unique_ptr< first_method_type > x)
+{
+  this->first_method_.set (std::move (x));
+}
+
+const parallelizationSettingsType::second_method_optional& parallelizationSettingsType::
+second_method () const
+{
+  return this->second_method_;
+}
+
+parallelizationSettingsType::second_method_optional& parallelizationSettingsType::
+second_method ()
+{
+  return this->second_method_;
+}
+
+void parallelizationSettingsType::
+second_method (const second_method_type& x)
+{
+  this->second_method_.set (x);
+}
+
+void parallelizationSettingsType::
+second_method (const second_method_optional& x)
+{
+  this->second_method_ = x;
+}
+
+void parallelizationSettingsType::
+second_method (::std::unique_ptr< second_method_type > x)
+{
+  this->second_method_.set (std::move (x));
+}
+
+
 // rdfType
 // 
 
@@ -1192,6 +1286,62 @@ spheres (const spheres_sequence& s)
 }
 
 
+// first_method
+// 
+
+const first_method::numThreads_optional& first_method::
+numThreads () const
+{
+  return this->numThreads_;
+}
+
+first_method::numThreads_optional& first_method::
+numThreads ()
+{
+  return this->numThreads_;
+}
+
+void first_method::
+numThreads (const numThreads_type& x)
+{
+  this->numThreads_.set (x);
+}
+
+void first_method::
+numThreads (const numThreads_optional& x)
+{
+  this->numThreads_ = x;
+}
+
+
+// second_method
+// 
+
+const second_method::numThreads_optional& second_method::
+numThreads () const
+{
+  return this->numThreads_;
+}
+
+second_method::numThreads_optional& second_method::
+numThreads ()
+{
+  return this->numThreads_;
+}
+
+void second_method::
+numThreads (const numThreads_type& x)
+{
+  this->numThreads_.set (x);
+}
+
+void second_method::
+numThreads (const numThreads_optional& x)
+{
+  this->numThreads_ = x;
+}
+
+
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
 
 // outputParamsType
@@ -1686,6 +1836,127 @@ operator= (const simulationParamsType& x)
 
 simulationParamsType::
 ~simulationParamsType ()
+{
+}
+
+// parallelizationSettingsType
+//
+
+parallelizationSettingsType::
+parallelizationSettingsType ()
+: ::xml_schema::type (),
+  serial_ (this),
+  first_method_ (this),
+  second_method_ (this)
+{
+}
+
+parallelizationSettingsType::
+parallelizationSettingsType (const parallelizationSettingsType& x,
+                             ::xml_schema::flags f,
+                             ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  serial_ (x.serial_, f, this),
+  first_method_ (x.first_method_, f, this),
+  second_method_ (x.second_method_, f, this)
+{
+}
+
+parallelizationSettingsType::
+parallelizationSettingsType (const ::xercesc::DOMElement& e,
+                             ::xml_schema::flags f,
+                             ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  serial_ (this),
+  first_method_ (this),
+  second_method_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void parallelizationSettingsType::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // serial
+    //
+    if (n.name () == "serial" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< serial_type > r (
+        serial_traits::create (i, f, this));
+
+      if (!this->serial_)
+      {
+        this->serial_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // first_method
+    //
+    if (n.name () == "first_method" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< first_method_type > r (
+        first_method_traits::create (i, f, this));
+
+      if (!this->first_method_)
+      {
+        this->first_method_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // second_method
+    //
+    if (n.name () == "second_method" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< second_method_type > r (
+        second_method_traits::create (i, f, this));
+
+      if (!this->second_method_)
+      {
+        this->second_method_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    break;
+  }
+}
+
+parallelizationSettingsType* parallelizationSettingsType::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class parallelizationSettingsType (*this, f, c);
+}
+
+parallelizationSettingsType& parallelizationSettingsType::
+operator= (const parallelizationSettingsType& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->serial_ = x.serial_;
+    this->first_method_ = x.first_method_;
+    this->second_method_ = x.second_method_;
+  }
+
+  return *this;
+}
+
+parallelizationSettingsType::
+~parallelizationSettingsType ()
 {
 }
 
@@ -2995,6 +3266,170 @@ operator= (const parameters& x)
 
 parameters::
 ~parameters ()
+{
+}
+
+// first_method
+//
+
+first_method::
+first_method ()
+: ::xml_schema::type (),
+  numThreads_ (this)
+{
+}
+
+first_method::
+first_method (const first_method& x,
+              ::xml_schema::flags f,
+              ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  numThreads_ (x.numThreads_, f, this)
+{
+}
+
+first_method::
+first_method (const ::xercesc::DOMElement& e,
+              ::xml_schema::flags f,
+              ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  numThreads_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void first_method::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // numThreads
+    //
+    if (n.name () == "numThreads" && n.namespace_ ().empty ())
+    {
+      if (!this->numThreads_)
+      {
+        this->numThreads_.set (numThreads_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+}
+
+first_method* first_method::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class first_method (*this, f, c);
+}
+
+first_method& first_method::
+operator= (const first_method& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->numThreads_ = x.numThreads_;
+  }
+
+  return *this;
+}
+
+first_method::
+~first_method ()
+{
+}
+
+// second_method
+//
+
+second_method::
+second_method ()
+: ::xml_schema::type (),
+  numThreads_ (this)
+{
+}
+
+second_method::
+second_method (const second_method& x,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  numThreads_ (x.numThreads_, f, this)
+{
+}
+
+second_method::
+second_method (const ::xercesc::DOMElement& e,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  numThreads_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void second_method::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // numThreads
+    //
+    if (n.name () == "numThreads" && n.namespace_ ().empty ())
+    {
+      if (!this->numThreads_)
+      {
+        this->numThreads_.set (numThreads_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+}
+
+second_method* second_method::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class second_method (*this, f, c);
+}
+
+second_method& second_method::
+operator= (const second_method& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->numThreads_ = x.numThreads_;
+  }
+
+  return *this;
+}
+
+second_method::
+~second_method ()
 {
 }
 

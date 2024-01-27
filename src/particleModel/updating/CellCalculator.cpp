@@ -97,7 +97,7 @@ void CellCalculator::calculateV(){
     }
 }
 
-void CellCalculator::calculateF(){
+    void CellCalculator::calculateF(){
     calculateLinkedCellF();
     calculatePeriodicF();
 
@@ -151,14 +151,14 @@ void CellCalculator::calculateLinkedCellF() {
                 for (auto &p_i: *cell_1) {
                     for (auto &p_j: *cell_2) {
 
-                        if (inCutoffDistance(*p_i, *p_j, {0, 0, 0})) {
+
                             F_ij = force(*p_i, *p_j, {0, 0, 0});
 
                             for (int i = 0; i < 3; i++) {
                                 p_i->addF(i, F_ij[i]);
                                 p_j->addF(i, -F_ij[i]);
                             }
-                        }
+
                     }
                 }
 
@@ -195,14 +195,14 @@ void CellCalculator::calculatePeriodicF() {
                 for (auto &p_i: *cell_1) {
                     for (auto &p_j: *cell_2) {
 
-                        if (inCutoffDistance(*p_i, *p_j, particle_offset)) {
+
                             F_ij = force(*p_i, *p_j, particle_offset);
 
                             for (int i = 0; i < 3; i++) {
                                 p_i->addF(i, F_ij[i]);
                                 p_j->addF(i, -F_ij[i]);
                             }
-                        }
+
                     }
                 }
             }
@@ -337,14 +337,14 @@ void CellCalculator::finishF(std::vector<Particle*> *current_cell) {
             p_i = *it1;
             p_j = *it2;
 
-            if(inCutoffDistance(*p_i, *p_j, {0, 0, 0})) {
+
                 F_ij = force(*p_i, *p_j, {0, 0, 0});
 
                 for (int i = 0; i < 3; i++) {
                     p_i->addF(i, F_ij[i]);
                     p_j->addF(i, -F_ij[i]);
                 }
-            }
+
         }
 
         //add gravity
