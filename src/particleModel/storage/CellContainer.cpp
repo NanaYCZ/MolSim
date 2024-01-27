@@ -276,24 +276,6 @@ void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 
 }
 
 
-inline void CellContainer::allocateCellFromPosition(const std::array<double, 3> &x, std::array<dim_t , 3> &cell_position) {
-    cell_position[0] = std::floor(x[0] / cell_size + 1);
-    cell_position[1] = std::floor(x[1] / cell_size + 1);
-    cell_position[2] = std::floor(x[2] / cell_size + 1);
-
-    //cover edge case with last cell being less than cell_size
-    if(domain_bounds[0] < x[0]) {
-        cell_position[0] = std::ceil((x[0] - domain_bounds[0]) / cell_size + domain_max_dim[0]);
-    }
-    if(domain_bounds[1] < x[1]) {
-        cell_position[1] = std::ceil((x[1] - domain_bounds[1]) / cell_size + domain_max_dim[1]);
-    }
-    if(domain_bounds[2] < x[2]) {
-        cell_position[2] = std::ceil((x[2] - domain_bounds[2]) / cell_size + domain_max_dim[2]);
-    }
-}
-
-
 bool CellContainer::isApproximatelyEqual(double a, double b, double epsilon) {
     return std::abs(a - b) < epsilon;
 }
