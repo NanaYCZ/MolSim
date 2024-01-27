@@ -269,6 +269,36 @@ forceType (::std::unique_ptr< forceType_type > x)
   this->forceType_.set (std::move (x));
 }
 
+const simulationParamsType::parallelizationVersion_optional& simulationParamsType::
+parallelizationVersion () const
+{
+  return this->parallelizationVersion_;
+}
+
+simulationParamsType::parallelizationVersion_optional& simulationParamsType::
+parallelizationVersion ()
+{
+  return this->parallelizationVersion_;
+}
+
+void simulationParamsType::
+parallelizationVersion (const parallelizationVersion_type& x)
+{
+  this->parallelizationVersion_.set (x);
+}
+
+void simulationParamsType::
+parallelizationVersion (const parallelizationVersion_optional& x)
+{
+  this->parallelizationVersion_ = x;
+}
+
+void simulationParamsType::
+parallelizationVersion (::std::unique_ptr< parallelizationVersion_type > x)
+{
+  this->parallelizationVersion_.set (std::move (x));
+}
+
 const simulationParamsType::Rdf_optional& simulationParamsType::
 Rdf () const
 {
@@ -1333,6 +1363,7 @@ simulationParamsType (const tEnd_type& tEnd,
   cellSize_ (cellSize, this),
   gravityFactor_ (this),
   forceType_ (forceType, this),
+  parallelizationVersion_ (this),
   Rdf_ (this),
   diffusionStatFrequency_ (this),
   Thermostats_ (this),
@@ -1356,6 +1387,7 @@ simulationParamsType (const tEnd_type& tEnd,
   cellSize_ (cellSize, this),
   gravityFactor_ (this),
   forceType_ (forceType, this),
+  parallelizationVersion_ (this),
   Rdf_ (this),
   diffusionStatFrequency_ (this),
   Thermostats_ (this),
@@ -1375,6 +1407,7 @@ simulationParamsType (const simulationParamsType& x,
   cellSize_ (x.cellSize_, f, this),
   gravityFactor_ (x.gravityFactor_, f, this),
   forceType_ (x.forceType_, f, this),
+  parallelizationVersion_ (x.parallelizationVersion_, f, this),
   Rdf_ (x.Rdf_, f, this),
   diffusionStatFrequency_ (x.diffusionStatFrequency_, f, this),
   Thermostats_ (x.Thermostats_, f, this),
@@ -1394,6 +1427,7 @@ simulationParamsType (const ::xercesc::DOMElement& e,
   cellSize_ (this),
   gravityFactor_ (this),
   forceType_ (this),
+  parallelizationVersion_ (this),
   Rdf_ (this),
   diffusionStatFrequency_ (this),
   Thermostats_ (this),
@@ -1482,6 +1516,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!forceType_.present ())
       {
         this->forceType_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // parallelizationVersion
+    //
+    if (n.name () == "parallelizationVersion" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< parallelizationVersion_type > r (
+        parallelizationVersion_traits::create (i, f, this));
+
+      if (!this->parallelizationVersion_)
+      {
+        this->parallelizationVersion_.set (::std::move (r));
         continue;
       }
     }
@@ -1625,6 +1673,7 @@ operator= (const simulationParamsType& x)
     this->cellSize_ = x.cellSize_;
     this->gravityFactor_ = x.gravityFactor_;
     this->forceType_ = x.forceType_;
+    this->parallelizationVersion_ = x.parallelizationVersion_;
     this->Rdf_ = x.Rdf_;
     this->diffusionStatFrequency_ = x.diffusionStatFrequency_;
     this->Thermostats_ = x.Thermostats_;

@@ -114,14 +114,22 @@ int main(int argc, char *argsv[])
 
     if(args.checkpoint_input_file.has_value()){
         Checkpointer::addCheckpointparticles(cellContainer,args.checkpoint_input_file.value());
-
     }
 
     cellContainer.createPointers();
 
     if(args.diff_frequency.has_value())
-        thermoStats.initDiffCoeff();
+        thermoStats.initDiffusionCoefficient();
 
+    if(args.parallelization_version.has_value()){
+        if(args.parallelization_version.value() == "Version0"){
+            //maybe no parallel...
+        }else if(args.parallelization_version.value() == "Version1"){
+            //a lot of threads...
+        }else{
+            spdlog::info("The parallelization version you provided does not exist");
+        }
+    }
 
     runSimulation(cellContainer,cellCalculator,thermoStats,args.t_end,args.delta_t,args.write_frequency,
                 args.calculate_thermostats ? std::optional<int>(args.thermo_stat_frequency) : std::nullopt,

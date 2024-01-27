@@ -92,6 +92,9 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
     args.cell_size = sim_params.cellSize();
     args.gravity_factor = sim_params.gravityFactor().present() ? sim_params.gravityFactor().get() : 0;
     args.force_type = sim_params.forceType();
+    args.parallelization_version = sim_params.parallelizationVersion().present() ?
+                                   std::make_optional<std::string>(sim_params.parallelizationVersion().get())
+                                   : std::nullopt;
 
     if(sim_params.diffusionStatFrequency().present())
         args.diff_frequency =  sim_params.diffusionStatFrequency().get();

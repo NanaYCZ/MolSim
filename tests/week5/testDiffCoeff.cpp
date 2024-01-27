@@ -34,7 +34,7 @@ TEST(test_CellCalculation, test_periodic_corner){
 
     container_corner.createPointers();
 
-    thermoStats.initDiffCoeff();
+    thermoStats.initDiffusionCoefficient();
 
 
     // as the particle is exactly at the boundary -> should move to 
@@ -53,7 +53,7 @@ TEST(test_CellCalculation, test_periodic_corner){
     ASSERT_EQ(1,crossed_boundaries[0]);
     ASSERT_EQ(1,crossed_boundaries[1]);
 
-    double diffusion_coefficient_actual = thermoStats.diffusionCoeff();
+    double diffusion_coefficient_actual = thermoStats.getDiffusionCoefficient();
 
     double diffusion_coefficient_expected = (std::pow(-10 * 0.001,2) + std::pow(-10 * 0.001,2));
     
@@ -101,7 +101,7 @@ TEST(test_DiffCoeff1, test_periodic_diff_Coeff_reappearing){
 
     container.createPointers();
 
-    thermoStats.initDiffCoeff();
+    thermoStats.initDiffusionCoefficient();
 
     // as the particles are exactly at the boundary, they both should move to 
     // the respective other side within one step already
@@ -119,7 +119,7 @@ TEST(test_DiffCoeff1, test_periodic_diff_Coeff_reappearing){
     ASSERT_EQ(1,particles[0].getBoundariesCrossed(0));
     ASSERT_EQ(1,particles[1].getBoundariesCrossed(1));
 
-    double diffusion_coefficient_actual = thermoStats.diffusionCoeff();
+    double diffusion_coefficient_actual = thermoStats.getDiffusionCoefficient();
 
     double diffusion_coefficient_expected = ( std::pow(-10 * 0.05,2) +  std::pow(-10 * 0.05,2) ) / 2.0;
 
@@ -149,7 +149,7 @@ TEST(test_DiffCoeff2, diff_Coeff_twice_crossed_boundary){
 
     container.createPointers();
 
-    thermoStats.initDiffCoeff();
+    thermoStats.initDiffusionCoefficient();
 
     // as the particles are exactly at the boundary, they both should move to 
     // the respective other side within one step already
@@ -169,7 +169,7 @@ TEST(test_DiffCoeff2, diff_Coeff_twice_crossed_boundary){
 
     ASSERT_EQ(2,particles[0].getBoundariesCrossed(0));
 
-    double diffusion_coefficient_actual = thermoStats.diffusionCoeff();
+    double diffusion_coefficient_actual = thermoStats.getDiffusionCoefficient();
 
     double diffusion_coefficient_expected = ( std::pow(-10 * 0.6 * 2,2)) / 1.0;
 

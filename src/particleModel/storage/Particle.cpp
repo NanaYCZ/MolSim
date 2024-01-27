@@ -114,6 +114,22 @@ void Particle::shiftF() {
   }
 }
 
+std::array<int,3>& Particle::getBoundariesCrossed(){
+    return boundaries_crossed;
+}
+
+void  Particle::incBoundariesCrossedI(int i){
+    boundaries_crossed[i]+=1;
+}
+
+void Particle::decBoundariesCrossedI(int i){
+    boundaries_crossed[i]-=1;
+};
+
+void Particle::setBoundariesCrossedZero(){
+    boundaries_crossed = {0, 0, 0};
+}
+
 std::string Particle::toString() const {
   std::stringstream stream;
   stream << "Particle: X:" << x << " v: " << v << " f: " << getF() << " crossed: " << boundaries_crossed 

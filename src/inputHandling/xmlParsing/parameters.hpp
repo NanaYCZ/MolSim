@@ -1262,6 +1262,82 @@ class simulationParamsType: public ::xml_schema::type
   //@}
 
   /**
+   * @name parallelizationVersion
+   *
+   * @brief Accessor and modifier functions for the %parallelizationVersion
+   * optional element.
+   */
+  //@{
+
+  /**
+   * @brief Element type.
+   */
+  typedef ::xml_schema::string parallelizationVersion_type;
+
+  /**
+   * @brief Element optional container type.
+   */
+  typedef ::xsd::cxx::tree::optional< parallelizationVersion_type > parallelizationVersion_optional;
+
+  /**
+   * @brief Element traits type.
+   */
+  typedef ::xsd::cxx::tree::traits< parallelizationVersion_type, char > parallelizationVersion_traits;
+
+  /**
+   * @brief Return a read-only (constant) reference to the element
+   * container.
+   *
+   * @return A constant reference to the optional container.
+   */
+  const parallelizationVersion_optional&
+  parallelizationVersion () const;
+
+  /**
+   * @brief Return a read-write reference to the element container.
+   *
+   * @return A reference to the optional container.
+   */
+  parallelizationVersion_optional&
+  parallelizationVersion ();
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x A new value to set.
+   *
+   * This function makes a copy of its argument and sets it as
+   * the new value of the element.
+   */
+  void
+  parallelizationVersion (const parallelizationVersion_type& x);
+
+  /**
+   * @brief Set the element value.
+   *
+   * @param x An optional container with the new value to set.
+   *
+   * If the value is present in @a x then this function makes a copy 
+   * of this value and sets it as the new value of the element.
+   * Otherwise the element container is set the 'not present' state.
+   */
+  void
+  parallelizationVersion (const parallelizationVersion_optional& x);
+
+  /**
+   * @brief Set the element value without copying.
+   *
+   * @param p A new value to use.
+   *
+   * This function will try to use the passed value directly instead
+   * of making a copy.
+   */
+  void
+  parallelizationVersion (::std::unique_ptr< parallelizationVersion_type > p);
+
+  //@}
+
+  /**
    * @name Rdf
    *
    * @brief Accessor and modifier functions for the %Rdf
@@ -1703,6 +1779,7 @@ class simulationParamsType: public ::xml_schema::type
   ::xsd::cxx::tree::one< cellSize_type > cellSize_;
   gravityFactor_optional gravityFactor_;
   ::xsd::cxx::tree::one< forceType_type > forceType_;
+  parallelizationVersion_optional parallelizationVersion_;
   Rdf_optional Rdf_;
   diffusionStatFrequency_optional diffusionStatFrequency_;
   Thermostats_optional Thermostats_;

@@ -9,16 +9,13 @@ TEST(test_Rdf,test_basic){
     CellContainer container(15,15,0,3.0,3.0);
     ThermoStats thermoStats(container,0.1,0,0);
 
-    // basic pyramid where between the base sides there 
-    // is a distance of 2 between every pair  (3 * dist 2)
-    // and then 3 * sides of length 2 * sqrt(2) ~ 2.828 where
-    // the points from the ground are connected with the top of the pyramid
+    // basic equal-sided pyramid (every side has length 2 * sqrt(2) ~ 2.828 )
     container.addParticle({2,2,2},{0,0,0},3);
     container.addParticle({2,0,0},{0,0,0},4);
     container.addParticle({0,2,0},{0,0,0},4);
     container.addParticle({0,0,2},{0,0,0},7);
 
-    std::vector<double> rdf = thermoStats.radialDistributionFunction(0.1);
+    std::vector<double> rdf = thermoStats.getRadialDistributionFunction(0.1);
     //-> there should be 6 entries be counted in the 28th "backet"
     //because there are 6 pairs with the distance 2.828 -> they belong in 2.8 - 2.9 bucket
 
@@ -28,7 +25,7 @@ TEST(test_Rdf,test_basic){
     std::cout << ArrayUtils::to_string(rdf) << "\n";
 
     for(size_t i = 0; i < rdf.size();i++){
-        if(i == 28){ // 28 * 0.1 = 2.8 -> bucket 2.8 - 2.9
+        if(i == 28){ // 28 * 0.1(step size) = 2.8 -> bucket 2.8 - 2.9
             ASSERT_EQ(expected,rdf[i]);
         }else{
             ASSERT_EQ(0,rdf[i]);
