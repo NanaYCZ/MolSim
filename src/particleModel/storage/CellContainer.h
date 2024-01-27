@@ -10,11 +10,6 @@
 typedef int dim_t;
 
 /**
- * @brief reserved dim_t value for controlling
- */
-extern dim_t dim_t_res;
-
-/**
  * @class CellContainer
  * @brief container structure to store the particles within cells
  */
@@ -122,6 +117,10 @@ public:
         return domain_bounds;
     }
 
+    std::vector<std::array<dim_t,3>> getPatterns() {
+        return patterns;
+    }
+
     /**
     * @brief allocates a cell position in the domain for the given position
     *
@@ -168,17 +167,17 @@ private:
       * @brief helper method to set the next 3d pattern for "setNextPath(...)"
       *
       * @param pattern to set the next pattern to
-      * @param start to set the reserved value in case all patterns are done
+      * @return bool indicating that last pattern is not reached
       */
-    void setNext3dPattern(std::array<dim_t, 3> &pattern, std::array<dim_t, 3> &start);
+    bool setNext3dPattern(std::array<dim_t, 3> &pattern);
 
     /**
       * @brief helper method to set the next 2d pattern for "setNextPath(...)"
       *
       * @param pattern to set the next pattern to
-      * @param start to set the reserved value in case all patterns are done
+      * @return bool indicating that last pattern is not reached
       */
-    void setNext2dPattern(std::array<dim_t, 3> &pattern, std::array<dim_t, 3> &start);
+    bool setNext2dPattern(std::array<dim_t, 3> &pattern);
 
 
     /**
