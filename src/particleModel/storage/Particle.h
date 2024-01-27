@@ -54,6 +54,20 @@ private:
     */
     bool secondIsOld = true;
 
+    /**
+     * Records which boundaries in which direction were crossed.
+     * This makes storing the boundaries, that were crossed in a
+     * certain time period possible. The time period is determined
+     * by the user, because he has to reset the boundaries_crossed
+     * tracker to 0 as well
+     * e.g. boundaries_crossed[0] = 3 means that domain_bounds in x
+     *                                direction were added three times
+     *                                or that the domain was crossed three times
+     *                                in negative x direction
+     * e.g. boundaries_crossed[1] = -2 means that domain_bounds in y direction
+     *                                were subtracted two times or that the domain
+     *                                was crossed three times in positive x direction
+     */
     std::array<int,3> boundaries_crossed;
 
 public:
@@ -69,19 +83,31 @@ public:
 
     virtual ~Particle();
 
-    std::array<int,3>& getBoundariesCrossed(){return boundaries_crossed;}
-    int& getBoundariesCrossed(int i){return boundaries_crossed[i];};
-    void incBoundariesCrossedI(int i){
-        //std::cout << "Called periodic inc\n"; 
-        boundaries_crossed[i]+=1;
-        // std::cout << "cross: " << boundaries_crossed << "\n";
-        }
-    void decBoundariesCrossedI(int i){
-        //std::cout << "Called periodic inc\n";
-        boundaries_crossed[i]-=1; 
-        //std::cout << "cross: " << boundaries_crossed << "\n";
-        };
-    void setPeriodicZero(){boundaries_crossed = {0,0,0};};
+    /**
+     *
+     * @return boundaries_crossed member
+     */
+    std::array<int,3>& getBoundariesCrossed();
+
+    /**
+     * @brief increments boundary i by one
+     *
+     * @param i   boundary
+     */
+    void incBoundariesCrossedI(int i);
+
+    /**
+     * @brief decrements boundary i by one
+     *
+     * @param i   boundary
+     */
+    void decBoundariesCrossedI(int i);
+
+    /**
+     * @brief sets all boundaries to zero
+     *
+     */
+    void setBoundariesCrossedZero();
 
     const std::array<double, 3> &getX() const;
 

@@ -216,7 +216,7 @@ void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3
                 //                                ArrayUtils::to_string(particle_ptr->getBoundariesCrossed()) + "\n";
                 // std::cout << msg;
                 particle_ptr->addX(i,domain_bounds[i]);
-                particle_ptr->incBoundariesCrossedI(i);
+                particle_ptr->decBoundariesCrossedI(i); //crossed boundary in negative i direction
             }
         } //check if position is outside the domain
         else if(domain_bounds[i] < x[i]) {
@@ -232,7 +232,7 @@ void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3
                 //                                ArrayUtils::to_string(particle_ptr->getBoundariesCrossed()) + "\n";
                 // std::cout << msg;
                 particle_ptr->addX(i,-domain_bounds[i]);
-                particle_ptr->decBoundariesCrossedI(i);
+                particle_ptr->incBoundariesCrossedI(i); //crossed boundary in positive i direction
             }
         }
     }

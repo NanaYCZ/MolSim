@@ -75,17 +75,22 @@ double ThermoStats::getDiffusionCoefficient(){
               std::array<int,3> how_often_periodic_boundaries_crossed = particle_ptr->getBoundariesCrossed();
               //in every direction remove the domain_bounds which were added to the current particle's
               //position to place the particle back into the domain within the simulation
-                remove_periodic_boundaries[0] = domain_size[0] *
+              // e.g. in direction i how_often_periodic_boundaries_crossed[i] = 3
+              //then we know that the boundary in direction i was crossed three times in positive
+              //direction -> therefore domain_size[i] was subtracted three times from the original position
+                remove_periodic_boundaries[0] = -domain_size[0] *
                                 static_cast<double>(how_often_periodic_boundaries_crossed[0]);
-                remove_periodic_boundaries[1] = domain_size[1] *
+                remove_periodic_boundaries[1] = -domain_size[1] *
                                 static_cast<double>(how_often_periodic_boundaries_crossed[1]);
-                remove_periodic_boundaries[2] = domain_size[2] *
+                remove_periodic_boundaries[2] = -domain_size[2] *
                                 static_cast<double>(how_often_periodic_boundaries_crossed[2]);
-
+              //remove_periodic_boundaries now contains exactly what was added/subtracted
+              //to the particles position due to periodic boundaries
+              //-> subtract remove_periodic_boundaries from the current position
               diff = current_position - remove_periodic_boundaries - old_position;
               sum += ArrayUtils::scalarProduct(diff,diff); //no need to calculate L2norm and then square
               amount++;
-              particle_ptr->setPeriodicZero();
+                particle_ptr->setBoundariesCrossedZero();
             }
         }
     }
