@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="parameters.xsd">
+
+  <!-- Output Parameters -->
+  <outputParameters>
+    <baseName>out</baseName>
+    <writeFrequency>100</writeFrequency>
+    <checkpointInputFileName>fluid_task5_checkpoint_big.txt</checkpointInputFileName>
+  </outputParameters>
+
+
+  <!-- Simulation Parameters -->
+  <simulationParameters>
+    <tEnd>250</tEnd>
+    <deltaT>0.001</deltaT>
+    <cutOffRadius>2.3</cutOffRadius>                                          
+    <cellSize>2.3</cellSize>
+    <forceType>smoothedLJ</forceType>
+    <Rdf>
+      <rdfTimeInterval>0.05</rdfTimeInterval>
+      <rdfStatFrequency>10000</rdfStatFrequency>
+    </Rdf>
+    <diffusionStatFrequency>1000</diffusionStatFrequency>
+    <Thermostats>
+        <initTemp>3.0</initTemp>
+        <targetTemp>0.5</targetTemp>
+        <thermoStatFrequency>50</thermoStatFrequency>
+        <maxTempDiff>0.00078</maxTempDiff>
+      </Thermostats>
+    <boundaryConditions>
+        <boundaryConditionsPositiveZ>periodic</boundaryConditionsPositiveZ>
+        <boundaryConditionsNegativeZ>periodic</boundaryConditionsNegativeZ>
+        <boundaryConditionsPositiveX>periodic</boundaryConditionsPositiveX>
+        <boundaryConditionsNegativeX>periodic</boundaryConditionsNegativeX>
+        <boundaryConditionsPositiveY>periodic</boundaryConditionsPositiveY>
+        <boundaryConditionsNegativeY>periodic</boundaryConditionsNegativeY>
+      </boundaryConditions>
+    <domainDimensions> 
+      <x>20</x>
+      <y>20</y>
+      <z>20</z>
+    </domainDimensions>
+  </simulationParameters>
+
+
+
+
+
+  <!-- Spheres -->
+
+
+  <!-- Add arbitrarily many spheres here  -->
+
+</parameters>

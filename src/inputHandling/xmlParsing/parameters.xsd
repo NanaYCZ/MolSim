@@ -35,7 +35,7 @@
       <xs:element name="cellSize" type="xs:double" />
       <xs:element name="gravityFactor" type="xs:double" minOccurs="0"/>
       <xs:element name="forceType" type="xs:string"/>
-      <xs:element name="parallelizationVersion" type="xs:string" minOccurs="0"/>
+      <xs:element name="parallelizationVersion" type="parallelizationSettingsType" minOccurs="0"/>
       <xs:element name="Rdf" type="rdfType" minOccurs="0"/>
       <xs:element name="diffusionStatFrequency" type="xs:int" minOccurs="0"/>
       <!-- specifying mean velocity and Thermostats at the same time is undefined behaviour-->
@@ -43,6 +43,26 @@
       <xs:element name="boundaryConditions" type="boundaryConditionsType" />
       <xs:element name="domainDimensions" type="vector3DType" />
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="parallelizationSettingsType">
+    <xs:choice>
+      <xs:element name="serial"></xs:element>
+      <xs:element name="first_method">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="numThreads" type="xs:int" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="second_method">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="numThreads" type="xs:int" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
   </xs:complexType>
 
   <xs:complexType name="rdfType">

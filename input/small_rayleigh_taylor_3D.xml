@@ -34,9 +34,9 @@
             <boundaryConditionsNegativeY>reflective</boundaryConditionsNegativeY>
         </boundaryConditions>
         <domainDimensions>
-            <x>15</x>
-            <y>30</y>
-            <z>15</z>
+            <x>12</x>
+            <y>12</y>
+            <z>30</z>
         </domainDimensions>
     </simulationParameters>
 
@@ -53,9 +53,9 @@
             <z>0</z>
         </velocity>
         <dimensions>
-            <x>10</x>
+            <x>8</x>
             <y>5</y>
-            <z>10</z>
+            <z>8</z>
         </dimensions>
         <mass>1</mass>
         <meshWidth>1.2</meshWidth>
@@ -66,8 +66,8 @@
     <cuboids>
         <position>
             <x>0.6</x>
-            <y>10.6</y>
-            <z>0.6</z>
+            <y>0.6</y>
+            <z>10.6</z>
         </position>
         <velocity>
             <x>0</x>
@@ -75,9 +75,9 @@
             <z>0</z>
         </velocity>
         <dimensions>
-            <x>10</x>
+            <x>8</x>
             <y>5</y>
-            <z>10</z>
+            <z>8</z>
         </dimensions>
         <mass>2</mass>
         <meshWidth>1.2</meshWidth>

@@ -87,8 +87,6 @@ int main(int argc, char *argsv[])
     auto logger = spdlog::basic_logger_mt("logger", "logs.txt");
     spdlog::set_level(logging_level);
 
-    //todo set via input file
-    omp_set_num_threads(1);
 
     FileReader::ProgramArgs args = fileReader.readProgramArguments(filename);
     SPDLOG_INFO("Read:\n" + args.to_string());
@@ -101,10 +99,21 @@ int main(int argc, char *argsv[])
        FileReader::initializeCorrectInitialTemp(args);
     }
 
+    if(args.choose_amount_threads.has_value()){
+        int number_of_threads = args.choose_amount_threads.value();
+        if(number_of_threads < 1){
+            throw std::invalid_argument("It is not possible to simulate with the numer"
+                                        " of threads you provided: " + std::to_string(number_of_threads));
+        }
+        omp_set_num_threads(number_of_threads);
+    }
+
     CellContainer cellContainer(args.domain_dimensions[0],args.domain_dimensions[1],args.domain_dimensions[2],
                                 args.cut_off_radius,args.cell_size);
     CellCalculator cellCalculator(cellContainer,args.delta_t,args.cut_off_radius,1.9, args.boundaries,
-                                args.force_type, args.gravity_factor);
+                                args.force_type, args.gravity_factor,
+                                args.parallelization_version.has_value() ? args.parallelization_version.value() :
+                                                                                    concurrency_strategy::serial);
     ThermoStats thermoStats(cellContainer,args.delta_t,
                     args.target_temp.has_value() ? args.target_temp : args.init_temp,args.max_temp_diff);
 
@@ -121,15 +130,6 @@ int main(int argc, char *argsv[])
     if(args.diff_frequency.has_value())
         thermoStats.initDiffusionCoefficient();
 
-    if(args.parallelization_version.has_value()){
-        if(args.parallelization_version.value() == "Version0"){
-            //maybe no parallel...
-        }else if(args.parallelization_version.value() == "Version1"){
-            //a lot of threads...
-        }else{
-            spdlog::info("The parallelization version you provided does not exist");
-        }
-    }
 
     runSimulation(cellContainer,cellCalculator,thermoStats,args.t_end,args.delta_t,args.write_frequency,
                 args.calculate_thermostats ? std::optional<int>(args.thermo_stat_frequency) : std::nullopt,

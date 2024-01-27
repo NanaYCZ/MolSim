@@ -137,7 +137,8 @@ struct FileReader::CuboidData {
     double gravity_factor = 0;
     double init_temp = 0;
     std::string force_type = "LJ";
-    std::optional<std::string> parallelization_version = std::nullopt;
+    std::optional<concurrency_strategy> parallelization_version = std::nullopt;
+    std::optional<int> choose_amount_threads = std::nullopt;
     std::optional<int> diff_frequency = std::nullopt;
     std::optional<std::pair<double,int>> rdf_interval_and_frequency = std::nullopt;
     std::optional<double> max_temp_diff = std::nullopt;
