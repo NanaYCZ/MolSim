@@ -31,8 +31,10 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     size_t barWidth, pos;
 
     SPDLOG_INFO("Starting Simulation");
-    if(calculator.parallelization == concurrency_strategy::first_method)
+    if(calculator.parallelization == concurrency_strategy::first_method){
         SPDLOG_INFO("max threads: " + std::to_string(omp_get_max_threads()));
+        SPDLOG_INFO("schedule size: " + std::to_string(calculator.scheduling_size));
+    }
     calculator.calculateF();
     calculator.shiftF();
 
@@ -66,6 +68,8 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
         calculator.calculateX();
         calculator.calculateF();
         calculator.calculateV();
+
+        //std::cout << "one iteration done\n";
     
         
         iteration++;
@@ -135,8 +139,9 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     if(rdf_interval_and_frequency.has_value())
         stat_logger->info("rdf:\n" + rdf_log);
 
-        
-    spdlog::info("[" + std::string(pos, '=') + ">] 100%\r");
+    if(!performance_measurement)
+        spdlog::info("[" + std::string(pos, '=') + ">] 100%\r");
+
     SPDLOG_INFO("output written. Terminating...\r");
 }
 
