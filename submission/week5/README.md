@@ -155,35 +155,37 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d8ed8fd5-2579-4ca3-9
 [^2]: http://rkt.chem.ox.ac.uk/lectures/liqsolns/liquids.html
 
 
-### Misc
+### Misc / Overview
 #### XML File
-- the new file format includes a optional `Thermostats` component in the `simulationParameters`. 
-  In `Thermostats`, one has to specify the initial temperature of the system and the frequency, with
-  which the Thermostats is applied. A target temperature and the maximal temperature difference are optional. The maximum temperature difference sets the limit for the magnitude of a temperature update from the current temperature towards the target temperature.
-- The `outputParameters` now contain an option for a input checkpoint file, that will be used as input to the next simulation, if the option is set and an option that will produce a output checkpoint file at the end of the simulation, if set. The checkpoint input file has to be a file that was produced by our program. The sigma and epsilon in the cuboid/sphere component of the xsd-schema are now applied to the cuboids in the simulation and it is possible to specify a `meanVelocity` in the cuboids/spheres component.
-- Setting a `meanVelocity` and Thermostats at the same time does not make sense and is undefined behaviour. If no `meanVelocity` and no Thermostat is given, the particles from the respective cuboid, will just have the initial velocity specified by the user. If a `meanVelocity` and no Thermostat is given, the particles of the respective cuboid will be initialized with a Maxwell-Boltzman distributed initial velocity, that is added to the inital velocity given by the user (no matter if it is zero or not). If instead a Thermostat and no `meanVelocity` is given, an intial Temperature for the Thermostat must have been specified by the user. This inital Temperature will then be used to set the intial velocities of all cuboids according to the Maxwell-Boltzman distribution depending on the Thermostat inital Temperature, but only if the initial velocity of all cuboids are zero. This is realized by setting the `meanVelocity` of all cuboids to $\sqrt{T_{init}/m_i}$, where $m_i$ is the mass of the particles of the respective cuboid.
-- The `boundaryConditions` (in the different directions) can now either be 'outflow', 'reflective', 'ghost_reflective' or 'periodic'.
+- this section provides a brief overview of the XML-file format and what each component means (for the sake of good documenation :D)
 
+`outputParameters`
+- `baseName` : the .vtu files that will get created by the program, will be of the format `baseName`_`current_iteration`.vtu
+- `writeFrequency`: every `writeFrequency`-th iteration .vtu output will be generated
+- `checkpointInputFileName`(optional): if given, checkpointed particles will be read from
+                                       the file `checkpointInputFileName`
+- `checkpointOutputFileName`(optional): if given, at the end of the simulation every particle will be tracked
+                                        and written into the file  `checkpointOutputFileName`
 
-#### Ghost Particle Reflective Boundaries
-- Our different boundary conditions are now mostly handled in the `updateCells` method and for the reflective boundary conditions we implemented a different simpler approach, that seems to be at least as good as the old Ghost Particle reflective boundaries approach. The Ghost Particle Approach is especially unstable for high velocities and forces and does not guarantee that particles stay within the domain boundary.
-- We did not yet delete the old reflective boundaries, that are encapsulated in the `applyReflectiveBoundaries()` function, because we will see how they compare to the new reflective boundaries(`updateCells`) for future tasks. We will likely delete the Ghost Particle reflective boundaries in the next and last sheet, if there is no significant disadvantage in the new method. For now our main method of handling reflective boundaries is the new one that is implemented in the `updateCells`. (maybe a combination :) in the future)
-
-#### Force Calculations
-- We moved the functions for calculating forces into the Cellcalculator, because we now have to calculate with different sigma and epsilon depending on the particles that are currently in our system. Therefore it is more convenient to have it within the Cellcalculator and specific to an CellCalculator object.
-
-
-#### Order of calculating Position, Forces and Velocities
-- We changed the order of calculating position, forces and velocities back to the order, 
-  which was used in the very beginning and reintroduced the `calculateX()`, `calculateV()` 
-  and `calculateF()` functions as well as `shiftF()`, which made our simulation run 5.5% slower. 
-  Our current implementation uses this way of iterating through the simulation. We still kept 
-  the old methods, because they are quite developed and in case of issues with the current one 
-  or the need for slight speedup, but like the Ghost Particles, we will likely remove the 
-  `calculateWithinFVX()` and `initializeFX()` in the last sheet, if we don't run see any use for them. 
-
-
-
+`simulationParameters`
+- `tEnd`: end time of the simulation / until when should the system be simulated
+- `deltaT`: the step-size, with which the simulation runs
+- `cutOffRadius`: the forces between two particles will only be calculated, if they are closer than `cutOffRadius` to each other
+- `cellSize`: the domain is divided into equal-sized cells, each cell is a cuboid, where every side has
+              the length `cellSize`
+- `gravityFactor` (optional): if provided, in every time step a vertical force $m \times g_{grav}$ is applied in
+                              y-direction to all particles, where `gravityFactor` = $g_{grav}$.
+- `forceType`: this string can either be
+  "Gravity", then the simple gravitational force will be used for inter-particle forces(cutoff will be applied though)
+  "LJ", then the basic Lennard-Jones potential from worksheet 2 will be used
+  "smoothed LJ", then the smmothed Lennard-Jones potential from worksheet 5 will be used ($r_l$ is hardcoded to 1.9 for now) 
+- `parallelizationVersion`: can either be `serial`, `first_method` or `second_method`. These are again xml elements and not strings!. `serial` executes the program with one thread. `first_method` is the first parallelization method (and the one that is actually implemented) and `second_method` is the second parallelization method (which is not implemented). If `first_method` or `second_method` are specified, the number of threads `numThreads`, with which the parallel version computes can optionally be given as well. If `numThreads` is not given, openMP will choose the amount of threads, which in most cases corresponds to the number of logical CPUs of the current machine.
+- `Rdf`(optional): If given, the radial distribution function will be calculated and written into a "stat.txt" file in the build directory. For the RDF it is required to specify the `rdfIntervalSize`, which is the granularity of the RDF. Meaning the distances between particles are tracked in buckets of size `rdfIntervalSize` from 0 to 'max distance possible between two particle pairs', where every bucket is an integer counter. The rdf is caclulated every `rdfStatFrequency`-th iteration.
+- `diffusionStatFrequency`(optional): If given, the diffusion coefficient is calculated every `diffusionStatFrequency`-th iteration and written into a "stat.txt" file in the build directory.
+- `Thermostats`(optional): for further details please see the report of week 4
+- `boundaryConditions`: for each direction boundary conditions have to be specified. A boundary condition, can either be "reflective", "outflow" or "periodic". Defining in one direction periodic boundaries on one side and not periodic boundaries on the other side does not make sense and is therefore undefined behaviour
+- `domainDimensions`: gives the size of th domain in x direction, y direction and z direction. The resulting domain will be from x: 0 - `domainDimensions`(x) and y: 0 - `domainDimensions`(y)  and z: 0 - `domainDimensions`(z).
+After `outputParameters` and `simulationParameters` an arbitrary amount of first cuboids and the spheres can be defined (nothing changed here).
 
 
 
