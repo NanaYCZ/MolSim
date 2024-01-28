@@ -105,8 +105,8 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/0074efa9-670c-432b-8
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/c3893f4d-cbe4-497c-bcb8-88822d822381" width="470">
 
 
-- when looking at the simulation and the end result it is possible to see that a certain structure is forming, but it is hard to determine what it looks like, because we are looking at a relatively small example.
-- the diffusion coefficient is linearly decreasing over time. The general trend makes sense, because we are linearly decreasing the temperature as well and with lower temperature of the system, we would expect less movement or activity. In order to somewhat verify the diffusion we also measured the temperature during the simulation and the plots are very similar. This fits due to the temperature being a function of the velocities and the diffusion coefficient being a function of the movement of the particles in the last time step and $v = \frac{ x(t_{current}) - x_(t_{last}) }{\delta t}$. The general behaviour makes sense, but the phase transitions seem to be missing. The first phase transition of Argon from gaseous to liquid should happen at 87.302 K or 0.7275 and the second from liquid to solid at 83.81 K or 0.6984. From the Temperature plot, we can see that we are crossing both of these Temperatures at time $\approx$ 190, yet no sudden changes in the diffusion are happening. Still we can observe a sudden change in the potential energy of the system at time $\approx$ 190. The plot of the potential energy also fits the example from the book well and is likely correct
+- when looking at the simulation and the end result it is possible to see that a certain structure is forming, but it is hard to determine what it exactly looks like. Still it is clear, that the particles are more condensed in the end, which acn also be seen from the radial distribution function. The rdf shows, that in the end small distances are far more prevalent, than in the beginning. 
+- the diffusion coefficient is linearly decreasing over time. The general trend makes sense, because we are linearly decreasing the temperature as well and with lower temperature of the system, we would expect less movement or activity. In order to somewhat verify the diffusion we also measured the temperature during the simulation and the plots are very similar. This fits due to the temperature being a function of the velocities and the diffusion coefficient being a function of the movement of the particles in the last time step and $v = \frac{ x(t_{current}) - x_(t_{last}) }{\delta t}$. The general behaviour makes sense, but the phase transitions seem to be missing. The first phase transition of Argon from gaseous to liquid should happen at 87.302 K or 0.7275 and the second from liquid to solid at 83.81 K or 0.6984. From the Temperature plot, we can see that we are crossing both of these Temperatures at time $\approx$ 190, yet no sudden changes in the diffusion are happening. Still we can observe a sudden change in the potential energy of the system at time $\approx$ 190. It is difficult to make a clear distinction between the two phase Transitions, as there is only a $\approx$ 0.03 difference in simulation temperature between the transition from gaseous to liquid and the transition from liquid to sloid. Nevertheless the plot of the potential energy fits the example from the book well and seems to be correct.
 - the rdf shows, that with proceeding time and therefore also decreasing temperature, the expected distances of two particle decrease. Expecially distances in the interval 1.3 ~ 1.4 become far more prevalent. Apart from that it is visible, that the distribution function is oscillating more with decreased temperature. These oscillations mean that there a certain distances that are far more prevalent than others. Maybe this is the case, because the crystalized Argon organizes in lattices of face-centered cubics [^1]. Then instead of the equilibrated fluid of the beginning, there is a clear structure, in which the molecules organize. In such a regular repeating grid structure it would make sense, that there are only a few certain distances e.g. the distance to the direct neighbours of the cuboid that occur often, whereas other distances are practically impossible due to the grid structure. In general the rdf seems to fit as the sources we could find and the book show a similar rdf and trend of the rdf for decreasing temperature [^2].    
 
 
@@ -125,50 +125,35 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/e59e897d-79dc-464f-b
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/7e317c00-a6cb-4992-a435-a5d159b5e9f7" width="470">
 
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/1ae6d8d8-0c07-40a7-b253-4ac42936c679" width="490">
+
+
+
+
 - again it is possible to see a distinct structure forming in the simulation, but it is hard to recognize a certain structure in this  example
-- the rdf seems to have a similar trend to the rdf of the normal cooling simulation, except that the oscillations of the distribution are even more visible. Compared to the rdf at time=10 and the rdf at time=30, which are really smooth functions, the rdf at time=50 and later shows a clear oscillation. Again this might be due to a regular repeating structure forming, altough it is difficult to find information on the structure of Argon in an amorphous glass state.
-- the diffusion coefficient and the temperature plot show an intersting behaviour. At a temperature of $\approx$ 0.6 and time $\approx$ 33 the cooling slows down and the slope of the temperature function is less steep then before. This roughly fits the freezing point of Argon, which is at 83.81 K and therefore at $\frac{83.81}{120} \approx 0.698$ (simulation temperature). Looking at the data, the phase transition from liquid to solid happens at time $\approx$ 31. The phase transition from gaseous to liquid state is hard to see in the simulation or data, because Argon only is a liquid between 83.81 K and 87.302 K or 0.6984 and 0.7275 (simulation temp.). Therefore the Argon in our simulation is only fluid at time $\approx$ 30. At first the slower cooling of the Argon from time $\approx$ 30 onwards is unexpected, as we are applying the same linear cooling with our Thermostat throughout the simulation. The slower cooling might be due to 
-the crystallization 
+- the rdf seems to have a similar trend to the rdf of the normal cooling simulation, except that it is oscillating even more strongly. Compared to the rdf at time=10 and the rdf at time=30, which are really smooth functions, the rdf at time=50 and later shows a clear oscillation. Again this might be due to a regular repeating structure forming, altough it is difficult to find information on the structure of Argon in an amorphous glass state.
+- the diffusion coefficient and the temperature plot show an intersting behaviour. At a temperature of $\approx$ 0.6 and time $\approx$ 33 the cooling slows down and the slope of the temperature function is less steep then before. This roughly fits the freezing point of Argon, which is at 83.81 K and therefore at $\frac{83.81}{120} \approx 0.698$ (simulation temperature). Looking at the temperature graph, the phase transition from liquid to solid happens at time $\approx$ 31. 
 
-big:
+- just for fun we did some bigger simulations: 
 
-
-nosuper:
-
+Cooling until Crystalization of Argon:
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/81474079-02d0-4f4b-8151-14f5bf76170c
 
-
-end result:
-
+- end result:
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/949404f3-937d-4bdd-b3bd-a65ee17bcbed
 
+- the resulting structure from above is quite interesting and seems to be very regular. First we speculated it might have something to do with the lattices of face-centered cubics, in which Argon arranges when it crystalizes. Since we are on on the level of several hundred of molecules, there is probably some other reason for the structure though.
 
-
-
-super
-
+Super cooling until amorphous glass state of Argon:
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/cfedcf58-0556-4b97-b69f-92e9356e2cab
 
-end result:
-
-
+- in the above video it is possible to really see the phase transition after roughly one third of the time and how the amorphous glass structure is forming. Also the end result of this glass state looks a lot less regular, than the result of the crystalization. 
+- end result:
 
 https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d8ed8fd5-2579-4ca3-9bbc-f83c3e4fc343
-
-
-
-
-
-- we tried the experiment with a bigger sphere of argon, to be able to really see the structures, that are forming
-- for the normal cooling until 0.5 (Simulation temp) or ~ 60 K we get the simulation below:
-  
-
-- yielding the end result:
-
-
 
 
 
