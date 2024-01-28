@@ -50,7 +50,16 @@ command line arguments and what is being returned by the executable. This file s
 ### Task 2 
 
 #### Performance
-- we measured and profiled the performance of the execution of our parallel version with Intel's Vtune profiler. Measurements were performed within a Linux environment on an AMD Ryzen 7 5700U without VTK output and logging enabled. We used gcc with the optimization level -O3 and a smaller version of the rayleigh-taylor instability in 3D. When using the Threading analysis of Vtune, we can see, that thoughout the execution, our programs makes use of the 16 logical cores, that the AMD Ryzen 7 5700U has.
+- we measured and profiled the performance of the execution of our parallel version with Intel's Vtune profiler and perf. Measurements were performed within a Linux environment on an AMD Ryzen 7 5700U without VTK output and logging enabled. We used gcc with the optimization level -O3 and the rayleigh-taylor instability in 3D(but tEnd=0.1 only). Measuring the runtimer for a different number of threads yields the following:
+
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/4ca80370-5db8-4231-827b-8cd11615734e" width="470">
+
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/0eb6813e-e02a-450b-9124-06af8a93a5d8" width="470">
+
+- it is important to know that the AMD Ryzen 7 5700U only has 16 logical CPU Cores, meaning only 16 threads can run truly parallel, this we can see in a later analysis as well. Therefore it is expected, that after more than 16 threads no further speed-up is gained, as there a never more than 16 threads running truely parallel. The graph shows, that more than 16 threads are even a bit slower than the execution of "only" 16 threads, likely because the additional software threads create overhead by context switches etc.
+- The linear trend of speed-up only remains until ~ 8 threads, altough already 8 threads don't provide the expected speed-up of 8. For 16 threads it becomes obvious, that the expected speed-up is not reached.  
+
+    When using the Threading analysis of Vtune, we can see, that thoughout the execution, our programs makes use of the 16 logical cores, that the AMD Ryzen 7 5700U has.
 - 
 ![grafik](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/cfcfd114-47d9-4a5a-9a1e-2832b122c5df)
  
