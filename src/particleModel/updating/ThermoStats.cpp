@@ -1,5 +1,5 @@
 #include "ThermoStats.h"
-#include "particleModel/storage/CellContainerIterators.h"
+#include "CellContainerIterators.h"
 #include "utils/ArrayUtils.h"
 #include <cmath>
 #include <spdlog/spdlog.h>

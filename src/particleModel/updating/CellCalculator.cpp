@@ -1,5 +1,5 @@
 #include "CellCalculator.h"
-#include "particleModel/storage/CellContainerIterators.h"
+#include "CellContainerIterators.h"
 #include "utils/ArrayUtils.h"
 #include <iostream>
 #include <spdlog/spdlog.h>

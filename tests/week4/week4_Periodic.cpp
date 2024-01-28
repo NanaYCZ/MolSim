@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "particleModel/storage/CellContainer.h"
-#include "particleModel/storage/CellContainerIterators.h"
+#include "particleModel/updating/CellContainerIterators.h"
 
 #include "particleModel/updating/CellCalculator.h"
 #include "utils/ArrayUtils.h"

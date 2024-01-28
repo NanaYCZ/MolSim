@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CellContainer.h"
+#include "particleModel/storage/CellContainer.h"
 
 typedef int dim_t;
 

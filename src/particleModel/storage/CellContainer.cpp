@@ -1,11 +1,9 @@
 #include <iostream>
 #include "CellContainer.h"
-#include "CellContainerIterators.h"
+#include "particleModel/updating/CellContainerIterators.h"
 #include "particleModel/updating/CellCalculator.h"
 #include <cmath>
 #include <spdlog/spdlog.h>
-
-dim_t dim_t_res = -1;
 
 CellContainer::CellContainer(double d_width, double d_height, double d_depth, double r_cutoff, double cell_size)
             : cell_size(cell_size),cut_of_radius(r_cutoff), domain_bounds({d_width, d_height, d_depth})
@@ -75,25 +73,14 @@ CellContainer::CellContainer(double d_width, double d_height, double d_depth, do
         three_dimensions = true;
     }
 
-    //precalculate all the patterns
-    std::array<dim_t, 3> tmp{};
+    //precalculate all patterns
     std::array<dim_t, 3> pattern{};
 
     if(three_dimensions) {
-        setNext3dPattern(pattern, tmp);
+        while(setNext3dPattern(pattern)) patterns.emplace_back(pattern);
 
     } else {
-        setNext2dPattern(pattern, tmp);
-    }
-
-    while (tmp[0] != dim_t_res) {
-        patterns.emplace_back(pattern);
-
-        if(three_dimensions) {
-            setNext3dPattern(pattern, tmp);
-        } else {
-            setNext2dPattern(pattern, tmp);
-        }
+        while(setNext2dPattern(pattern)) patterns.emplace_back(pattern);
     }
 
     patterns.shrink_to_fit();
@@ -109,7 +96,7 @@ enum direction_status {
     first_subset, second_subset, third_subset
 };
 
-void CellContainer::setNext3dPattern(std::array<dim_t, 3> &pattern, std::array<dim_t, 3> &start) {
+bool CellContainer::setNext3dPattern(std::array<dim_t, 3> &pattern) {
     static direction_status status = first_subset;
 
     switch (status) {
@@ -156,18 +143,14 @@ void CellContainer::setNext3dPattern(std::array<dim_t, 3> &pattern, std::array<d
                 ++pattern[2];
             } else {
                 //finished
-                pattern[0] = 0;
-                pattern[1] = 0;
-                pattern[2] = 0;
-                status = first_subset;
-                start[0] = dim_t_res;
-                return;
+                return false;
             }
             break;
     }
+    return true;
 }
 
-void CellContainer::setNext2dPattern(std::array<dim_t, 3> &pattern, std::array<dim_t, 3> &start) {
+bool CellContainer::setNext2dPattern(std::array<dim_t, 3> &pattern) {
     static direction_status status = first_subset;
 
     switch (status) {
@@ -194,15 +177,11 @@ void CellContainer::setNext2dPattern(std::array<dim_t, 3> &pattern, std::array<d
 
             } else {
                 //finished
-                pattern[0] = 0;
-                pattern[1] = 0;
-                pattern[2] = 0;
-                status = first_subset;
-                start[0] = dim_t_res;
-                return;
+                return false;
             }
             break;
     }
+    return true;
 }
 
 CellContainer::CustomIterator CellContainer::begin_custom(dim_t low_x, dim_t upp_x,
