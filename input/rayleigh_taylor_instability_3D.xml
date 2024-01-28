@@ -17,6 +17,10 @@
         <cellSize>1.8</cellSize>
         <gravityFactor>-12.44</gravityFactor>
         <forceType>LJ</forceType>
+        <parallelizationVersion>
+            <first_method>
+            </first_method>
+        </parallelizationVersion>
         <Thermostats>
             <initTemp>40</initTemp>
             <thermoStatFrequency>1000</thermoStatFrequency>

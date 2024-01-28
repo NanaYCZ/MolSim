@@ -33,7 +33,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     SPDLOG_INFO("Starting Simulation");
     if(calculator.parallelization == concurrency_strategy::first_method){
         SPDLOG_INFO("max threads: " + std::to_string(omp_get_max_threads()));
-        SPDLOG_INFO("schedule size: " + std::to_string(calculator.scheduling_size));
+        SPDLOG_INFO("schedule size: " + std::to_string(schedule_size));
     }
     calculator.calculateF();
     calculator.shiftF();
