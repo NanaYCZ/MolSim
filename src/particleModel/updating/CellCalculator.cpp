@@ -97,7 +97,7 @@ void CellCalculator::calculateV(){
     }
 }
 
-    void CellCalculator::calculateF(){
+void CellCalculator::calculateF(){
     calculateLinkedCellF();
     calculatePeriodicF();
 

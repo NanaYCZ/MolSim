@@ -116,8 +116,8 @@ TEST(test_DiffCoeff1, test_periodic_diff_Coeff_reappearing){
 
     std::cout << particles[0].toString() << "\n" << particles[1].toString() << "\n";
 
-    ASSERT_EQ(1,particles[0].getBoundariesCrossed(0));
-    ASSERT_EQ(1,particles[1].getBoundariesCrossed(1));
+    ASSERT_EQ(1,particles[0].getBoundariesCrossed()[0]);
+    ASSERT_EQ(1,particles[1].getBoundariesCrossed()[1]);
 
     double diffusion_coefficient_actual = thermoStats.getDiffusionCoefficient();
 
@@ -167,7 +167,7 @@ TEST(test_DiffCoeff2, diff_Coeff_twice_crossed_boundary){
 
     std::cout << particles[0].toString() << "\n";
 
-    ASSERT_EQ(2,particles[0].getBoundariesCrossed(0));
+    ASSERT_EQ(2,particles[0].getBoundariesCrossed()[0]);
 
     double diffusion_coefficient_actual = thermoStats.getDiffusionCoefficient();
 
