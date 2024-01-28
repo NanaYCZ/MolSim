@@ -11,7 +11,7 @@
 
     <!-- Simulation Parameters -->
     <simulationParameters>
-        <tEnd>20</tEnd>
+        <tEnd>100</tEnd>
         <deltaT>0.0005</deltaT>
         <cutOffRadius>3.6</cutOffRadius>
         <cellSize>1.8</cellSize>
@@ -34,9 +34,9 @@
             <boundaryConditionsNegativeY>reflective</boundaryConditionsNegativeY>
         </boundaryConditions>
         <domainDimensions>
-            <x>15</x>
-            <y>30</y>
-            <z>15</z>
+            <x>60</x>
+            <y>60</y>
+            <z>60</z>
         </domainDimensions>
     </simulationParameters>
 
@@ -53,9 +53,9 @@
             <z>0</z>
         </velocity>
         <dimensions>
-            <x>10</x>
-            <y>5</y>
-            <z>10</z>
+            <x>50</x>
+            <y>20</y>
+            <z>50</z>
         </dimensions>
         <mass>1</mass>
         <meshWidth>1.2</meshWidth>
@@ -66,7 +66,7 @@
     <cuboids>
         <position>
             <x>0.6</x>
-            <y>10.6</y>
+            <y>24.6</y>
             <z>0.6</z>
         </position>
         <velocity>
@@ -75,9 +75,9 @@
             <z>0</z>
         </velocity>
         <dimensions>
-            <x>10</x>
-            <y>5</y>
-            <z>10</z>
+            <x>50</x>
+            <y>20</y>
+            <z>50</z>
         </dimensions>
         <mass>2</mass>
         <meshWidth>1.2</meshWidth>
