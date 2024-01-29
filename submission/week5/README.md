@@ -52,12 +52,13 @@ command line arguments and what is being returned by the executable. This file s
 #### Performance
 - we measured and profiled the performance of the execution of our parallel version with Intel's Vtune profiler and perf. Measurements were performed within a Linux environment on an AMD Ryzen 7 5700U without VTK output and logging enabled. We used gcc with the optimization level -O3 and the rayleigh-taylor instability in 3D(but tEnd=0.1 only). Measuring the runtimer for a different number of threads yields the following:
 
+
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/4ca80370-5db8-4231-827b-8cd11615734e" width="470">
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/0eb6813e-e02a-450b-9124-06af8a93a5d8" width="470">
 
 - it is important to know that the AMD Ryzen 7 5700U only has 16 logical CPU Cores, meaning only 16 threads can run truly parallel, this we can see in a later analysis as well. Therefore it is expected, that after more than 16 threads no further speed-up is gained, as there a never more than 16 threads running truely parallel. The graph shows, that more than 16 threads are even a bit slower than the execution of "only" 16 threads, likely because the additional software threads create overhead by context switches etc.
-- The linear trend of speed-up only remains until ~ 8 threads, altough already 8 threads don't provide the expected speed-up of 8. For 16 threads it becomes obvious, that the expected speed-up of 16 is not reached.  When examining the scenario with 16 threads using Vtune, we get several statistics. The first one shows the how much logical CPU cores run in parallel for how long:
+- The linear trend of speed-up only remains until ~ 8 threads, altough already 8 threads don't provide the expected speed-up of 8. For 16 threads it becomes obvious, that the expected speed-up of 16 is not reached.  When examining the scenario with 16 threads using Vtune, we get several statistics. The first one shows the how much logical CPU cores run in parallel for how long.
 
 ![grafik](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/7097624b-2b8b-4aac-90a0-e70fcc9165e1)
 
@@ -65,11 +66,15 @@ command line arguments and what is being returned by the executable. This file s
 
 
 -  The upper diagram results from executing our program with 8 threads and the lower one from executing it with 16 threads. We can see, that in both cases most of the time the program utilizes exactly the specified amount of threads and especially that the threads are mapped to truely parallel logical CPU cores, which is good.
--  The second interesting statistic shows what the different threads are actually doing and when they are waiting:  
+-  The second interesting statistic shows what the different threads are actually doing and when they are waiting.  
 
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/3bb722b4-2e31-43d5-951a-790ec43f9d65" width="490">
 
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/779f4a7d-e876-4fac-a4f0-fd98d14ca5ed" width="490">
 
- 
+![timeline_view16_threads](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/51f3aca3-5f11-47c7-a35a-8c9a42d592c9)
+
+- On the upper left side is the program executed with 8 threads, on the upper right side executed with 32 threads and the lower diagram shows the execution with 16 threads (here it should also be possible to see the legend/ description of the diagram). We can see that for 8 and 16 threads, every thread has $\approx$ 100 % CPU utilization, which is in line with the first two bar graph statistics. Then for 32 threads, we can see, that every Thread only has $\approx$ 50 % CPU utilization, as there are only 16 truely parallel hardware threads. Apart from that, we can't really see a reason for the 16 threads not leading to the expected speed-up. Altough there is one short time span, where the threads are spinning/ have overhead due to locks, this is likely an interruption by the OS, as all threads are idle in this time span. Therefore synchronization doesn't seem to be a significant bottleneck for the performance of the execution with 16 threads. 
 
 ### Task 3 
 
