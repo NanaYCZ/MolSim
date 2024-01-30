@@ -46,7 +46,7 @@ double ThermoStats::getPressure(){
 
 void ThermoStats::initDiffusionCoefficient(){
   particle_positions_previous_iteration = {};
-  std::list<Particle>& particles = cellContainer.getInstances();
+  std::vector<Particle>& particles = cellContainer.getInstances();
   for(Particle& particle : particles){
     particle_positions_previous_iteration.emplace_back(&particle, particle.getX());
   }
