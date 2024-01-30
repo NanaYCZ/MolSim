@@ -1197,6 +1197,215 @@ epsilon (const epsilon_type& x)
   this->epsilon_.set (x);
 }
 
+// MembraneType
+//
+
+
+
+const membraneType::averageBondLength_type& membraneType::
+averageBondLength () const
+{
+    return this->averageBondLength_.get ();
+}
+
+membraneType::averageBondLength_type& membraneType::
+averageBondLength ()
+{
+    return this->averageBondLength_.get ();
+}
+
+void membraneType::
+averageBondLength (const averageBondLength_type& x)
+{
+    this->averageBondLength_.set (x);
+}
+
+const membraneType::forceParameter_type& membraneType::
+forceParameter () const
+{
+    return this->forceParameter_.get ();
+}
+
+membraneType::forceParameter_type& membraneType::
+forceParameter ()
+{
+    return this->forceParameter_.get ();
+}
+
+void membraneType::
+forceParameter (const forceParameter_type& x)
+{
+    this->forceParameter_.set (x);
+}
+
+
+const membraneType::position_type& membraneType::
+position () const
+{
+    return this->position_.get ();
+}
+
+membraneType::position_type& membraneType::
+position ()
+{
+    return this->position_.get ();
+}
+
+void membraneType::
+position (const position_type& x)
+{
+    this->position_.set (x);
+}
+
+void membraneType::
+position (::std::unique_ptr< position_type > x)
+{
+    this->position_.set (std::move (x));
+}
+
+const membraneType::velocity_type& membraneType::
+velocity () const
+{
+    return this->velocity_.get ();
+}
+
+membraneType::velocity_type& membraneType::
+velocity ()
+{
+    return this->velocity_.get ();
+}
+
+void membraneType::
+velocity (const velocity_type& x)
+{
+    this->velocity_.set (x);
+}
+
+void membraneType::
+velocity (::std::unique_ptr< velocity_type > x)
+{
+    this->velocity_.set (std::move (x));
+}
+
+const membraneType::dimensions_type& membraneType::
+dimensions () const
+{
+    return this->dimensions_.get ();
+}
+
+membraneType::dimensions_type& membraneType::
+dimensions ()
+{
+    return this->dimensions_.get ();
+}
+
+void membraneType::
+dimensions (const dimensions_type& x)
+{
+    this->dimensions_.set (x);
+}
+
+void membraneType::
+dimensions (::std::unique_ptr< dimensions_type > x)
+{
+    this->dimensions_.set (std::move (x));
+}
+
+/*const membraneType::meanVelocity_optional& membraneType::
+meanVelocity () const
+{
+    return this->meanVelocity_;
+}
+
+membraneType::meanVelocity_optional& membraneType::
+meanVelocity ()
+{
+    return this->meanVelocity_;
+}
+
+void membraneType::
+meanVelocity (const meanVelocity_type& x)
+{
+    this->meanVelocity_.set (x);
+}
+
+void membraneType::
+meanVelocity (const meanVelocity_optional& x)
+{
+    this->meanVelocity_ = x;
+}
+*/
+const membraneType::mass_type& membraneType::
+mass () const
+{
+    return this->mass_.get ();
+}
+
+membraneType::mass_type& membraneType::
+mass ()
+{
+    return this->mass_.get ();
+}
+
+void membraneType::
+mass (const mass_type& x)
+{
+    this->mass_.set (x);
+}
+
+const membraneType::meshWidth_type& membraneType::
+meshWidth () const
+{
+    return this->meshWidth_.get ();
+}
+
+membraneType::meshWidth_type& membraneType::
+meshWidth ()
+{
+    return this->meshWidth_.get ();
+}
+
+void membraneType::
+meshWidth (const meshWidth_type& x)
+{
+    this->meshWidth_.set (x);
+}
+
+const membraneType::sigma_type& membraneType::
+sigma () const
+{
+    return this->sigma_.get ();
+}
+
+membraneType::sigma_type& membraneType::
+sigma ()
+{
+    return this->sigma_.get ();
+}
+
+void membraneType::
+sigma (const sigma_type& x)
+{
+    this->sigma_.set (x);
+}
+
+const membraneType::epsilon_type& membraneType::
+epsilon () const
+{
+    return this->epsilon_.get ();
+}
+
+membraneType::epsilon_type& membraneType::
+epsilon ()
+{
+    return this->epsilon_.get ();
+}
+
+void membraneType::
+epsilon (const epsilon_type& x)
+{
+    this->epsilon_.set (x);
+}
 
 // parameters
 // 
@@ -1285,6 +1494,23 @@ spheres (const spheres_sequence& s)
   this->spheres_ = s;
 }
 
+const parameters::membranes_sequence& parameters::
+membranes () const
+{
+    return this->membranes_;
+}
+
+parameters::membranes_sequence& parameters::
+membranes ()
+{
+    return this->membranes_;
+}
+
+void parameters::
+membranes (const membranes_sequence& s)
+{
+    this->membranes_ = s;
+}
 
 // first_method
 // 
@@ -2842,6 +3068,312 @@ cuboidType::
 {
 }
 
+// membraneType
+//
+
+membraneType::
+membraneType (const averageBondLength_type& averageBondLength,
+              const forceParameter_type& forceParameter,
+            const position_type& position,
+            const velocity_type& velocity,
+            const dimensions_type& dimensions,
+            const mass_type& mass,
+            const meshWidth_type& meshWidth,
+            const sigma_type& sigma,
+            const epsilon_type& epsilon)
+        : ::xml_schema::type (),
+          averageBondLength_ (averageBondLength,this),
+          forceParameter_ (forceParameter,this),
+          position_ (position, this),
+          velocity_ (velocity, this),
+          dimensions_ (dimensions, this),
+          mass_ (mass, this),
+          meshWidth_ (meshWidth, this),
+          sigma_ (sigma, this),
+          epsilon_ (epsilon, this)
+{
+}
+
+membraneType::
+membraneType (const averageBondLength_type& averageBondLength,
+            const forceParameter_type& forceParameter,
+            ::std::unique_ptr< position_type > position,
+            ::std::unique_ptr< velocity_type > velocity,
+            ::std::unique_ptr< dimensions_type > dimensions,
+            const mass_type& mass,
+            const meshWidth_type& meshWidth,
+            const sigma_type& sigma,
+            const epsilon_type& epsilon)
+        : ::xml_schema::type (),
+          averageBondLength_ (averageBondLength,this),
+          forceParameter_ (forceParameter,this),
+          position_ (std::move (position), this),
+          velocity_ (std::move (velocity), this),
+          dimensions_ (std::move (dimensions), this),
+          mass_ (mass, this),
+          meshWidth_ (meshWidth, this),
+          sigma_ (sigma, this),
+          epsilon_ (epsilon, this)
+{
+}
+
+membraneType::
+membraneType (const membraneType& x,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+        : ::xml_schema::type (x, f, c),
+          averageBondLength_ (averageBondLength_,f,this),
+          forceParameter_ (forceParameter_,f,this),
+          position_ (x.position_, f, this),
+          velocity_ (x.velocity_, f, this),
+          dimensions_ (x.dimensions_, f, this),
+          mass_ (x.mass_, f, this),
+          meshWidth_ (x.meshWidth_, f, this),
+          sigma_ (x.sigma_, f, this),
+          epsilon_ (x.epsilon_, f, this)
+{
+}
+
+membraneType::
+membraneType (const ::xercesc::DOMElement& e,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+        : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+          averageBondLength_ (this),
+          forceParameter_ (this),
+          position_ (this),
+          velocity_ (this),
+          dimensions_ (this),
+          mass_ (this),
+          meshWidth_ (this),
+          sigma_ (this),
+          epsilon_ (this)
+{
+    if ((f & ::xml_schema::flags::base) == 0)
+    {
+        ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+        this->parse (p, f);
+    }
+}
+
+void membraneType::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+    for (; p.more_content (); p.next_content (false))
+    {
+        const ::xercesc::DOMElement& i (p.cur_element ());
+        const ::xsd::cxx::xml::qualified_name< char > n (
+                ::xsd::cxx::xml::dom::name< char > (i));
+
+        // averageBondLength
+        //
+        if (n.name () == "averageBondLength" && n.namespace_ ().empty ())
+        {
+            if (!averageBondLength_.present ())
+            {
+                this->averageBondLength_.set (averageBondLength_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        // forceParameter
+        //
+        if (n.name () == "forceParameter" && n.namespace_ ().empty ())
+        {
+            if (!forceParameter_.present ())
+            {
+                this->forceParameter_.set (forceParameter_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        // position
+        //
+        if (n.name () == "position" && n.namespace_ ().empty ())
+        {
+            ::std::unique_ptr< position_type > r (
+                    position_traits::create (i, f, this));
+
+            if (!position_.present ())
+            {
+                this->position_.set (::std::move (r));
+                continue;
+            }
+        }
+
+        // velocity
+        //
+        if (n.name () == "velocity" && n.namespace_ ().empty ())
+        {
+            ::std::unique_ptr< velocity_type > r (
+                    velocity_traits::create (i, f, this));
+
+            if (!velocity_.present ())
+            {
+                this->velocity_.set (::std::move (r));
+                continue;
+            }
+        }
+
+        // dimensions
+        //
+        if (n.name () == "dimensions" && n.namespace_ ().empty ())
+        {
+            ::std::unique_ptr< dimensions_type > r (
+                    dimensions_traits::create (i, f, this));
+
+            if (!dimensions_.present ())
+            {
+                this->dimensions_.set (::std::move (r));
+                continue;
+            }
+        }
+
+
+        // mass
+        //
+        if (n.name () == "mass" && n.namespace_ ().empty ())
+        {
+            if (!mass_.present ())
+            {
+                this->mass_.set (mass_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        // meshWidth
+        //
+        if (n.name () == "meshWidth" && n.namespace_ ().empty ())
+        {
+            if (!meshWidth_.present ())
+            {
+                this->meshWidth_.set (meshWidth_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        // sigma
+        //
+        if (n.name () == "sigma" && n.namespace_ ().empty ())
+        {
+            if (!sigma_.present ())
+            {
+                this->sigma_.set (sigma_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        // epsilon
+        //
+        if (n.name () == "epsilon" && n.namespace_ ().empty ())
+        {
+            if (!epsilon_.present ())
+            {
+                this->epsilon_.set (epsilon_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        break;
+    }
+
+    if (!averageBondLength_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "averageBondLength",
+                "");
+    }
+
+    if (!forceParameter_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "forceParameter",
+                "");
+    }
+
+    if (!position_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "position",
+                "");
+    }
+
+    if (!velocity_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "velocity",
+                "");
+    }
+
+    if (!dimensions_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "dimensions",
+                "");
+    }
+
+    if (!mass_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "mass",
+                "");
+    }
+
+    if (!meshWidth_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "meshWidth",
+                "");
+    }
+
+    if (!sigma_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "sigma",
+                "");
+    }
+
+    if (!epsilon_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "epsilon",
+                "");
+    }
+}
+
+membraneType* membraneType::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+    return new class membraneType (*this, f, c);
+}
+
+membraneType& membraneType::
+operator= (const membraneType& x)
+{
+    if (this != &x)
+    {
+        static_cast< ::xml_schema::type& > (*this) = x;
+        this->averageBondLength_ = x.averageBondLength_;
+        this->forceParameter_ = x.forceParameter_;
+        this->position_ = x.position_;
+        this->velocity_ = x.velocity_;
+        this->dimensions_ = x.dimensions_;
+        this->mass_ = x.mass_;
+        this->meshWidth_ = x.meshWidth_;
+        this->sigma_ = x.sigma_;
+        this->epsilon_ = x.epsilon_;
+    }
+
+    return *this;
+}
+
+membraneType::
+~membraneType ()
+{
+}
+
 // sphereType
 //
 
@@ -3120,6 +3652,7 @@ parameters (const outputParameters_type& outputParameters,
   outputParameters_ (outputParameters, this),
   simulationParameters_ (simulationParameters, this),
   cuboids_ (this),
+  membranes_ (this),
   spheres_ (this)
 {
 }
@@ -3131,6 +3664,7 @@ parameters (::std::unique_ptr< outputParameters_type > outputParameters,
   outputParameters_ (std::move (outputParameters), this),
   simulationParameters_ (std::move (simulationParameters), this),
   cuboids_ (this),
+  membranes_ (this),
   spheres_ (this)
 {
 }
@@ -3143,6 +3677,7 @@ parameters (const parameters& x,
   outputParameters_ (x.outputParameters_, f, this),
   simulationParameters_ (x.simulationParameters_, f, this),
   cuboids_ (x.cuboids_, f, this),
+  membranes_ (this),
   spheres_ (x.spheres_, f, this)
 {
 }
@@ -3155,6 +3690,7 @@ parameters (const ::xercesc::DOMElement& e,
   outputParameters_ (this),
   simulationParameters_ (this),
   cuboids_ (this),
+  membranes_ (this),
   spheres_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -3213,6 +3749,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       continue;
     }
 
+      // membranes
+      //
+      if (n.name () == "membranes" && n.namespace_ ().empty ())
+      {
+          ::std::unique_ptr< membranes_type > r (
+                  membranes_traits::create (i, f, this));
+
+          this->membranes_.push_back (::std::move (r));
+          continue;
+      }
+
     // spheres
     //
     if (n.name () == "spheres" && n.namespace_ ().empty ())
@@ -3258,6 +3805,7 @@ operator= (const parameters& x)
     this->outputParameters_ = x.outputParameters_;
     this->simulationParameters_ = x.simulationParameters_;
     this->cuboids_ = x.cuboids_;
+    this->membranes_ = x.membranes_;
     this->spheres_ = x.spheres_;
   }
 

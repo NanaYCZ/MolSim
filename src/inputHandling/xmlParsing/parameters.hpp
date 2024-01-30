@@ -571,6 +571,7 @@ class thermoStatsType;
 class vector3DType;
 class boundaryConditionsType;
 class cuboidType;
+class membraneType;
 class sphereType;
 class parameters;
 class first_method;
@@ -3868,6 +3869,586 @@ class cuboidType: public ::xml_schema::type
 
   //@endcond
 };
+/**
+ * @brief Class corresponding to the %membraneType schema type.
+ *
+ * @nosubgrouping
+ */
+class membraneType: public ::xml_schema::type
+{
+public:
+    /**
+ * @name averageBondLength
+ *
+ * @brief Accessor and modifier functions for the %mass
+ * required element.
+ */
+
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ averageBondLength_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< averageBondLength_type, char, ::xsd::cxx::tree::schema_type::double_ > averageBondLength_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const averageBondLength_type&
+    averageBondLength () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    averageBondLength_type&
+    averageBondLength ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    averageBondLength (const averageBondLength_type& x);
+
+    //@}
+    /**
+ * @name forceParameter
+ *
+ * @brief Accessor and modifier functions for the %forceParameter
+ * required element.
+ */
+
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ forceParameter_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< forceParameter_type, char, ::xsd::cxx::tree::schema_type::double_ > forceParameter_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const forceParameter_type&
+    forceParameter () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    forceParameter_type&
+    forceParameter ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    forceParameter (const forceParameter_type& x);
+
+    //@}
+    /**
+     * @name position
+     *
+     * @brief Accessor and modifier functions for the %position
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::vector3DType position_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< position_type, char > position_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const position_type&
+    position () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    position_type&
+    position ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    position (const position_type& x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void
+    position (::std::unique_ptr< position_type > p);
+
+    //@}
+
+    /**
+     * @name velocity
+     *
+     * @brief Accessor and modifier functions for the %velocity
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::vector3DType velocity_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< velocity_type, char > velocity_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const velocity_type&
+    velocity () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    velocity_type&
+    velocity ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    velocity (const velocity_type& x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void
+    velocity (::std::unique_ptr< velocity_type > p);
+
+    //@}
+
+    /**
+     * @name dimensions
+     *
+     * @brief Accessor and modifier functions for the %dimensions
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::vector3DType dimensions_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< dimensions_type, char > dimensions_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const dimensions_type&
+    dimensions () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    dimensions_type&
+    dimensions ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    dimensions (const dimensions_type& x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void
+    dimensions (::std::unique_ptr< dimensions_type > p);
+
+
+    /**
+     * @name mass
+     *
+     * @brief Accessor and modifier functions for the %mass
+     * required element.
+     */
+
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ mass_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< mass_type, char, ::xsd::cxx::tree::schema_type::double_ > mass_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const mass_type&
+    mass () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    mass_type&
+    mass ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    mass (const mass_type& x);
+
+    //@}
+
+    /**
+     * @name meshWidth
+     *
+     * @brief Accessor and modifier functions for the %meshWidth
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ meshWidth_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< meshWidth_type, char, ::xsd::cxx::tree::schema_type::double_ > meshWidth_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const meshWidth_type&
+    meshWidth () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    meshWidth_type&
+    meshWidth ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    meshWidth (const meshWidth_type& x);
+
+    //@}
+
+    /**
+     * @name sigma
+     *
+     * @brief Accessor and modifier functions for the %sigma
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ sigma_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< sigma_type, char, ::xsd::cxx::tree::schema_type::double_ > sigma_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const sigma_type&
+    sigma () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    sigma_type&
+    sigma ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    sigma (const sigma_type& x);
+
+    //@}
+
+    /**
+     * @name epsilon
+     *
+     * @brief Accessor and modifier functions for the %epsilon
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ epsilon_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< epsilon_type, char, ::xsd::cxx::tree::schema_type::double_ > epsilon_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const epsilon_type&
+    epsilon () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    epsilon_type&
+    epsilon ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    epsilon (const epsilon_type& x);
+
+    //@}
+
+    /**
+     * @name Constructors
+     */
+    //@{
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes.
+     */
+    membraneType (const averageBondLength_type&,
+                const forceParameter_type&,
+                const position_type&,
+                const velocity_type&,
+                const dimensions_type&,
+                const mass_type&,
+                const meshWidth_type&,
+                const sigma_type&,
+                const epsilon_type&);
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes
+     * (::std::unique_ptr version).
+     *
+     * This constructor will try to use the passed values directly
+     * instead of making copies.
+     */
+    membraneType (const averageBondLength_type&,
+                const forceParameter_type&,
+                ::std::unique_ptr< position_type >,
+                ::std::unique_ptr< velocity_type >,
+                ::std::unique_ptr< dimensions_type >,
+                const mass_type&,
+                const meshWidth_type&,
+                const sigma_type&,
+                const epsilon_type&);
+
+    /**
+     * @brief Create an instance from a DOM element.
+     *
+     * @param e A DOM element to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    membraneType (const ::xercesc::DOMElement& e,
+                ::xml_schema::flags f = 0,
+                ::xml_schema::container* c = 0);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param x An instance to make a copy of.
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    membraneType (const membraneType& x,
+                ::xml_schema::flags f = 0,
+                ::xml_schema::container* c = 0);
+
+    /**
+     * @brief Copy the instance polymorphically.
+     *
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     * @return A pointer to the dynamically allocated copy.
+     *
+     * This function ensures that the dynamic type of the instance is
+     * used for copying and should be used for polymorphic object
+     * models instead of the copy constructor.
+     */
+    virtual membraneType*
+    _clone (::xml_schema::flags f = 0,
+            ::xml_schema::container* c = 0) const;
+
+    /**
+     * @brief Copy assignment operator.
+     *
+     * @param x An instance to make a copy of.
+     * @return A reference to itself.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    membraneType&
+    operator= (const membraneType& x);
+
+    //@}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual
+    ~membraneType();
+
+    // Implementation.
+    //
+
+    //@cond
+
+protected:
+    void
+    parse (::xsd::cxx::xml::dom::parser< char >&,
+           ::xml_schema::flags);
+
+protected:
+    ::xsd::cxx::tree::one< averageBondLength_type > averageBondLength_;
+    ::xsd::cxx::tree::one< forceParameter_type > forceParameter_;
+    ::xsd::cxx::tree::one< position_type > position_;
+    ::xsd::cxx::tree::one< velocity_type > velocity_;
+    ::xsd::cxx::tree::one< dimensions_type > dimensions_;
+    ::xsd::cxx::tree::one< mass_type > mass_;
+    ::xsd::cxx::tree::one< meshWidth_type > meshWidth_;
+    ::xsd::cxx::tree::one< sigma_type > sigma_;
+    ::xsd::cxx::tree::one< epsilon_type > epsilon_;
+
+    //@endcond
+};
 
 /**
  * @brief Class corresponding to the %sphereType schema type.
@@ -4602,7 +5183,80 @@ class parameters: public ::xml_schema::type
    * @brief Accessor and modifier functions for the %spheres
    * sequence element.
    */
+
+
   //@{
+    /**
+     * @name membranes
+     *
+     * @brief Accessor and modifier functions for the %membranes
+     * sequence element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::membraneType membranes_type;
+
+    /**
+     * @brief Element sequence container type.
+     */
+    typedef ::xsd::cxx::tree::sequence< membranes_type > membranes_sequence;
+
+    /**
+     * @brief Element iterator type.
+     */
+    typedef membranes_sequence::iterator membranes_iterator;
+
+    /**
+     * @brief Element constant iterator type.
+     */
+    typedef membranes_sequence::const_iterator membranes_const_iterator;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< membranes_type, char > membranes_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * sequence.
+     *
+     * @return A constant reference to the sequence container.
+     */
+    const membranes_sequence&
+    membranes () const;
+
+    /**
+     * @brief Return a read-write reference to the element sequence.
+     *
+     * @return A reference to the sequence container.
+     */
+    membranes_sequence&
+    membranes ();
+
+    /**
+     * @brief Copy elements from a given sequence.
+     *
+     * @param s A sequence to copy elements from.
+     *
+     * For each element in @a s this function makes a copy and adds it
+     * to the sequence. Note that this operation completely changes the
+     * sequence and all old elements will be lost.
+     */
+    void
+    membranes (const membranes_sequence& s);
+
+    //@}
+
+    /**
+     * @name spheres
+     *
+     * @brief Accessor and modifier functions for the %spheres
+     * sequence element.
+     */
+
 
   /**
    * @brief Element type.
@@ -4756,6 +5410,7 @@ class parameters: public ::xml_schema::type
   ::xsd::cxx::tree::one< outputParameters_type > outputParameters_;
   ::xsd::cxx::tree::one< simulationParameters_type > simulationParameters_;
   cuboids_sequence cuboids_;
+  membranes_sequence membranes_;
   spheres_sequence spheres_;
 
   //@endcond
