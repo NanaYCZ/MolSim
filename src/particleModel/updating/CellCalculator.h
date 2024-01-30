@@ -18,7 +18,7 @@ enum class concurrency_strategy{
 
 extern double min_distance;
 
-extern int schedule_size;
+extern int chunk_size;
 
 extern std::vector<std::vector<double>> sigma_mixed;
 

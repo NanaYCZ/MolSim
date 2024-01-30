@@ -31,10 +31,12 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     size_t barWidth, pos;
 
     SPDLOG_INFO("Starting Simulation");
+#ifdef _OPENMP
     if(calculator.parallelization == concurrency_strategy::first_method){
         SPDLOG_INFO("max threads: " + std::to_string(omp_get_max_threads()));
-        SPDLOG_INFO("schedule size: " + std::to_string(schedule_size));
+        SPDLOG_INFO("scheduled chunk size: " + std::to_string(chunk_size));
     }
+#endif
     calculator.calculateF();
     calculator.shiftF();
 

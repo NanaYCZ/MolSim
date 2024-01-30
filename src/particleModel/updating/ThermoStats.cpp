@@ -106,7 +106,7 @@ std::vector<double> ThermoStats::getRadialDistributionFunction(double interval_s
     if(cellContainer.hasThreeDimensions())
         max_distance_of_two_particles = std::sqrt(std::pow(max_distance_of_two_particles, 2) + std::pow(cellContainer.domain_bounds[2], 2));
 
-    std::list<Particle>& particle_instances = cellContainer.particle_instances;
+    std::vector<Particle>& particle_instances = cellContainer.particle_instances;
     //first the amount of particle pairs in that interval will be calculated
     //afterwards the rdf statistic, therefore it uses double
     std::vector<size_t> particle_pairs_per_interval(static_cast<size_t>(max_distance_of_two_particles / interval_size + 1), 0.0);
