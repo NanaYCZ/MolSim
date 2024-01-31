@@ -114,7 +114,7 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
 
     if(sim_params.Rdf().present()){
         auto rdf = sim_params.Rdf().get();
-        args.rdf_interval_and_frequency = std::pair(rdf.rdfTimeInterval(),rdf.rdfStatFrequency());
+        args.rdf_interval_and_frequency = std::pair(rdf.rdfIntervalSize(),rdf.rdfStatFrequency());
     }
     if(sim_params.Thermostats().present()){
         auto thermo = sim_params.Thermostats().get();

@@ -90,6 +90,13 @@ public:
     std::array<int,3>& getBoundariesCrossed();
 
     /**
+     *
+     * @param i index of boundary
+     * @return i-th index of boundaries_crossed member
+     */
+    int& getBoundariesCrossed(int i);
+
+    /**
      * @brief increments boundary i by one
      *
      * @param i   boundary

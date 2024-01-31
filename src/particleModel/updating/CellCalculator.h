@@ -173,6 +173,7 @@ private:
         double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
         double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
         //make formula more readable, compiler will optimize away
+        //
         double r_c = cutoff;
         double r_c_squared = r_c * r_c;
 

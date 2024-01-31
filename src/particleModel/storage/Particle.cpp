@@ -118,6 +118,10 @@ std::array<int,3>& Particle::getBoundariesCrossed(){
     return boundaries_crossed;
 }
 
+int& Particle::getBoundariesCrossed(int i){
+    return boundaries_crossed[i];
+}
+
 void  Particle::incBoundariesCrossedI(int i){
     boundaries_crossed[i]+=1;
 }

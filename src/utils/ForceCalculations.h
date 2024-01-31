@@ -97,7 +97,6 @@ ForceCalculation inline forceLennJonesPotentialFunction(std::vector<std::vector<
         double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
         double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
         //make formula more readable, compiler will optimize away
-        std::cout << "  A A  A";
         double r_c = cutoff;
         double r_c_squared = r_c * r_c;
 
@@ -161,7 +160,7 @@ ForceCalculation inline forceSmoothedLennJonesPotentialFunction(std::vector<std:
     double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
     double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
     //make formula more readable, compiler will optimize away
-    std::cout << "  A A  A";
+
     double r_c = cutoff;
     double r_c_squared = r_c * r_c;
 

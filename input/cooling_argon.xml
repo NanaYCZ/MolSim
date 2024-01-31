@@ -18,7 +18,7 @@
     <cellSize>2.3</cellSize>
     <forceType>smoothedLJ</forceType>
     <Rdf>
-      <rdfTimeInterval>0.05</rdfTimeInterval>
+      <rdfIntervalSize>0.05</rdfIntervalSize>
       <rdfStatFrequency>10000</rdfStatFrequency>
     </Rdf>
     <diffusionStatFrequency>1000</diffusionStatFrequency>

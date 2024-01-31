@@ -47,7 +47,10 @@
 
   <xs:complexType name="parallelizationSettingsType">
     <xs:choice>
-      <xs:element name="serial"></xs:element>
+      <xs:element name="serial">
+        <xs:complexType>
+        </xs:complexType>
+      </xs:element>
       <xs:element name="first_method">
         <xs:complexType>
           <xs:sequence>
@@ -67,7 +70,7 @@
 
   <xs:complexType name="rdfType">
     <xs:sequence>
-      <xs:element name="rdfTimeInterval" type="xs:double"/>
+      <xs:element name="rdfIntervalSize" type="xs:double"/>
       <xs:element name="rdfStatFrequency" type="xs:int" />
     </xs:sequence>
   </xs:complexType>
