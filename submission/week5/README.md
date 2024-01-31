@@ -72,9 +72,14 @@ command line arguments and what is being returned by the executable. This file s
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/779f4a7d-e876-4fac-a4f0-fd98d14ca5ed" width="490">
 
-![timeline_view16_threads](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/51f3aca3-5f11-47c7-a35a-8c9a42d592c9)
+![grafik](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/88f0c82f-a23b-49dd-8410-4fc84d12ea93)
 
-- On the upper left side is the program executed with 8 threads, on the upper right side executed with 32 threads and the lower diagram shows the execution with 16 threads (here it should also be possible to see the legend/ description of the diagram). We can see that for 8 and 16 threads, every thread has $\approx$ 100 % CPU utilization, which is in line with the first two bar graph statistics. Then for 32 threads, we can see, that every Thread only has $\approx$ 50 % CPU utilization, as there are only 16 truely parallel hardware threads. Apart from that, we can't really see a reason for the 16 threads not leading to the expected speed-up. Altough there is one short time span, where the threads are spinning/ have overhead due to locks, this is likely an interruption by the OS, as all threads are idle in this time span. Therefore synchronization doesn't seem to be a significant bottleneck for the performance of the execution with 16 threads. 
+- On the upper left side is the program executed with 8 threads, on the upper right side executed with 32 threads and the lower diagram shows the execution with 16 threads (here it should also be possible to see the legend/ description of the diagram). We can see that for 8 and 16 threads, every thread has $\approx$ 100 % CPU utilization, which is in line with the first two bar graph statistics. Then for 32 threads, we can see, that every Thread only has $\approx$ 50 % CPU utilization, as there are only 16 truely parallel hardware threads. Apart from that, we can't really see a reason for the 16 threads not leading to the expected speed-up. Altough there is one short time span, where the threads are spinning/ have overhead due to locks, this is likely an interruption by the OS, as all threads are idle in this time span. Therefore synchronization doesn't seem to be a significant bottleneck for the performance of the execution with 16 threads.
+
+
+
+
+we tried the following flags `-Ofast` , `-march=native`, `-malign-data=cacheline` and`-ftree-loop-optimize`, but none of them increased performance significantly 
 
 ### Task 3 
 
