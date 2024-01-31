@@ -12,6 +12,8 @@ if(OpenMP_CXX_FOUND)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 endif()
 
+find_package(XercesC REQUIRED)
+
 option(BUILD_TEST "Tests" OFF)
 
 # string(REPLACE "-O3" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
@@ -63,6 +65,7 @@ add_executable(MolSim ${MY_SRC})
 target_include_directories(MolSim
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/libs/libxsd
+        ${XercesC_INCLUDE_DIRS}
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 
@@ -71,7 +74,8 @@ target_include_directories(MolSim
 target_link_libraries(MolSim
         # stuff that is used in headers and source files
         spdlog
-        xerces-c
+        #xerces-c
+        ${XercesC_LIBRARIES}
         OpenMP::OpenMP_CXX
 )
 
