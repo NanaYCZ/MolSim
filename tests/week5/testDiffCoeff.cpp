@@ -43,9 +43,7 @@ TEST(test_CellCalculation, test_periodic_corner){
 
     std::cout << container_corner.to_string() << std::endl;
 
-    std::list<Particle>& instances = container_corner.getInstances();
-
-    std::vector<Particle> particles(instances.begin(),instances.end());
+    std::vector<Particle> particles = container_corner.getInstances();
 
     std::cout << particles[0].toString() <<  "\n";
 
@@ -110,9 +108,9 @@ TEST(test_DiffCoeff1, test_periodic_diff_Coeff_reappearing){
     std::cout << container.to_string();
 
 
-    std::list<Particle>& instances = container.getInstances();
 
-    std::vector<Particle> particles(instances.begin(),instances.end());
+
+    std::vector<Particle> particles = container.getInstances();
 
     std::cout << particles[0].toString() << "\n" << particles[1].toString() << "\n";
 
@@ -160,10 +158,7 @@ TEST(test_DiffCoeff2, diff_Coeff_twice_crossed_boundary){
 
     std::cout << container.to_string();
 
-
-    std::list<Particle>& instances = container.getInstances();
-
-    std::vector<Particle> particles(instances.begin(),instances.end());
+    std::vector<Particle> particles = container.getInstances();
 
     std::cout << particles[0].toString() << "\n";
 
@@ -225,9 +220,8 @@ TEST(test_DiffCoeff3, diff_Coeff_very_big){
     std::cout << container.to_string();
 
 
-    std::list<Particle>& instances = container.getInstances();
 
-    std::vector<Particle> particles(instances.begin(),instances.end());
+    std::vector<Particle> particles = container.getInstances();
 
     std::cout << particles[0].toString() << "\n";
 
