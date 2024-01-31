@@ -2,7 +2,6 @@
 
 #include "outputWriter/VTKWriter.h"
 #include <vector>
-#include <list>
 
 /**
  * @brief type for dimensions, used to apply changes easily in the code
@@ -147,7 +146,6 @@ public:
 private:
     bool three_dimensions;
     const double cell_size;
-    double cut_of_radius;
     std::array<double, 3> domain_bounds;
     dim_t comparing_depth = 1;
     size_t particle_amount = 0;

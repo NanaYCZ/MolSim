@@ -63,6 +63,10 @@ public:
      */
     void calculateLinkedCellF();
 
+    //todo
+    /**
+     * @brief
+     */
     void calculatePeriodicF();
 
     /**
@@ -155,6 +159,13 @@ private:
      */
     void updateCells(instructions& cell_updates);
 
+    //todo
+    /**
+     * @brief
+     * @param
+     * @param
+     * @param
+     */
     void applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3>& new_cell_position, instructions& cell_updates);
 
     std::array<double,3> force_exp(const Particle &p_i, const Particle &p_j, const std::array<double,3> &offset) {

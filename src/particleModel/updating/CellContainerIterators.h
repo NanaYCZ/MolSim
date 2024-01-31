@@ -188,18 +188,51 @@ private:
 };
 
 
+//todo
+/**
+ * @class CellIterator
+ * @brief
+ */
 class CellIterator {
 public:
+    /**
+     * @brief
+     * @param
+     * @param
+     * @param
+     */
     CellIterator(dim_t x, dim_t y, dim_t z);
 
+    /**
+     * @brief
+     * @param
+     * @return
+     */
     CellIterator &operator+=(int p);
 
+    /**
+     * @brief
+     * @return
+     */
     CellIterator &operator++();
 
+    /**
+     * @brief
+     * @return
+     */
     std::array<dim_t,3> position();
 
+    /**
+     * @brief
+     * @return
+     */
     std::vector<Particle*>& operator*() const;
 
+    /**
+     * @brief
+     * @param
+     * @return
+     */
     //for sequential iterations
     bool operator!=(CellIterator other) const;
 
@@ -212,10 +245,25 @@ public:
     void next_index();
 };
 
+/**
+ * @brief
+ * @param
+ * @param
+ * @return
+ */
 //for openMP iterations
 int operator-(CellIterator a, CellIterator b);
 
+/**
+ * @brief
+ * @return
+ */
 CellIterator begin_CI();
+
+/**
+ * @brief
+ * @return
+ */
 CellIterator end_CI();
 
 enum state_PI {
@@ -226,20 +274,52 @@ enum state_PI {
     finished = -2
 };
 
+
+//todo
+/**
+ * @class StartPointIterator
+ * @brief
+ */
 class StartPointIterator {
 public:
+    /**
+     * @brief
+     * @param
+     */
     StartPointIterator(std::array<dim_t, 3> pattern);
 
     StartPointIterator();
 
+    /**
+     * @brief
+     * @param
+     * @return
+     */
     StartPointIterator &operator+=(int p);
 
+    /**
+     * @brief
+     * @return
+     */
     StartPointIterator operator++();
 
+    /**
+     * @brief
+     * @param
+     * @return
+     */
     bool operator!=(StartPointIterator other);
 
+    /**
+     * @brief
+     * @return
+     */
     std::array<dim_t, 3> outside();
 
+    /**
+     * @brief
+     * @return
+     */
     std::array<dim_t,3> operator*();
 
     std::array<dim_t, 3> min{1,1,1};
@@ -252,23 +332,53 @@ public:
 
     int total;
 
+    /**
+     * @brief
+     */
     //"iterates over every point of every plane"
     //sets "current" to the next starting point within a plane
     void next_index();
 
+    /**
+     * @brief
+     * @param
+     * @param
+     */
     //"iterates over every point of a plane"
     //sets "current" to the next position within the plane a*b
     void next_point_on_plane(short a, short b);
 
+    /**
+     * @brief
+     */
     //"iterates over every plane"
     //sets "current" to the first position of a plane to iterate over
     void next_plane_corner();
 
+    /**
+     * @brief
+     */
     //helper function to determine the next plane corner and update the border for remaining planes
     void set_plane_position_on_axis();
 };
 
+/**
+ * @brief
+ * @param
+ * @param
+ * @return
+ */
 int operator-(StartPointIterator a, StartPointIterator b);
 
+/**
+ * @brief
+ * @param
+ * @return
+ */
 StartPointIterator begin_SI(std::array<dim_t,3> pattern);
+
+/**
+ * @brief
+ * @return
+ */
 StartPointIterator end_SI();

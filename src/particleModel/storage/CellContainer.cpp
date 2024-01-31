@@ -6,7 +6,7 @@
 #include <spdlog/spdlog.h>
 
 CellContainer::CellContainer(double d_width, double d_height, double d_depth, double r_cutoff, double cell_size)
-            : cell_size(cell_size),cut_of_radius(r_cutoff), domain_bounds({d_width, d_height, d_depth})
+            : cell_size(cell_size), domain_bounds({d_width, d_height, d_depth})
               {
 
     domain_max_dim = {static_cast<dim_t>(d_width / cell_size + 1),
