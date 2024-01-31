@@ -50,15 +50,15 @@ command line arguments and what is being returned by the executable. This file s
 ### Task 2 
 
 #### Performance
-- we measured and profiled the performance of the execution of our parallel version with Intel's Vtune profiler and perf. Measurements were performed within a Linux environment on an AMD Ryzen 7 5700U without VTK output and logging enabled. We used gcc with the optimization level -O3 and for all measurements we used the the rayleigh-taylor instability example in 3D (but with tEnd=0.1 only). Measuring the runtime for a different number of threads yields the following:
+- we measured and profiled the performance of the execution of our parallel version with Intel's Vtune profiler and perf. Measurements were performed within a Linux environment on an AMD Ryzen 7 5700U without VTK output and logging enabled. We used gcc with the optimization level -O3 and for all measurements we used the rayleigh-taylor instability example in 3D (but with tEnd=0.1 only). Measuring the runtime for a different number of threads yields the following:
 
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/4ca80370-5db8-4231-827b-8cd11615734e" width="470">
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/0eb6813e-e02a-450b-9124-06af8a93a5d8" width="470">
 
-- it is important to know that the AMD Ryzen 7 5700U only has 16 logical CPU Cores, meaning only 16 threads can run truly parallel, this we can see in a later analysis as well. Therefore it is expected, that after more than 16 threads no further speed-up is gained, as there a never more than 16 threads running truely parallel. The graph shows, that more than 16 threads are even a bit slower than the execution of "only" 16 threads, likely because the additional software threads create overhead by context switches etc.
-- The linear trend of speed-up only remains until ~ 8 threads, altough already 8 threads don't provide the expected speed-up of 8. For 16 threads it becomes obvious, that the expected speed-up of 16 is not reached.  When examining the scenario with 16 threads using Vtune, we get several statistics. The first one shows the how much logical CPU cores run in parallel for how long.
+- It is important to know that the AMD Ryzen 7 5700U only has 16 logical CPU Cores, meaning only 16 threads can run truly parallel, this we can see in a later analysis as well. Therefore it is expected, that after more than 16 threads no further speed-up is gained, as there a never more than 16 threads running truely parallel. The graph shows, that more than 16 threads are even a bit slower than the execution of "only" 16 threads, likely because the additional software threads create overhead by context switches etc.
+- The linear trend of speed-up only remains until ~ 8 threads, altough already 8 threads don't provide the expected speed-up of 8. For 16 threads it becomes obvious, that the expected speed-up of 16 is not reached. When examining the scenario with 16 threads using Vtune, we get several statistics. The first one shows the how much logical CPU cores run in parallel for how long.
 
 ![grafik](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/7097624b-2b8b-4aac-90a0-e70fcc9165e1)
 
@@ -75,27 +75,31 @@ command line arguments and what is being returned by the executable. This file s
 ![grafik](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/88f0c82f-a23b-49dd-8410-4fc84d12ea93)
 
 - On the upper left side is the program executed with 8 threads, on the upper right side executed with 32 threads and the lower diagram shows the execution with 16 threads (here it should also be possible to see the legend/ description of the diagram). We can see that for 8 and 16 threads, every thread has $\approx$ 100 % CPU utilization, which is in line with the first two bar graph statistics. Then for 32 threads, we can see, that every Thread only has $\approx$ 50 % CPU utilization, as there are only 16 truely parallel hardware threads. Apart from that, we can't really see a reason for the 16 threads not leading to the expected speed-up. Altough there is one short time span, where the threads are spinning/ have overhead due to locks, this is likely an interruption by the OS, as all threads are idle in this time span. Therefore synchronization doesn't seem to be a significant bottleneck for the performance of the execution with 16 threads.
-- when looking at the tables of functions and the respective time  spend within them, there doesn't seem to be a clear difference between running the program with 1 thread(left) or running the program with 16 threads(right). Except with 16 threads ~ 6 % more time is spend in `force_exp`, whereas with 1 thread ~ 5 % more time is spend in `calculateLinkedCellF`. The percentage next to a function f1, represents the time that is spend in the respective function f1 without the time, that is spend in other functions f2, that are called by f1.
+- When looking at the tables of functions and the respective time  spend within them, there doesn't seem to be a clear difference between running the program with 1 thread(left) or running the program with 16 threads(right). Except with 16 threads ~ 6 % more time is spend in `force_exp`, whereas with 1 thread ~ 5 % more time is spend in `calculateLinkedCellF`. The percentage next to a function f1, represents the time that is spend in the respective function f1 without the time, that is spend in other functions f2, that are called by f1.
 `force_exp` is the function for calculating the Lennard-Jones-Potential (not smoothed). In the regular program, we use function lambdas to dynamically switch between different ways of calculating the force, but direct calls to a function known at compile time make profiling a lot easier and the runtime remains basically unchanged.
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/86917ca4-87e9-4b01-b185-6504faff710a" width="500">
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/2ae278f1-bf61-4f79-bea1-3a816046163f" width="470">
 
- - further insights can be gained when looking at the Code annotated with the time spend in each line next to it. The upper annotations show the execution with 1 thread, the  lower annotations show the execution with 16 threads. It is important to note, that here the percentage next to the line is the total percentage that the program spends in the respective line. This means time that elapsed in a function call from a certain line will be counted towards that line as well.
+ - Further insights can be gained when looking at the Code annotated with the time spend in each line next to it. The upper annotations show the execution with 1 thread, the  lower annotations show the execution with 16 threads. It is important to note, that here the percentage next to the line is the total percentage that the program spends in the respective line. This means time that elapsed in a function call from a certain line will be counted towards that line as well.
  - 
 ![annotated_source_1thread](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/c01378e1-a289-4abf-b193-23ed0f5f7369)
 
 ![annotated_source_16threads](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/fe879a25-254c-4311-bb13-4d106f7e0156)
 
-- it is clearly visible, that for 16 threads the time spend calculating the actual potential is significantly reduced (e.g. time spend in line 168,169 and 179, 181) compared to the execution with one thread, while the time spend accessing memory(e.g. line 161-163) is significantly increased compared to the execution with one thread. As can be seen in the third statistic(function call table), another ~ 10% of total execution is spend in the `addF` function, which is called in `calculateLinkedCellF` and two other functions (`calculatePeriodicF` and `finishF`) after the force was calculated between two particles. It just adds a force vector to the force vector of its particle. This time correspond to another ~ 10 % of time spend for accessing memory, as the performed Addition is certainly not responsible for the needed runtime. In total, likely about 40 % of runtime is spend accessing memory in the execution with 16 threads, which is quite high. In general parallelizing memory-bound programs is difficult and can lead to problems.
-- When looking at the cache-miss rate for a different number of threads, it becomes apparent, that the 16 threads underperforming, might be a reason of poor cache-performance. 
+- It is clearly visible, that for 16 threads the time spend calculating the actual potential is significantly reduced (e.g. time spend in line 168,169 and 179, 181) compared to the execution with one thread, while the time spend accessing memory(e.g. line 161-163) is significantly increased compared to the execution with one thread. As can be seen in the third statistic(function call table), another ~ 10% of total execution is spend in the `addF` function, which is called in `calculateLinkedCellF` and two other functions (`calculatePeriodicF` and `finishF`) after the force was calculated between two particles. It just adds a force vector to the force vector of its particle. This time correspond to another ~ 10 % of time spend for accessing memory, as the performed Addition is certainly not responsible for the needed runtime. In total, likely about 40 % of runtime is spend accessing memory in the execution with 16 threads, which is quite high. In general parallelizing memory-bound programs is difficult and can lead to problems.
+- When looking at the cache-miss rate for a different number of threads, it becomes apparent, that the 16 threads underperforming, might due to a poor cache-performance. 
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/8c8552df-21ed-4662-b812-9dfb183c20d6" width="650">
 
-
+- We can see that the cache miss rate is increasing with more threads and that our programm in general has a high cache-miss rate. 
+- it is not obvious why the cache rate is increasing, but no 
 
 we tried the following flags `-Ofast` , `-march=native`, `-malign-data=cacheline` and`-ftree-loop-optimize`, but none of them increased performance significantly 
+
+##### Configurations
+- For all measurements and statistics we used the rayleigh-taylor instability example in 3D (but with tEnd=0.1 only). The runtime measurements were made by calling our program with the `-p` option and the application was compiled with gcc and `-O3`. The statistics from Vtune were obtained by performing the 'Threading' Analysis from the Intel Vtune tool chain and the application was compiled with `-O2` and `-g` to generate debugging symbols. For the cache-performance  measurements, the program was compiled with the same arguments and executed with `perf stat -e cache-misses,cache-refernces -a ./Molsim ..` . We also tried using AMD's μProf, but it turned out to not be very useful.
 
 ### Task 3 
 
