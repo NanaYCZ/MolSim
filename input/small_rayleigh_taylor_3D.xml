@@ -16,10 +16,13 @@
         <cutOffRadius>3.6</cutOffRadius>
         <cellSize>1.8</cellSize>
         <gravityFactor>-12.44</gravityFactor>
-        <forceType>LJ</forceType>
+        <forceType>
+           <smoothedLJ>
+               <r_l>1.9</r_l>
+           </smoothedLJ>
+        </forceType>
         <parallelizationVersion>
-            <first_method>
-            </first_method>
+            <serial/>
         </parallelizationVersion>
         <Thermostats>
             <initTemp>40</initTemp>

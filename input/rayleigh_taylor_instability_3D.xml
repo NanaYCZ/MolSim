@@ -16,7 +16,7 @@
         <cutOffRadius>3.6</cutOffRadius>
         <cellSize>1.8</cellSize>
         <gravityFactor>-12.44</gravityFactor>
-        <forceType>LJ</forceType>
+        <forceType><LJ/></forceType>
         <parallelizationVersion>
             <first_method>
                 <numThreads>16</numThreads>
