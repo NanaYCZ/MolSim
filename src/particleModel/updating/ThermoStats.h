@@ -82,8 +82,12 @@ class ThermoStats{
          */
         void initDiffusionCoefficient();
 
+        auto& getParticlePositionsPreviousIteration(){
+            return particle_positions_previous_iteration;
+        }
 
-    private:
+
+private:
         CellContainer& cellContainer;
 
         double delta_t;

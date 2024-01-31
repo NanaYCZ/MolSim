@@ -529,22 +529,22 @@ second_method (::std::unique_ptr< second_method_type > x)
 // rdfType
 // 
 
-const rdfType::rdfTimeInterval_type& rdfType::
-rdfTimeInterval () const
+const rdfType::rdfIntervalSize_type& rdfType::
+rdfIntervalSize () const
 {
-  return this->rdfTimeInterval_.get ();
+  return this->rdfIntervalSize_.get ();
 }
 
-rdfType::rdfTimeInterval_type& rdfType::
-rdfTimeInterval ()
+rdfType::rdfIntervalSize_type& rdfType::
+rdfIntervalSize ()
 {
-  return this->rdfTimeInterval_.get ();
+  return this->rdfIntervalSize_.get ();
 }
 
 void rdfType::
-rdfTimeInterval (const rdfTimeInterval_type& x)
+rdfIntervalSize (const rdfIntervalSize_type& x)
 {
-  this->rdfTimeInterval_.set (x);
+  this->rdfIntervalSize_.set (x);
 }
 
 const rdfType::rdfStatFrequency_type& rdfType::
@@ -1286,6 +1286,10 @@ spheres (const spheres_sequence& s)
 }
 
 
+// serial
+// 
+
+
 // first_method
 // 
 
@@ -1964,10 +1968,10 @@ parallelizationSettingsType::
 //
 
 rdfType::
-rdfType (const rdfTimeInterval_type& rdfTimeInterval,
+rdfType (const rdfIntervalSize_type& rdfIntervalSize,
          const rdfStatFrequency_type& rdfStatFrequency)
 : ::xml_schema::type (),
-  rdfTimeInterval_ (rdfTimeInterval, this),
+  rdfIntervalSize_ (rdfIntervalSize, this),
   rdfStatFrequency_ (rdfStatFrequency, this)
 {
 }
@@ -1977,7 +1981,7 @@ rdfType (const rdfType& x,
          ::xml_schema::flags f,
          ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  rdfTimeInterval_ (x.rdfTimeInterval_, f, this),
+  rdfIntervalSize_ (x.rdfIntervalSize_, f, this),
   rdfStatFrequency_ (x.rdfStatFrequency_, f, this)
 {
 }
@@ -1987,7 +1991,7 @@ rdfType (const ::xercesc::DOMElement& e,
          ::xml_schema::flags f,
          ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  rdfTimeInterval_ (this),
+  rdfIntervalSize_ (this),
   rdfStatFrequency_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -2007,13 +2011,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // rdfTimeInterval
+    // rdfIntervalSize
     //
-    if (n.name () == "rdfTimeInterval" && n.namespace_ ().empty ())
+    if (n.name () == "rdfIntervalSize" && n.namespace_ ().empty ())
     {
-      if (!rdfTimeInterval_.present ())
+      if (!rdfIntervalSize_.present ())
       {
-        this->rdfTimeInterval_.set (rdfTimeInterval_traits::create (i, f, this));
+        this->rdfIntervalSize_.set (rdfIntervalSize_traits::create (i, f, this));
         continue;
       }
     }
@@ -2032,10 +2036,10 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     break;
   }
 
-  if (!rdfTimeInterval_.present ())
+  if (!rdfIntervalSize_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "rdfTimeInterval",
+      "rdfIntervalSize",
       "");
   }
 
@@ -2060,7 +2064,7 @@ operator= (const rdfType& x)
   if (this != &x)
   {
     static_cast< ::xml_schema::type& > (*this) = x;
-    this->rdfTimeInterval_ = x.rdfTimeInterval_;
+    this->rdfIntervalSize_ = x.rdfIntervalSize_;
     this->rdfStatFrequency_ = x.rdfStatFrequency_;
   }
 
@@ -3266,6 +3270,60 @@ operator= (const parameters& x)
 
 parameters::
 ~parameters ()
+{
+}
+
+// serial
+//
+
+serial::
+serial ()
+: ::xml_schema::type ()
+{
+}
+
+serial::
+serial (const serial& x,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c)
+{
+}
+
+serial::
+serial (const ::xercesc::DOMElement& e,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (e, f, c)
+{
+}
+
+serial::
+serial (const ::xercesc::DOMAttr& a,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (a, f, c)
+{
+}
+
+serial::
+serial (const ::std::string& s,
+        const ::xercesc::DOMElement* e,
+        ::xml_schema::flags f,
+        ::xml_schema::container* c)
+: ::xml_schema::type (s, e, f, c)
+{
+}
+
+serial* serial::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class serial (*this, f, c);
+}
+
+serial::
+~serial ()
 {
 }
 

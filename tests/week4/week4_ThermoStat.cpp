@@ -236,6 +236,7 @@ TEST(test_Thermo_Stat,test_initial_Temp){
         std::nullopt,
         std::nullopt,
         std::nullopt,
+        std::nullopt,
         std::nullopt,       //max temp diff
         std::nullopt,       //target temp
         50,          //thermostat write frequency

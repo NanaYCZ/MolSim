@@ -90,7 +90,7 @@ double ThermoStats::getDiffusionCoefficient(){
               diff = current_position - remove_periodic_boundaries - old_position;
               sum += ArrayUtils::scalarProduct(diff,diff); //no need to calculate L2norm and then square
               amount++;
-                particle_ptr->setBoundariesCrossedZero();
+              particle_ptr->setBoundariesCrossedZero();
             }
         }
     }

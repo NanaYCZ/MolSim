@@ -573,6 +573,7 @@ class boundaryConditionsType;
 class cuboidType;
 class sphereType;
 class parameters;
+class serial;
 class first_method;
 class second_method;
 
@@ -1811,7 +1812,7 @@ class parallelizationSettingsType: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::type serial_type;
+  typedef ::serial serial_type;
 
   /**
    * @brief Element optional container type.
@@ -2125,9 +2126,9 @@ class rdfType: public ::xml_schema::type
 {
   public:
   /**
-   * @name rdfTimeInterval
+   * @name rdfIntervalSize
    *
-   * @brief Accessor and modifier functions for the %rdfTimeInterval
+   * @brief Accessor and modifier functions for the %rdfIntervalSize
    * required element.
    */
   //@{
@@ -2135,28 +2136,28 @@ class rdfType: public ::xml_schema::type
   /**
    * @brief Element type.
    */
-  typedef ::xml_schema::double_ rdfTimeInterval_type;
+  typedef ::xml_schema::double_ rdfIntervalSize_type;
 
   /**
    * @brief Element traits type.
    */
-  typedef ::xsd::cxx::tree::traits< rdfTimeInterval_type, char, ::xsd::cxx::tree::schema_type::double_ > rdfTimeInterval_traits;
+  typedef ::xsd::cxx::tree::traits< rdfIntervalSize_type, char, ::xsd::cxx::tree::schema_type::double_ > rdfIntervalSize_traits;
 
   /**
    * @brief Return a read-only (constant) reference to the element.
    *
    * @return A constant reference to the element.
    */
-  const rdfTimeInterval_type&
-  rdfTimeInterval () const;
+  const rdfIntervalSize_type&
+  rdfIntervalSize () const;
 
   /**
    * @brief Return a read-write reference to the element.
    *
    * @return A reference to the element.
    */
-  rdfTimeInterval_type&
-  rdfTimeInterval ();
+  rdfIntervalSize_type&
+  rdfIntervalSize ();
 
   /**
    * @brief Set the element value.
@@ -2167,7 +2168,7 @@ class rdfType: public ::xml_schema::type
    * the new value of the element.
    */
   void
-  rdfTimeInterval (const rdfTimeInterval_type& x);
+  rdfIntervalSize (const rdfIntervalSize_type& x);
 
   //@}
 
@@ -2227,7 +2228,7 @@ class rdfType: public ::xml_schema::type
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
    */
-  rdfType (const rdfTimeInterval_type&,
+  rdfType (const rdfIntervalSize_type&,
            const rdfStatFrequency_type&);
 
   /**
@@ -2300,7 +2301,7 @@ class rdfType: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< rdfTimeInterval_type > rdfTimeInterval_;
+  ::xsd::cxx::tree::one< rdfIntervalSize_type > rdfIntervalSize_;
   ::xsd::cxx::tree::one< rdfStatFrequency_type > rdfStatFrequency_;
 
   //@endcond
@@ -4759,6 +4760,100 @@ class parameters: public ::xml_schema::type
   spheres_sequence spheres_;
 
   //@endcond
+};
+
+/**
+ * @brief Class corresponding to the %serial schema type.
+ *
+ * @nosubgrouping
+ */
+class serial: public ::xml_schema::type
+{
+  public:
+  /**
+   * @name Constructors
+   */
+  //@{
+
+  /**
+   * @brief Create an instance from the ultimate base and
+   * initializers for required elements and attributes.
+   */
+  serial ();
+
+  /**
+   * @brief Create an instance from a DOM element.
+   *
+   * @param e A DOM element to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  serial (const ::xercesc::DOMElement& e,
+          ::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Create an instance from a DOM attribute.
+   *
+   * @param a A DOM attribute to extract the data from.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  serial (const ::xercesc::DOMAttr& a,
+          ::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Create an instance from a string fragment.
+   *
+   * @param s A string fragment to extract the data from.
+   * @param e A pointer to DOM element containing the string fragment.
+   * @param f Flags to create the new instance with.
+   * @param c A pointer to the object that will contain the new
+   * instance.
+   */
+  serial (const ::std::string& s,
+          const ::xercesc::DOMElement* e,
+          ::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy constructor.
+   *
+   * @param x An instance to make a copy of.
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   *
+   * For polymorphic object models use the @c _clone function instead.
+   */
+  serial (const serial& x,
+          ::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0);
+
+  /**
+   * @brief Copy the instance polymorphically.
+   *
+   * @param f Flags to create the copy with.
+   * @param c A pointer to the object that will contain the copy.
+   * @return A pointer to the dynamically allocated copy.
+   *
+   * This function ensures that the dynamic type of the instance is
+   * used for copying and should be used for polymorphic object
+   * models instead of the copy constructor.
+   */
+  virtual serial*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  //@}
+
+  /**
+   * @brief Destructor.
+   */
+  virtual 
+  ~serial ();
 };
 
 /**

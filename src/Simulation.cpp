@@ -24,11 +24,13 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
 
     std::chrono::high_resolution_clock::time_point perf_time_start, perf_time_end;
 
+
+
     double current_time = 0;
     int iteration = 0;
 
     std::string progressBar;
-    size_t barWidth, pos;
+    size_t barWidth, pos = 0;
 
     SPDLOG_INFO("Starting Simulation");
     if(calculator.parallelization == concurrency_strategy::first_method){
