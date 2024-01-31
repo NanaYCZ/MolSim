@@ -19,6 +19,7 @@
         <forceType>LJ</forceType>
         <parallelizationVersion>
             <first_method>
+                <numThreads>32</numThreads>
             </first_method>
         </parallelizationVersion>
         <Thermostats>
