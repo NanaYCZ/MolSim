@@ -91,7 +91,18 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
     args.cut_off_radius = sim_params.cutOffRadius();
     args.cell_size = sim_params.cellSize();
     args.gravity_factor = sim_params.gravityFactor().present() ? sim_params.gravityFactor().get() : 0;
-    args.force_type = sim_params.forceType();
+    auto force_type_param  = sim_params.forceType();
+    if(force_type_param.gravitational().present()){
+        args.force_type_param    = force_type::gravitational;
+    }else if(force_type_param.LJ().present()){
+        args.force_type_param    = force_type::LJ;
+    }else if(force_type_param.smoothedLJ().present()){
+        args.force_type_param = force_type::smoothedLJ;
+        args.r_l = force_type_param.smoothedLJ().get().r_l();
+    }else{
+        spdlog::info("The force type you provided does not exist");
+    }
+
     if(sim_params.parallelizationVersion().present()){
         if(sim_params.parallelizationVersion().get().serial().present()){
             args.parallelization_version = concurrency_strategy::serial;

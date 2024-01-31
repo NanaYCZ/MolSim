@@ -14,16 +14,16 @@ std::vector<std::vector<double>> epsilon_mixed{{5.0}};
 
 CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,
                                double r_l_, std::array<boundary_conditions,6> boundaries_cond,
-                               std::string forceType,double gravity_factor, concurrency_strategy strategy)
+                               force_type forceType,double gravity_factor, concurrency_strategy strategy)
     : parallelization(strategy), cellContainer(cellContainer), gravity_factor(gravity_factor), delta_t(delta_t), cutoff(cutoff), r_l(r_l_),
     domain_bounds(cellContainer.getDomainBounds()), domain_max_dim(CellContainer::domain_max_dim), boundaries(boundaries_cond),
     particles(CellContainer::particles)
     {
-    if(forceType == "smoothedLJ"){
+    if(forceType == force_type::smoothedLJ){
         force = forceSmoothedLennJonesPotentialFunction(sigma_mixed,epsilon_mixed,cutoff,r_l);
-    }else if(forceType == "LJ"){
+    }else if(forceType == force_type::LJ){
         force = forceLennJonesPotentialFunction(sigma_mixed,epsilon_mixed,cutoff);
-    }else if(forceType == "Gravity"){
+    }else if(forceType == force_type::gravitational){
         force = forceSimpleGravitational(cutoff);
     }else{
         throw std::invalid_argument("Force Type was not correctly specified");

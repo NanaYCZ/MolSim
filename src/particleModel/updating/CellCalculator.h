@@ -16,6 +16,12 @@ enum class concurrency_strategy{
     second_method
 };
 
+enum class force_type{
+    gravitational,
+    LJ,
+    smoothedLJ
+};
+
 extern double min_distance;
 
 extern int chunk_size;
@@ -45,7 +51,7 @@ class CellCalculator {
 
 public:
     CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff, double r_l_,
-                   std::array<boundary_conditions,6> boundaries_cond, std::string forceType,
+                   std::array<boundary_conditions,6> boundaries_cond, force_type forceType = force_type::LJ,
                    double gravity_factor = 0, concurrency_strategy strategy = concurrency_strategy::serial);
 
     /**
