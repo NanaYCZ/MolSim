@@ -7,7 +7,7 @@
 #include <algorithm>
 
 double min_distance = 0.7;
-int schedule_size = 16;
+int chunk_size = 16;
 
 std::vector<std::vector<double>> sigma_mixed{{1.0}};
 std::vector<std::vector<double>> epsilon_mixed{{5.0}};
@@ -33,8 +33,8 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
 void CellCalculator::calculateX(){
     instructions cell_updates;
 
-    #pragma omp parallel for default(none) shared(cell_updates, schedule_size) \
-                            schedule(static,schedule_size) \
+    #pragma omp parallel for default(none) shared(cell_updates, chunk_size) \
+                            schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
@@ -76,8 +76,8 @@ void CellCalculator::calculateX(){
 
 void CellCalculator::calculateV(){
 
-    #pragma omp parallel for default(none) shared(schedule_size) \
-                            schedule(static,schedule_size) \
+    #pragma omp parallel for default(none) shared(chunk_size) \
+                            schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
@@ -97,7 +97,7 @@ void CellCalculator::calculateV(){
     }
 }
 
-    void CellCalculator::calculateF(){
+void CellCalculator::calculateF(){
     calculateLinkedCellF();
     calculatePeriodicF();
 
@@ -111,8 +111,8 @@ void CellCalculator::calculateV(){
 
 void CellCalculator::shiftF(){
 
-    #pragma omp parallel for default(none) shared(schedule_size) \
-                            schedule(static,schedule_size) \
+    #pragma omp parallel for default(none) shared(chunk_size) \
+                            schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
     for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
@@ -174,8 +174,8 @@ void CellCalculator::calculateLinkedCellF() {
 void CellCalculator::calculatePeriodicF() {
     for(std::array<dim_t,3> pattern : CellContainer::patterns) {
 
-        #pragma omp parallel for default(none) shared(pattern, schedule_size) \
-                                schedule(static,schedule_size) \
+        #pragma omp parallel for default(none) shared(pattern, chunk_size) \
+                                schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
         for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
@@ -284,14 +284,12 @@ void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3
 }
 
 void CellCalculator::updateCells(instructions& cell_updates) {
-    //todo omp vs sequential?
     for(auto ins : cell_updates){
 
         std::array<dim_t, 3> &new_cell_position = std::get<1>(ins);
 
         std::vector<Particle *> *new_cell = &particles[new_cell_position[0]][new_cell_position[1]][new_cell_position[2]];
 
-        //todo lock here?
         new_cell->push_back(std::get<0>(ins));
     }
 }

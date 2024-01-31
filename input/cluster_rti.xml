@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="parameters.xsd">
+
+  <!-- Output Parameters -->
+  <outputParameters>
+    <baseName>out</baseName>
+    <writeFrequency>50</writeFrequency>
+  </outputParameters>
+
+  <!-- Simulation Parameters -->
+  <simulationParameters>
+    <tEnd>0.5</tEnd>
+    <deltaT>0.0005</deltaT>
+    <cutOffRadius>3.0</cutOffRadius>
+    <cellSize>1.5</cellSize>
+    <gravityFactor>-12.44</gravityFactor>
+    <forceType>LJ</forceType>
+    <parallelizationVersion>
+      <first_method>
+        <numThreads>32</numThreads>
+      </first_method>
+    </parallelizationVersion>
+    <Thermostats>
+      <initTemp>40</initTemp>
+      <thermoStatFrequency>1000</thermoStatFrequency>
+    </Thermostats>
+    <boundaryConditions>
+        <boundaryConditionsPositiveZ>periodic</boundaryConditionsPositiveZ>
+        <boundaryConditionsNegativeZ>periodic</boundaryConditionsNegativeZ>
+        <boundaryConditionsPositiveX>periodic</boundaryConditionsPositiveX>
+        <boundaryConditionsNegativeX>periodic</boundaryConditionsNegativeX>
+        <boundaryConditionsPositiveY>reflective</boundaryConditionsPositiveY>
+        <boundaryConditionsNegativeY>reflective</boundaryConditionsNegativeY>
+      </boundaryConditions>
+    <domainDimensions>
+      <x>300</x>
+      <y>54</y>
+      <z>0</z>
+    </domainDimensions>
+  </simulationParameters>
+
+
+
+  <!-- Cuboids -->
+  <cuboids>
+    <position>
+      <x>0.6</x>
+      <y>2</y>
+      <z>0</z>
+    </position>
+    <velocity>
+      <x>0</x>
+      <y>0</y>
+      <z>0</z>
+    </velocity>
+    <dimensions>
+      <x>250</x>
+      <y>20</y>
+      <z>1</z>
+    </dimensions>
+    <mass>1</mass>
+    <meshWidth>1.2</meshWidth>
+    <sigma>1.2</sigma>
+    <epsilon>1.0</epsilon>
+  </cuboids>
+
+  <cuboids>
+    <position>
+        <x>0.6</x>
+        <y>27</y>
+        <z>0</z>
+    </position>
+    <velocity>
+      <x>0</x>
+      <y>0</y>
+      <z>0</z>
+    </velocity>
+    <dimensions>
+      <x>250</x>
+      <y>20</y>
+      <z>1</z>
+    </dimensions>
+    <mass>2</mass>
+    <meshWidth>1.2</meshWidth>
+    <sigma>1.1</sigma>
+    <epsilon>1.0</epsilon>
+  </cuboids>
+
+  <!-- Add arbitrarily many cuboids here  -->
+
+
+
+
+
+  <!-- Spheres -->
+
+
+  <!-- Add arbitrarily many spheres here  -->
+</parameters>

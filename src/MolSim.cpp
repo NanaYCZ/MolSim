@@ -99,6 +99,7 @@ int main(int argc, char *argsv[])
        FileReader::initializeCorrectInitialTemp(args);
     }
 
+#ifdef _OPENMP
     if(args.choose_amount_threads.has_value()){
         int number_of_threads = args.choose_amount_threads.value();
         if(number_of_threads < 1){
@@ -107,6 +108,7 @@ int main(int argc, char *argsv[])
         }
         omp_set_num_threads(number_of_threads);
     }
+#endif
 
     CellContainer cellContainer(args.domain_dimensions[0],args.domain_dimensions[1],args.domain_dimensions[2],
                                 args.cut_off_radius,args.cell_size);

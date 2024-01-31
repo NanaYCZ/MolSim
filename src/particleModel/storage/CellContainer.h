@@ -105,7 +105,7 @@ public:
      * Getter(we did not anotate each of those :3):
     */
 
-    std::list<Particle>& getInstances() {
+    std::vector<Particle>& getInstances() {
         return particle_instances;
     }
 
@@ -152,7 +152,7 @@ private:
     dim_t comparing_depth = 1;
     size_t particle_amount = 0;
 
-    std::list<Particle> particle_instances;
+    std::vector<Particle> particle_instances;
 
     static std::array<dim_t, 3> domain_max_dim;
     static std::vector<std::array<dim_t,3>> patterns;

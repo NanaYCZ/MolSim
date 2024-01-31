@@ -261,6 +261,8 @@ bool CellContainer::isApproximatelyEqual(double a, double b, double epsilon) {
 
 
 void CellContainer::createPointers(){
+    particle_instances.shrink_to_fit();
+
     for(Particle& particle : particle_instances){
         std::array<dim_t , 3> pos;
         std::array<double,3> x_arg = particle.getX();
