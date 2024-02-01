@@ -211,7 +211,6 @@ void CellCalculator::calculatePeriodicF() {
 }
 
 
-
 void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3>& new_cell_position, instructions& cell_updates) {
     //second method for reflective boundaries
     const std::array<double,3> &x = particle_ptr->getX();

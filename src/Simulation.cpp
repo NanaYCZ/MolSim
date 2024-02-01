@@ -26,6 +26,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
 
     double current_time = 0;
     int iteration = 0;
+    bool membraneArgument=1;
 
     std::string progressBar;
     size_t barWidth, pos;

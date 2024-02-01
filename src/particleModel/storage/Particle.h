@@ -17,6 +17,10 @@
 class Particle {
 private:
     /**
+    * Grids of the particle
+    */
+    std::array<uint, 3> grids;
+    /**
     * Position of the particle
     */
     std::array<double, 3> x;
@@ -25,6 +29,16 @@ private:
     * Velocity of the particle
     */
     std::array<double, 3> v;
+
+    /**
+    * forceParameter
+    */
+    double f;
+
+    /**
+    * averageGridLength
+    */
+    double a;
 
     /**
     * Mass of this particle
@@ -119,7 +133,55 @@ public:
 
     double getM() const;
 
+    double getA() const;
+
+    double getFP() const;
+
     int getType() const;
+
+    /**
+   * Vector of neighbours .
+   */
+    std::vector<Particle *> neighbours;
+
+    /**
+   * Vector of diagonalNeighbours.
+   */
+    std::vector<Particle *> diagonalNeighbours;
+
+    /**
+   * Getter for neighbours.
+   * @return neighbours
+   */
+    [[nodiscard]] const std::vector<Particle *> &getNeighbours() const {
+        return neighbours;
+    }
+
+    /**
+   * Getter for diagonalNeighbours.
+   * @return diagonalNeighbours
+   */
+    [[nodiscard]] const std::vector<Particle *> &getDiagonalNeighbours() const {
+        return diagonalNeighbours;
+    }
+
+
+    /**
+  * Adds a molecule-pointer to neighbours.
+  * @param p molecule-pointer
+  */
+    void addNeighbour(Particle *p) {
+        neighbours.emplace_back(p);
+    }
+
+    /**
+  * Adds a molecule-pointer to diagonalNeighbours.
+  * @param p molecule-pointer
+  */
+    void addDiagonalNeighbour(Particle *p) {
+        diagonalNeighbours.emplace_back(p);
+    }
+
 
 
 

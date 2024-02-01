@@ -15,6 +15,8 @@ class FileReader {
 
   struct CuboidData;
 
+  struct MembraneData;
+
   struct ProgramArgs; 
 
 

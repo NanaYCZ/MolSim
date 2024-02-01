@@ -73,6 +73,8 @@ public:
 
     void addParticle(const Particle& particle,double sigma, double epsilon);
 
+    void addParticle(std::array<uint64_t, 3> grid_arg, std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg);
+
     /**
      * @brief after all Particles were created and are stored, this function creates pointers to them
      * 

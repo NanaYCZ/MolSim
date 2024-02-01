@@ -29,7 +29,48 @@
  */
 using ForceCalculation = std::function<std::array<double, 3>(const Particle &, const Particle &, const std::array<double,3> &)>;
 
+ForceCalculation inline forceBetweenTwoNeighbors(){
+    return [] (const Particle &p_i, const Particle &p_j, const std::array<double,3> &offset) -> std::array<double, 3> {
 
+
+        auto delta_x = p_i.getX() - p_j.getX();
+        double l2Norm = std::sqrt(delta_x[0] * delta_x[0] + delta_x[1] * delta_x[1] + delta_x[2] * delta_x[2]);
+
+        double k = p_i.getFP();
+        double r0 = p_i.getA();
+
+        std::array<double, 3> force;
+        double magnitude = k * (l2Norm - r0) / l2Norm;
+
+        for (int dim = 0; dim < 3; ++dim) {
+            force[dim] = magnitude * (p_j.getX()[dim] - p_i.getX()[dim]);
+        }
+
+        return force;
+    };
+}
+
+
+ForceCalculation inline forceBetweenTwoDiagonalNeighbors(){
+    return [] (const Particle &p_i, const Particle &p_j, const std::array<double,3> &offset) -> std::array<double, 3> {
+
+
+        auto delta_x = p_i.getX() - p_j.getX();
+        double l2Norm = std::sqrt(delta_x[0] * delta_x[0] + delta_x[1] * delta_x[1] + delta_x[2] * delta_x[2]);
+
+        double k = p_i.getFP();
+        double r0 = p_i.getA();
+
+        std::array<double, 3> force;
+        double magnitude = k * (l2Norm - sqrt(2)*r0) / l2Norm;
+
+        for (int dim = 0; dim < 3; ++dim) {
+            force[dim] = magnitude * (p_j.getX()[dim] - p_i.getX()[dim]);
+        }
+
+        return force;
+    };
+}
 /**
  * @brief Calculate force between \f$ p_i \f$ and \f$ p_j \f$
  *

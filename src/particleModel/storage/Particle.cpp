@@ -68,6 +68,10 @@ const std::array<double, 3> &Particle::getOldF() const {
 
 double Particle::getM() const { return m; }
 
+double Particle::getFP() const {return f;}
+
+double Particle::getA() const {return a;}
+
 int Particle::getType() const { return type; }
 
 void Particle::setX(int index, double value) { x[index] = value; }

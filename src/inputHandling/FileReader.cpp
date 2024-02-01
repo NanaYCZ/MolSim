@@ -68,6 +68,7 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
     auto out_params = params->outputParameters();
     auto sim_params = params->simulationParameters();
     auto cuboids = params->cuboids();
+    auto membranes = params->membranes();
     auto spheres = params->spheres();
     auto rdf_params = sim_params.Rdf();
     auto boundary_conditions_xml = sim_params.boundaryConditions();
@@ -166,6 +167,26 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
         c.avg_v =  cuboid.meanVelocity().present() ? std::optional<double>(cuboid.meanVelocity().get()) : std::nullopt;
 
         args.cuboids.push_back(c);
+    }
+
+    for(size_t i = 0; i < membranes.size() ; i++){
+        MembraneData membraneData;
+        auto membrane = membranes[i];
+        membraneData.x = { membrane.position().x(), membrane.position().y(), membrane.position().z() };
+        membraneData.v = { membrane.velocity().x(), membrane.velocity().y(), membrane.velocity().z() };
+        membraneData.a=membrane.averageBondLength();
+        membraneData.f=membrane.forceParameter();
+
+        membraneData.N1 = membrane.dimensions().x();
+        membraneData.N2 = membrane.dimensions().y();
+        membraneData.N3 = membrane.dimensions().z();
+
+        membraneData.m = membrane.mass();
+        membraneData.h = membrane.meshWidth();
+        membraneData.sigma = membrane.sigma();
+        membraneData.epsilon = membrane.epsilon();
+
+        args.membranes.push_back(membraneData);
     }
 
 

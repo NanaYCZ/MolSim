@@ -63,7 +63,6 @@ struct FileReader::CuboidData {
     std::array<double, 3> x, v;
 
 
-
     /// N1: amount of particles along dimension 1
     /// N2: amount of particles along dimension 2
     /// N3: amount of particles along dimension 3
@@ -86,38 +85,101 @@ struct FileReader::CuboidData {
      * @return String representation of CuboidData
      */
     std::string to_string() const {
-      std::stringstream ss;
+        std::stringstream ss;
 
-      ss << "CuboidData:" << std::endl;
-      ss << "  x: (" << x[0] << ", " << x[1] << ", " << x[2] << ")"
-         << std::endl;
-      ss << "  v: (" << v[0] << ", " << v[1] << ", " << v[2] << ")"
-         << std::endl;
-      if(avg_v.has_value())
-        ss << "  v_avg: " << avg_v.value() << std::endl;
-      ss << "  N1: " << N1 << std::endl;
-      ss << "  N2: " << N2 << std::endl;
-      ss << "  N3: " << N3 << std::endl;
-      ss << "  m: " << m << std::endl;
-      ss << "  h: " << h << std::endl;
-      ss << "  sigma: " << sigma << std::endl;
-      ss << "  epsilon: " << epsilon << std::endl;
+        ss << "CuboidData:" << std::endl;
+        ss << "  x: (" << x[0] << ", " << x[1] << ", " << x[2] << ")"
+           << std::endl;
+        ss << "  v: (" << v[0] << ", " << v[1] << ", " << v[2] << ")"
+           << std::endl;
+        if (avg_v.has_value())
+            ss << "  v_avg: " << avg_v.value() << std::endl;
+        ss << "  N1: " << N1 << std::endl;
+        ss << "  N2: " << N2 << std::endl;
+        ss << "  N3: " << N3 << std::endl;
+        ss << "  m: " << m << std::endl;
+        ss << "  h: " << h << std::endl;
+        ss << "  sigma: " << sigma << std::endl;
+        ss << "  epsilon: " << epsilon << std::endl;
 
-      return ss.str();
+        return ss.str();
     }
 
     /**
-     * @brief Compare two CuboidData structs. Used for Testing
-     *
-     * @return True if this CuboidData struct has the same content as other
-     */
+    * @brief Compare two CuboidData structs. Used for Testing
+    *
+    * @return True if this CuboidData struct has the same content as other
+    */
     bool operator==(const CuboidData &other) const {
-      return (x == other.x && v == other.v && N1 == other.N1 &&
+        return (x == other.x && v == other.v && N1 == other.N1 &&
+                N2 == other.N2 && N3 == other.N3 && m == other.m &&
+                h == other.h && sigma == other.sigma &&
+                epsilon == other.epsilon);
+    }
+
+};
+
+    /**
+ * @struct MembraneData
+ *
+ * contains relevant information for one Membrane
+ *
+*/
+struct FileReader::MembraneData {
+        /// initial velocity and position vectors
+        std::array<double, 3> x, v;
+
+        double a, f;
+
+        /// N1: amount of particles along dimension 1
+        /// N2: amount of particles along dimension 2
+        /// N3: amount of particles along dimension 3
+        uint64_t N1, N2, N3;
+
+        /// Mass m of the particles in the Membrane
+        /// Mesh width h
+        double m, h;
+
+        /// sigma and epsilon parameters for the force calculation
+        /// between particles of this Membrane
+        double sigma, epsilon;
+
+        /**
+         * @brief Convert MembraneData to a string
+         *
+         * @return String representation of MembraneData
+         */
+        std::string to_string() const {
+            std::stringstream ss;
+
+            ss << "MembraneData:" << std::endl;
+            ss << "  x: (" << x[0] << ", " << x[1] << ", " << x[2] << ")"
+               << std::endl;
+            ss << "  v: (" << v[0] << ", " << v[1] << ", " << v[2] << ")"
+               << std::endl;
+            ss << "  N1: " << N1 << std::endl;
+            ss << "  N2: " << N2 << std::endl;
+            ss << "  N3: " << N3 << std::endl;
+            ss << "  m: " << m << std::endl;
+            ss << "  h: " << h << std::endl;
+            ss << "  sigma: " << sigma << std::endl;
+            ss << "  epsilon: " << epsilon << std::endl;
+
+            return ss.str();
+        }
+
+    /**
+     * @brief Compare two MembraneData structs. Used for Testing
+     *
+     * @return True if this MembraneData struct has the same content as other
+     */
+    bool operator==(const MembraneData &other) const {
+      return (a == other.a && f == other.f && x == other.x && v == other.v && N1 == other.N1 &&
               N2 == other.N2 && N3 == other.N3 && m == other.m &&
               h == other.h && sigma == other.sigma &&
-              epsilon == other.epsilon && avg_v == other.avg_v);
+              epsilon == other.epsilon);
     }
-  };
+};
 
 
 /**
@@ -158,6 +220,7 @@ struct FileReader::CuboidData {
     // spheres and cuboids to simulate
     std::list<CuboidData> cuboids;
     std::list<SphereData> spheres;
+    std::list<MembraneData> membranes;
   
 
     std::string to_string() const{
@@ -344,5 +407,4 @@ struct FileReader::CuboidData {
 
 
 
-
-  };
+ };
