@@ -8,6 +8,7 @@
 #include <string>
 #include <sstream>
 #include <ostream>
+
 #include <omp.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
@@ -33,12 +34,14 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     size_t barWidth, pos = 0;
 
     SPDLOG_INFO("Starting Simulation");
-#ifdef _OPENMP
+
+    #ifdef _OPENMP
     if(calculator.parallelization == concurrency_strategy::first_method){
         SPDLOG_INFO("max threads: " + std::to_string(omp_get_max_threads()));
         SPDLOG_INFO("scheduled chunk size: " + std::to_string(chunk_size));
     }
-#endif
+    #endif
+
     calculator.calculateF();
     calculator.shiftF();
 
@@ -47,15 +50,14 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     logger->flush();
 
     auto stat_logger = spdlog::basic_logger_mt("stat_log", "stat.txt");
-    
-    std::string rdf_log = "";
-    std::string diff_log = "";
-    std::string pot_log = "";
-    std::string pres_log = "";
-    std::string temp_log = "";
+
+    std::ostringstream rdf_log;
+    std::ostringstream diff_log;
+    std::ostringstream pot_log;
+    std::ostringstream temp_log;
 
 
-    //size_t before_size = container.size();    
+
 
     // for this loop, we assume: current x, current f and current v are known
     if (performance_measurement)
@@ -93,20 +95,19 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
         
         if(diffusion_frequency.has_value() && iteration % diffusion_frequency.value() == 0){
             double diffusion = thermoStats.getDiffusionCoefficient();
-            diff_log += "(" + std::to_string((iteration)/1000.0) + "," + std::to_string(diffusion) + ")\n";
-            pot_log += std::to_string((iteration)/1000.0) + " " + std::to_string(thermoStats.getPotentialEnergy()) + "\n";
-            pres_log += std::to_string((iteration)/1000.0) + " " + std::to_string(thermoStats.getPressure()) + "\n";
+            diff_log << "(" + std::to_string((iteration)/1000.0) + "," + std::to_string(diffusion) + ")\n";
+            pot_log << std::to_string((iteration)/1000.0) + " " + std::to_string(thermoStats.getPotentialEnergy()) + "\n";
             //track the temperature as well
             double temp = thermoStats.currentTemp();
-            temp_log += "(" + std::to_string(iteration/1000.0) + "," + std::to_string(temp) + ")\n";
+            temp_log << "(" + std::to_string(iteration/1000.0) + "," + std::to_string(temp) + ")\n";
         }
 
         if(rdf_interval_and_frequency.has_value() && iteration % (rdf_interval_and_frequency.value().second) == 0 ){
             double interval_size = rdf_interval_and_frequency.value().first;
             std::vector<double> stats = thermoStats.getRadialDistributionFunction(interval_size);
-            rdf_log += "for time: " + std::to_string(current_time) + " iter:" + std::to_string(iteration) + "\n";
+            rdf_log << "for time: " + std::to_string(current_time) + " iter:" + std::to_string(iteration) + "\n";
             for(size_t i = 0; i < stats.size();i++){
-                rdf_log+= "(" + std::to_string(i * interval_size + interval_size/2.0) + "," + 
+                rdf_log << "(" + std::to_string(i * interval_size + interval_size/2.0) + "," +
                             std::to_string(stats[i]) + ")";
             }
         }
@@ -134,14 +135,13 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
         std::cout << "The Computation took: " << perf_duration.count() << " seconds" << std::endl;
     }
     if(diffusion_frequency.has_value()){
-        stat_logger->info("diffusion:\n" + diff_log);
-        stat_logger->info("temp:\n" + temp_log);
-        stat_logger->info("potential_energy:\n" + pot_log);
-        stat_logger->info("pressure:\n" + pres_log);
+        stat_logger->info("diffusion:\n" + diff_log.str());
+        stat_logger->info("temp:\n" + temp_log.str());
+        stat_logger->info("potential_energy:\n" + pot_log.str());
     }
 
     if(rdf_interval_and_frequency.has_value())
-        stat_logger->info("rdf:\n" + rdf_log);
+        stat_logger->info("rdf:\n" + rdf_log.str());
 
     if(!performance_measurement)
         spdlog::info("[" + std::string(pos, '=') + ">] 100%\r");

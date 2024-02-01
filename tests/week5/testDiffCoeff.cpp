@@ -9,12 +9,27 @@
 
 
 
+
 /**
- * @brief Does the same as the previous case, only that the particle is in the corner
- *        or our 2D rectangle domain and should reappear on the opposite corner
- * 
- * 
- * 
+ * @brief First a CellContainer and a CellCalculator with all boundaries periodic are created.
+ *        Then a particle is added in the lower left corner of a 2D domain with velocity into lower
+ *        left direction. Then one step of calculating new positions is done, which will lead to
+ *        the particle crossing the negative x and the negative y boundary. This is checked in the
+ *        crossed_boundary tracker of the particle. We know that after that the particle is on the opposite
+ *        side of the domain, although it only made a step of "velocity * step_size" into (negative) y dir and
+ *        into (negative) x dir. Therefore we would expect, that the diffusion coefficient is
+ *        (10 * 0.001)^2  + (10 * 0.001)^2 / 1 (#particles).
+ *        Note: for every particle is ||x_new - x_old||^2 calculated, but this is just the scalar product
+ *        of x_new - x_old, ( <x_new - x_old,x_new - x_old> ) so we calculate the scalar product of the difference
+ *        and the difference is just the step in two directions (x and y) so 10 * 0.001 for x and y
+ *
+ *        |--------|
+ *        |        |
+ *        |        |
+ *        |p1______|
+ *       /
+ *     / - velocity
+ *    v
 */
 TEST(test_CellCalculation, test_periodic_corner){
     CellContainer container_corner{10, 10, 0, 2, 2};
@@ -61,20 +76,27 @@ TEST(test_CellCalculation, test_periodic_corner){
 
 
 
+
 /**
- * @brief First a CellContainer an CellCalculator are created, then two particles
- *        are added such, that one particle p1 is on the middle of the left side of a 2D rectangle (domain)
- *        and the other one is on the middle of the lower side. Both particles have velocities
- *        in the direction of the boundaries, that they are next to. Then the calculateX() method
- *        is called once and the new positions of the particles that are right at the boundary
- *        are calculated. We then expect that the reappear on the respective other sides
- *        
+ * @brief First a CellContainer and a CellCalculator with all boundaries periodic are created.
+ *        Then a particle is added at the middle of the negative x boundary and a particle at the
+ *        middle of the negative y boundary is added. Both have velocity into the direction of the boundary
+ *        at which they are. Again one step of calculating new particle positions is performed. Then again
+ *        it is checked it the boundaries, that were crossed were correctly tracked in boundaries_crossed
+ *        member of the particles. Again the diffusion coefficient should only be "velocity * step_size"
+ *        (for both particles) although the particles moved to the other side of the domain.
+ *        Therefore the diffusion coefficient is ( (10 * 0.001)^2  + (10 * 0.001)^2  )/ 2 (#particles)
+ *
+ *
  *        |--------|                        |---p2---|
  *        |        |                        |        |
- *        |p1      |  -should become->      |       p1
- *        |        |                        |        |
- *        |___p2___|                        |________|
-*/  
+ *   <----|p1      |  --------------->      |       p1
+ *    |   |        |                        |        |
+ *    |   |___p2___|                        |________|
+ *    |        |
+ * velocity -- |
+ *             v
+*/
 TEST(test_DiffCoeff1, test_periodic_diff_Coeff_reappearing){
     CellContainer container{10, 10, 0, 2, 2};
     CellCalculator calculator(container,0.05,2.0,1.9,
@@ -127,7 +149,30 @@ TEST(test_DiffCoeff1, test_periodic_diff_Coeff_reappearing){
 
 
 
-
+/**
+ * @brief First a CellContainer and a CellCalculator with all boundaries periodic are created.
+ *        Then a particle is added at the middle of the negative x boundary.
+ *        The particle again has a velocity into negative x direction, but his time the step size is quite
+ *        big, namely 0.6. Then we perform  two times a step of calculating new velocities and because
+ *        of the big step size, the boundary in negative X direction will be crossed twice, as
+ *        (10 * 0.6 +  10 * 0.6 = 12). Therefore we check crossed_boundaries of the particle and
+ *        the expected diffusions coefficient of (10 * 0.6)^2 +  (10 * 0.6)^2
+ *
+ *        at which they are. Again one step of calculating new particle positions is performed. Then again
+ *        it is checked it the boundaries, that were crossed were correctly tracked in boundaries_crossed
+ *        member of the particles. Again the diffusion coefficient should only be "velocity * step_size"
+ *        (for both particles) although the particles moved to the other side of the domain.
+ *        Therefore the diffusion coefficient is (10 * 0.001  + 10 * 0.001  )/ 2 (#particles)
+ *
+ *
+ *        |--------|                        |--------|              |--------|
+ *        |        |       calcX()          |        |   calcX()    |        |
+ *   <----|p1      |  --------------->      |       p1  --------->  p1       |
+ *    |   |        |                        |        |              |        |
+ *    |   |________|                        |________|              |________|
+ *    |
+ * velocity
+*/
 TEST(test_DiffCoeff2, diff_Coeff_twice_crossed_boundary){
     CellContainer container{10, 10, 0, 2, 2};
     CellCalculator calculator(container,0.6,2.0,1.9,
@@ -149,8 +194,6 @@ TEST(test_DiffCoeff2, diff_Coeff_twice_crossed_boundary){
 
     thermoStats.initDiffusionCoefficient();
 
-    // as the particles are exactly at the boundary, they both should move to 
-    // the respective other side within one step already
     calculator.calculateX();
     calculator.calculateX();
 
@@ -180,6 +223,24 @@ TEST(test_DiffCoeff2, diff_Coeff_twice_crossed_boundary){
 
 }
 
+
+
+/**
+ * @brief Lastly a big test is performed. First a CellContainer and a CellCalculator(all boundaries periodic)
+ *        are created. Then for every direction x, y and z we place a particle at the respective negative boundary
+ *        and one is placed at the respective positive boundary. So 6 particles in total. Each particle has
+ *        velocity into the direction of the boundary at which it was placed. The step size is again big and
+ *        two steps are calculated. Therefore every particle will cross its respective boundary twice. We
+ *        perform the same checks as before(boundaries_crossed and diffusion coefficient) and additionally, that
+ *        after calling the diffusion coefficient, the boundaries_crossed tracker is reset (should be 0) and
+ *        that the particle_positions_previous_iteration member of Thermostats is updated. The member is used
+ *        by the diffusion coefficient, to see what the previous positions of all the particles were and
+ *        should get update with every iteration
+ *
+ *        no ASCII art because very difficult for 3D with arrows :(
+ *
+ *
+*/
 TEST(test_DiffCoeff3, diff_Coeff_very_big){
     CellContainer container{10, 10, 10, 2, 2};
     CellCalculator calculator(container,0.6,2.0,1.9,

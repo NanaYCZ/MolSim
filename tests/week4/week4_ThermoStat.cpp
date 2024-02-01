@@ -9,34 +9,7 @@
 #include "particleModel/updating/ThermoStats.h"
 #include "utils/ArrayUtils.h"
 
-/**
- * @brief calculates the temperature of the system(all particles in the container, that are 
- *        within the domain boundary)
- * 
- * @return temperature of the system
-*/
-double getTemp(CellContainer& container){
 
-    double temp = 0;
-
-    for(auto iter = container.begin(); iter != container.end(); ++iter){
-        for(Particle* particle_ptr : *iter){   
-            //std::cout << "encountered particle"  << std::endl;
-            auto v = particle_ptr->getV();
-            // if(ArrayUtils::L2Norm(v) > 50)
-            //     std::cout << "high veloctiy for: " << particle_ptr->toString() << "\n" << std::endl;
-
-            temp += ((v[0]* v[0] + v[1] * v[1] + v[2] * v[2] ) * particle_ptr->getM());
-        }
-    }
-
-    std::cout << "Afterwards have kinetic energy(times 2): " << temp << std::endl;
-
-    //dimension should be 2 and boltzman constant is 1
-    temp = temp / ( 2.0 * container.size() *  1);
-
-    return temp;
-}
 
 /**
  * @brief Tests if the Thermostat applied to a CellContainer with particles changes the 
@@ -70,7 +43,7 @@ TEST(test_Thermo_Stat,test_basic){
 
     //particles afterwards
 
-    double temp = getTemp(container);
+    double temp = thermoStats.currentTemp();
 
     //due to rounding errors etc. we can't expect to get the exact double temperature again
     ASSERT_NEAR(30,temp,0.00001);
@@ -106,7 +79,7 @@ TEST(test_Thermo_Stat,test_heating){
 
     container.createPointers();
 
-    double temp = getTemp(container);
+    double temp = thermoStats.currentTemp();
 
     std::cout << "The Temperature before the simulation is: " << temp << std::endl; 
     //This will be 40
@@ -121,11 +94,11 @@ TEST(test_Thermo_Stat,test_heating){
         calculator.calculateV();
         calculator.shiftF();
         thermoStats.applyThermostats();
-        temp = getTemp(container);
+        temp = thermoStats.currentTemp();
         std::cout << "The current Temperature is: " << temp << std::endl; 
     }
 
-    temp = getTemp(container);
+    temp = thermoStats.currentTemp();
 
     std::cout << "The Temperature after the simulation is: " << temp << std::endl;
     //due to rounding errors etc. we can't expect to get the exact double temperature 
@@ -165,7 +138,7 @@ TEST(test_Thermo_Stat,test_cooling){
 
     container.createPointers();
 
-    double temp = getTemp(container);
+    double temp = thermoStats.currentTemp();
 
     std::cout << "The Temperature before the simulation is: " << temp << std::endl; 
     //This will be 40
@@ -180,11 +153,11 @@ TEST(test_Thermo_Stat,test_cooling){
         calculator.calculateV();
         calculator.shiftF();
         thermoStats.applyThermostats();
-        temp = getTemp(container);
+        temp = thermoStats.currentTemp();
         std::cout << "The current Temperature is: " << temp << std::endl; 
     }
 
-    temp = getTemp(container);
+    temp = thermoStats.currentTemp();
 
     std::cout << "The Temperature after the simulation is: " << temp << std::endl;
     //due to rounding errors etc. we can't expect to get the exact double temperature again
@@ -257,6 +230,8 @@ TEST(test_Thermo_Stat,test_initial_Temp){
     std::cout << args.to_string() << std::endl;
 
     CellContainer cellContainer(args.domain_dimensions[0],args.domain_dimensions[1],args.domain_dimensions[2],args.cut_off_radius,args.cell_size);
+    ThermoStats thermoStats(cellContainer,args.delta_t);
+
 
     FileReader::initializeCorrectInitialTemp(args);
     
@@ -268,7 +243,7 @@ TEST(test_Thermo_Stat,test_initial_Temp){
     cellContainer.createPointers();
 
     //std::cout << cellContainer.to_string() << std::endl;
-    double temp = getTemp(cellContainer);
+    double temp = thermoStats.currentTemp();
 
 
     // no comparison possible, because nondeterministic initialization

@@ -32,18 +32,6 @@ double ThermoStats::getPotentialEnergy(){
 
 
 
-double ThermoStats::getPressure(){
-  double sum = 0;
-  auto& instances = cellContainer.getInstances();
-
-  for(auto p1 = instances.begin(); p1 != instances.end(); p1++){
-      sum += (p1->getM() * ArrayUtils::scalarProduct(p1->getV(),p1->getV()) +
-                        ArrayUtils::scalarProduct(p1->getF(),p1->getX())  );
-  }
-
-  return sum;
-}
-
 void ThermoStats::initDiffusionCoefficient(){
   particle_positions_previous_iteration = {};
   std::vector<Particle>& particles = cellContainer.getInstances();
@@ -52,6 +40,9 @@ void ThermoStats::initDiffusionCoefficient(){
   }
 }
 
+
+//not the most efficient implementation, but as it is only a statistic
+//efficiency should not be too important
 double ThermoStats::getDiffusionCoefficient(){
     double sum = 0;
     size_t amount = 0;
@@ -98,13 +89,15 @@ double ThermoStats::getDiffusionCoefficient(){
     return sum / static_cast<double>(amount);
 }
 
-
+//not the most efficient implementation, but as it is only a statistic
+//efficiency should not be too important
 std::vector<double> ThermoStats::getRadialDistributionFunction(double interval_size){
     //simple calculation(pythagoras) of the maximal distance two particles can have in our current system
     double max_distance_of_two_particles = std::sqrt(std::pow(cellContainer.domain_bounds[0], 2) +
                                                         std::pow(cellContainer.domain_bounds[1], 2));
     if(cellContainer.hasThreeDimensions())
-        max_distance_of_two_particles = std::sqrt(std::pow(max_distance_of_two_particles, 2) + std::pow(cellContainer.domain_bounds[2], 2));
+        max_distance_of_two_particles = std::sqrt(std::pow(max_distance_of_two_particles, 2) +
+                                                    std::pow(cellContainer.domain_bounds[2], 2));
 
     std::vector<Particle>& particle_instances = cellContainer.particle_instances;
     //first the amount of particle pairs in that interval will be calculated
@@ -114,8 +107,8 @@ std::vector<double> ThermoStats::getRadialDistributionFunction(double interval_s
 
     for(auto particle1 = particle_instances.begin(); particle1 != particle_instances.end(); particle1++){
         for(auto particle2 = std::next(particle1); particle2 != particle_instances.end(); particle2++){
-            double dist = ArrayUtils::L2Norm(particle1->getX() - particle2->getX());
-            size_t interval_index = static_cast<size_t>(dist / interval_size);
+            double distance = ArrayUtils::L2Norm(particle1->getX() - particle2->getX());
+            size_t interval_index = static_cast<size_t>(distance / interval_size);
             if(interval_index < particle_pairs_per_interval.size())
                 //there is particle pair that has a distance that
                 //lies within intervals[interval_index]
@@ -129,8 +122,8 @@ std::vector<double> ThermoStats::getRadialDistributionFunction(double interval_s
 
     for(size_t i = 0; i < rdf_per_interval.size();i++ ){
         //calculate rdf statistic for this interval
-        rdf_per_interval[i] = static_cast<double>(particle_pairs_per_interval[i]) /
-                ( (4.0 * M_PI / 3.0) * ( std::pow((i+1) * interval_size,3) - std::pow(i * interval_size,3)) );
+        rdf_per_interval[i] = static_cast<double>(particle_pairs_per_interval[i]) / ( (4.0 * M_PI / 3.0) *
+                ( std::pow((i+1) * interval_size,3) - std::pow(i * interval_size,3))             );
         
     }
 
@@ -148,8 +141,8 @@ double ThermoStats::currentTemp(){
     for(Particle* particle_ptr : *iter){
       const std::array<double,3> &v = particle_ptr->getV();
       double v_squared = v[0] * v[0]  + v[1] * v[1] + v[2] * v[2];
-      double m = particle_ptr->getM();
-      kinetic_energy += v_squared * m;
+      double mass = particle_ptr->getM();
+      kinetic_energy += v_squared * mass;
       amount++;
     }
   }
@@ -159,6 +152,8 @@ double ThermoStats::currentTemp(){
   double current_temp = kinetic_energy/(static_cast<double>(cellContainer.hasThreeDimensions() ? 3 : 2) * amount * k_boltzman);
   return current_temp;
 }
+
+
 
 void ThermoStats::applyThermostats(){
   double current_temp = currentTemp();
