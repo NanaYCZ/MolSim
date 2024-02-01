@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include "inputHandling/FileReader.h"
 #include "inputHandling/generators/CuboidGeneration.h"
-#include "particleModel/storage/CellContainer.h"
+#include "particleModel/CellContainer.h"
 #include "inputHandling/FileReaderProgramArgs.h"
 
 /**

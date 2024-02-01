@@ -30,4 +30,4 @@ void generateCuboid(FileReader::CuboidData& cuboid, CellContainer& container, si
  * @param container reference to add particles to
  * @param cuboids all the cuboids data to iterate over
  */
-void addCuboids(CellContainer& container, std::list<FileReader::CuboidData> cuboids);
+void addCuboids(ParticleContainer &particles, std::list<FileReader::CuboidData> cuboids);

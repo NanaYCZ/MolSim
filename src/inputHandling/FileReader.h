@@ -3,7 +3,7 @@
 #include <list>
 #include <optional>
 
-#include "particleModel/updating/CellCalculator.h"
+#include "particleModel/CellCalculator.h"
 
 
 class FileReader {

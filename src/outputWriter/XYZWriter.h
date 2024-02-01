@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "particleModel/storage/CellContainer.h"
+#include "particleModel/CellContainer.h"
 
 #include <fstream>
 #include <list>

@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "particleModel/updating/CellCalculator.h"
+#include "particleModel/CellCalculator.h"
 
 
 

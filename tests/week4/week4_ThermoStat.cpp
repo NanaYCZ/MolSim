@@ -3,10 +3,10 @@
 #include "inputHandling/FileReaderProgramArgs.h"
 #include "inputHandling/generators/CuboidGeneration.h"
 #include "inputHandling/generators/SphereGeneration.h"
-#include "particleModel/storage/CellContainer.h"
-#include "particleModel/updating/CellContainerIterators.h"
-#include "particleModel/updating/CellCalculator.h"
-#include "particleModel/updating/ThermoStats.h"
+#include "particleModel/CellContainer.h"
+#include "particleModel/CellContainerIterators.h"
+#include "particleModel/CellCalculator.h"
+#include "particleModel/ThermoStats.h"
 #include "utils/ArrayUtils.h"
 
 /**

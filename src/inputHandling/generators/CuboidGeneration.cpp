@@ -2,8 +2,9 @@
 #include "utils/MaxwellBoltzmannDistribution.h"
 #include "inputHandling/FileReaderProgramArgs.h"
 
-void generateCuboid(FileReader::CuboidData& cuboid, CellContainer& container, size_t dim) {
-
+void generateCuboid(FileReader::CuboidData& cuboid, ParticleContainer &particles, size_t dim) {
+    uint64_t total_count = cuboid.N1 * cuboid.N2 * cuboid.N3;
+    particles.reserve(total_count);
     for(uint64_t z = 0; z < cuboid.N3; z++) {
 
         for (uint64_t y = 0; y < cuboid.N2; y++) {
@@ -12,7 +13,7 @@ void generateCuboid(FileReader::CuboidData& cuboid, CellContainer& container, si
                 std::array<double, 3> cords(cuboid.x);
                 std::array<double, 3> vel(cuboid.v);
                 //add boltzman distributed velocity only if needed
-                std::array<double, 3> dist = cuboid.avg_v.has_value()? 
+                std::array<double, 3> dist = cuboid.avg_v.has_value()?
                                                 maxwellBoltzmannDistributedVelocity(cuboid.avg_v.value(), dim)
                                                 : std::array<double, 3>({0,0,0});
 
@@ -24,14 +25,17 @@ void generateCuboid(FileReader::CuboidData& cuboid, CellContainer& container, si
                 vel[1] += dist[1];
                 vel[2] += dist[2];
 
-                container.addParticle(cords, vel, cuboid.m, cuboid.sigma, cuboid.epsilon);
+                Particle part = Particle{cords, vel, cuboid.m};
+
+
+                particles.emplace_back(part);
 
             }
         }
     }
 }
 
-void addCuboids(CellContainer& container, std::list<FileReader::CuboidData> cuboids) {
+void addCuboids(ParticleContainer &particles, std::list<FileReader::CuboidData> cuboids) {
     size_t dim{2};
     double z = cuboids.front().x[2];
     for (auto &cube : cuboids) {
@@ -39,6 +43,6 @@ void addCuboids(CellContainer& container, std::list<FileReader::CuboidData> cubo
     }
 
     for (auto &cube : cuboids) {
-        generateCuboid(cube, container, dim);
+        generateCuboid(cube, particles, dim);
     }
 }

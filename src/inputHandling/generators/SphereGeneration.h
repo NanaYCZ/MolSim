@@ -15,7 +15,7 @@
  * @param spheres all the spheres data to iterate over
  * @param dim dimension of all sphere particles
  */
-void addSpheres(CellContainer& container, std::list<FileReader::SphereData> spheres, size_t dim);
+void addSpheres(ParticleContainer& particles, std::list<FileReader::SphereData> spheres, size_t dim);
 
 
 
@@ -35,6 +35,6 @@ void addSpheres(CellContainer& container, std::list<FileReader::SphereData> sphe
 
  */
 
-void generateSpheresMethod2D(FileReader::SphereData& sphere, CellContainer& container);
+void generateSpheresMethod2D(FileReader::SphereData& sphere, ParticleContainer& particles);
 
-void generateSpheresMethod3D(FileReader::SphereData& sphere, CellContainer& container);
+void generateSpheresMethod3D(FileReader::SphereData& sphere, ParticleContainer& particles);

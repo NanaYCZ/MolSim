@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "particleModel/storage/CellContainer.h"
+#include "particleModel/CellContainer.h"
 #include "inputHandling/FileReader.h"
 #include "inputHandling/generators/SphereGeneration.h"
 

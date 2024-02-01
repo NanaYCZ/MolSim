@@ -4,21 +4,21 @@
 #include "inputHandling/FileReaderProgramArgs.h"
 #include "cmath"
 
-void addSpheres(CellContainer& container, std::list<FileReader::SphereData> spheres, size_t dim) {
+void addSpheres(ParticleContainer& particles, std::list<FileReader::SphereData> spheres, size_t dim) {
     if (dim == 2 ) {
-        for (auto &cube : spheres) {
-            generateSpheresMethod2D(cube, container);
+        for (auto &sphere : spheres) {
+            generateSpheresMethod2D(sphere, particles);
         }
     }
     if (dim == 3 ) {
-        for (auto &cube : spheres) {
-            generateSpheresMethod3D(cube, container);
+        for (auto &sphere : spheres) {
+            generateSpheresMethod3D(sphere, particles);
         }
     }
 
 }
 
-void generateSpheresMethod2D(FileReader::SphereData& sphere, CellContainer& container){
+void generateSpheresMethod2D(FileReader::SphereData& sphere, ParticleContainer& particles){
     
     std::array<double, 3> cords{0,0,0};
 
@@ -34,13 +34,16 @@ void generateSpheresMethod2D(FileReader::SphereData& sphere, CellContainer& cont
                 std::array<double, 3> vel(sphere.Velocity + dist);
                 cords[0]=position[0];
                 cords[1]=position[1];
-                container.addParticle(cords, vel, sphere.mass, sphere.sigma, sphere.epsilon);
+                Particle part = Particle{cords, vel, sphere.mass};
+
+
+                particles.emplace_back(part);
             }
         }
     }
 }
 
-void generateSpheresMethod3D(FileReader::SphereData& sphere, CellContainer& container){
+void generateSpheresMethod3D(FileReader::SphereData& sphere, ParticleContainer& particles){
     std::array<double, 3> cords{0,0,0};
 
     double radiuslength = sphere.radius * sphere.meshWidth;
@@ -60,7 +63,11 @@ void generateSpheresMethod3D(FileReader::SphereData& sphere, CellContainer& cont
                     cords[0] = position[0];
                     cords[1] = position[1];
                     cords[2] = position[2];
-                    container.addParticle(cords, vel, sphere.mass, sphere.sigma, sphere.epsilon);
+
+                    Particle part = Particle{cords, vel, sphere.mass};
+
+
+                    particles.emplace_back(part);
                 }
             }
         }

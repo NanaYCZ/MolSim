@@ -2,10 +2,10 @@
 
 #include "inputHandling/generators/CuboidGeneration.h"
 #include "inputHandling/generators/SphereGeneration.h"
-#include "inputHandling/Checkpointer.h"
+#include "inputHandling/generators/MembraneGeneration.h"
 #include "inputHandling/FileReaderProgramArgs.h"
+#include "inputHandling/FileReader.h"
 #include "Simulation.h"
-
 #include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/spdlog.h>
 #include <unistd.h>
@@ -22,6 +22,7 @@ int main(int argc, char *argsv[])
 {
     //initialize default values
     bool performance_measurement = false;
+    bool isMembrane = true;
     spdlog::level::level_enum logging_level = spdlog::level::info;
 
     std::string filename;
@@ -102,43 +103,39 @@ int main(int argc, char *argsv[])
     if(args.choose_amount_threads.has_value()){
         int number_of_threads = args.choose_amount_threads.value();
         if(number_of_threads < 1){
-            throw std::invalid_argument("It is not possible to simulate with the numer"
+            throw std::invalid_argument("It is not possible to simulate with the number"
                                         " of threads you provided: " + std::to_string(number_of_threads));
         }
         omp_set_num_threads(number_of_threads);
     }
 
-    CellContainer cellContainer(args.domain_dimensions[0],args.domain_dimensions[1],args.domain_dimensions[2],
-                                args.cut_off_radius,args.cell_size);
-    CellCalculator cellCalculator(cellContainer,args.delta_t,args.cut_off_radius,1.9, args.boundaries,
-                                args.force_type, args.gravity_factor,
-                                args.parallelization_version.has_value() ? args.parallelization_version.value() :
-                                                                                    concurrency_strategy::serial);
-    ThermoStats thermoStats(cellContainer,args.delta_t,
-                    args.target_temp.has_value() ? args.target_temp : args.init_temp,args.max_temp_diff);
 
 
-    addCuboids(cellContainer,args.cuboids);
-    addSpheres(cellContainer,args.spheres,2);
+    auto container = CellContainer(
+            args.domain_dimensions[0],
+            args.domain_dimensions[1],
+            args.domain_dimensions[2],
+            args.cut_off_radius,
+            args.boundaries,
+            std::array<double, 3>{0.0, 0.0, args.gravity_factor},
+            args.parallelization_version
+    );
+    addMembranes(container,args.membranes);
+    addCuboids(container,args.cuboids);
+    addSpheres(container,args.spheres,3);
+    auto io = outputWriter::VTKWriter();
+    auto calculator=calculator::CellCalculator(1.0, 1.0, args.cut_off_radius);
+    calculator.setDim(3);
+    calculator.setMembrane(isMembrane);
+    calculator.setRZero(2.2);
+    calculator.setDeltaT(args.delta_t);
+    calculator.setMembraneForceParameter(300);
 
-    if(args.checkpoint_input_file.has_value()){
-        Checkpointer::addCheckpointparticles(cellContainer,args.checkpoint_input_file.value());
+
+    runSimulation(container,calculator,io,args.parallelization_version,args.t_end,args.delta_t,150,args.write_frequency,
+                  performance_measurement);
+
+
     }
 
-    cellContainer.createPointers();
-
-    if(args.diff_frequency.has_value())
-        thermoStats.initDiffusionCoefficient();
-
-
-    runSimulation(cellContainer,cellCalculator,thermoStats,args.t_end,args.delta_t,args.write_frequency,
-                args.calculate_thermostats ? std::optional<int>(args.thermo_stat_frequency) : std::nullopt,
-                args.diff_frequency,args.rdf_interval_and_frequency,
-                performance_measurement);
-
-
-    if(args.checkpoint_output_file.has_value()){
-        Checkpointer::storeCheckpointparticles(cellContainer,args.checkpoint_output_file.value());
-    }
 }
-

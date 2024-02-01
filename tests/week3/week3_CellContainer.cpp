@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <cmath>
-#include "particleModel/storage/CellContainer.h"
+#include "particleModel/CellContainer.h"
 
 void skipStartVariants(int amount, CellContainer &cellContainer, std::array<dim_t,3> &start, std::array<dim_t,3> &pattern) {
     for(int i = 0; i < amount; i++) {

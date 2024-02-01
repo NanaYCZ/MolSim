@@ -14,7 +14,7 @@
         <tEnd>500</tEnd>
         <deltaT>0.01</deltaT>
         <cutOffRadius>4.0</cutOffRadius>
-        <cellSize>1.8</cellSize>
+        <cellSize>4.0</cellSize>
         <gravityFactor>-0.001</gravityFactor>
         <forceType>LJ</forceType>
         <parallelizationVersion>
@@ -22,10 +22,10 @@
             </first_method>
         </parallelizationVersion>
         <boundaryConditions>
-            <boundaryConditionsPositiveZ>periodic</boundaryConditionsPositiveZ>
-            <boundaryConditionsNegativeZ>periodic</boundaryConditionsNegativeZ>
-            <boundaryConditionsPositiveX>periodic</boundaryConditionsPositiveX>
-            <boundaryConditionsNegativeX>periodic</boundaryConditionsNegativeX>
+            <boundaryConditionsPositiveZ>outflow</boundaryConditionsPositiveZ>
+            <boundaryConditionsNegativeZ>outflow</boundaryConditionsNegativeZ>
+            <boundaryConditionsPositiveX>reflective</boundaryConditionsPositiveX>
+            <boundaryConditionsNegativeX>reflective</boundaryConditionsNegativeX>
             <boundaryConditionsPositiveY>reflective</boundaryConditionsPositiveY>
             <boundaryConditionsNegativeY>reflective</boundaryConditionsNegativeY>
         </boundaryConditions>

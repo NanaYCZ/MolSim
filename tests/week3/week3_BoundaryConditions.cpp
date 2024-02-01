@@ -1,8 +1,8 @@
 #include <gtest/gtest.h>
-#include "particleModel/storage/CellContainer.h"
-#include "particleModel/updating/CellContainerIterators.h"
+#include "particleModel/CellContainer.h"
+#include "particleModel/CellContainerIterators.h"
 
-#include "particleModel/updating/CellCalculator.h"
+#include "particleModel/CellCalculator.h"
 
 
 

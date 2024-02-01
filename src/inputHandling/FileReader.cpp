@@ -35,13 +35,13 @@ FileReader::~FileReader() = default;
  * @throws std::invalid_argument If the string is not recognized(not "reflective" or "outflow"), an invalid_argument exception is thrown,
  *                               providing an error message indicating the incorrect string that was given.)
  */
-void set_boundary_conditional(boundary_conditions& boundary,std::string specified_cond){
+void set_boundary_conditional(CellContainer::boundary_conditions& boundary,std::string specified_cond){
     if(specified_cond == "reflective")
-        boundary = boundary_conditions::reflective;
+        boundary = CellContainer::boundary_conditions::reflective;
     else if(specified_cond == "outflow")
-        boundary = boundary_conditions::outflow;
+        boundary = CellContainer::boundary_conditions::outflow;
     else if(specified_cond == "periodic")
-        boundary = boundary_conditions::periodic;
+        boundary = CellContainer::boundary_conditions::periodic;
     else
         throw std::invalid_argument("The Boundary Conditions were not correctly specified, you gave: " + specified_cond);
 
@@ -75,7 +75,7 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
 
 
 
-    boundary_conditions positive_z, negative_z ,positive_x, negative_x , positive_y , negative_y;
+    CellContainer::boundary_conditions positive_z, negative_z ,positive_x, negative_x , positive_y , negative_y;
 
     set_boundary_conditional(positive_z,boundary_conditions_xml.boundaryConditionsPositiveZ());
     set_boundary_conditional(negative_z,boundary_conditions_xml.boundaryConditionsNegativeZ());
@@ -95,13 +95,13 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
     args.force_type = sim_params.forceType();
     if(sim_params.parallelizationVersion().present()){
         if(sim_params.parallelizationVersion().get().serial().present()){
-            args.parallelization_version = concurrency_strategy::serial;
+            args.parallelization_version = CellContainer::concurrency_strategy::serial;
         }else if(sim_params.parallelizationVersion().get().first_method().present()){
-            args.parallelization_version = concurrency_strategy::first_method;
+            args.parallelization_version = CellContainer::concurrency_strategy::primitiveX;
             if(sim_params.parallelizationVersion().get().first_method().get().numThreads().present())
             args.choose_amount_threads = sim_params.parallelizationVersion().get().first_method().get().numThreads().get();
         }else if(sim_params.parallelizationVersion().get().first_method().present()){
-            args.parallelization_version = concurrency_strategy::second_method;
+            args.parallelization_version = CellContainer::concurrency_strategy::primitiveY;
             if(sim_params.parallelizationVersion().get().second_method().get().numThreads().present())
                 args.choose_amount_threads =  sim_params.parallelizationVersion().get().second_method().get().numThreads().get();
             //spdlog::info("The second method can be choosen, but at the moment it does not differ from the first");

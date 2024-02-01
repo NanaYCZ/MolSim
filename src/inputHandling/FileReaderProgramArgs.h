@@ -134,7 +134,7 @@ struct FileReader::MembraneData {
         /// N1: amount of particles along dimension 1
         /// N2: amount of particles along dimension 2
         /// N3: amount of particles along dimension 3
-        uint64_t N1, N2, N3;
+        int N1, N2, N3;
 
         /// Mass m of the particles in the Membrane
         /// Mesh width h
@@ -196,17 +196,17 @@ struct FileReader::MembraneData {
     double t_end;
     double cut_off_radius;
     double cell_size;
-    double gravity_factor = 0;
+    double gravity_factor;
     double init_temp = 0;
     std::string force_type = "LJ";
-    std::optional<concurrency_strategy> parallelization_version = std::nullopt;
+    CellContainer::concurrency_strategy parallelization_version = CellContainer::serial;
     std::optional<int> choose_amount_threads = std::nullopt;
     std::optional<int> diff_frequency = std::nullopt;
     std::optional<std::pair<double,int>> rdf_interval_and_frequency = std::nullopt;
     std::optional<double> max_temp_diff = std::nullopt;
     std::optional<double> target_temp = std::nullopt;
     int thermo_stat_frequency = 0;
-    std::array<boundary_conditions,6> boundaries;
+    std::array<CellContainer::boundary_conditions,6> boundaries;
     std::array<double,3> domain_dimensions;
 
     std::optional<std::string> checkpoint_input_file;
@@ -250,13 +250,13 @@ struct FileReader::MembraneData {
         std::string condition_name;
         std::string side_name;
         switch(condition) {
-            case boundary_conditions::reflective:
+            case CellContainer::boundary_conditions::reflective:
                 condition_name = "reflective";
                 break;
-            case boundary_conditions::outflow:
+            case CellContainer::boundary_conditions::outflow:
                 condition_name = "outflow";
                 break;
-            case boundary_conditions::periodic:
+            case CellContainer::boundary_conditions::periodic:
                 condition_name = "periodic";
                 break;
             default:
