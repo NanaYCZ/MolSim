@@ -56,7 +56,7 @@ double ThermoStats::getDiffusionCoefficient(){
     double sum = 0;
     size_t amount = 0;
 
-    for(auto iter = begin_CI(); iter != end_CI(); ++iter){
+    for(auto iter = begin_CellIterator(); iter != end_CellIterator(); ++iter){
         for(Particle* particle_ptr : *iter){
             auto current_particle_old_position = std::find_if(
                                                               particle_positions_previous_iteration.begin(),
@@ -144,7 +144,7 @@ double ThermoStats::currentTemp(){
   double kinetic_energy = 0;
   size_t amount = 0;
 
-  for(auto iter = begin_CI(); iter != end_CI(); ++iter){
+  for(auto iter = begin_CellIterator(); iter != end_CellIterator(); ++iter){
     for(Particle* particle_ptr : *iter){
       const std::array<double,3> &v = particle_ptr->getV();
       double v_squared = v[0] * v[0]  + v[1] * v[1] + v[2] * v[2];
@@ -181,7 +181,7 @@ void ThermoStats::applyThermostats(){
   double temp_scaling = sqrt(next_temp/current_temp);
 
   //apply scaling
-  for(auto iter = begin_CI(); iter != end_CI(); ++iter){
+  for(auto iter = begin_CellIterator(); iter != end_CellIterator(); ++iter){
       for(Particle* particle_ptr : *iter){
         std::array<double,3> v = particle_ptr->getV();
         particle_ptr->setV(temp_scaling * v);

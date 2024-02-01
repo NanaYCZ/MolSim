@@ -33,19 +33,16 @@ extern std::vector<std::vector<double>> epsilon_mixed;
 /**
  * @brief a list of tuples that contain information to change a particles location
  *
- * a tuple contains the index of a particle within it's cell, the current cell it's
- * located and the new cell to move it into.
+ * a tuple contains the pointer of the particle, the cell the pointer should be moved to.
  */
 typedef std::vector<std::tuple<Particle*, std::array<dim_t,3>>> instructions;
 
 /**
  * @class CellCalculator
- * @brief offers important functions for particle interactions.
+ * @brief offers important functions for particle manipulation.
  *
  * This class simulates the interaction between particles inside the cell storage structure.
- * It offers the functionality to calculate the forces, velocities and position of particles, by
- * requesting the next cells to consider, organised by the provided CellContainer, which allows
- * multiple CellCalculators to run in parallel based on the consumer-producer pattern.
+ * It offers the functionality to calculate the forces, velocities and position of particles.
  */
 class CellCalculator {
 
@@ -64,14 +61,32 @@ public:
      * we are covering them by iterating over so called "paths" created with a starting position and a
      * shifting pattern that shows which cells should be calculated next.
      * This way we are calculating all the forces within the cutoff radius for each cell, through divide
-     * and conquer with "paths" that are non overlapping for each pattern, which allows parallelisation
+     * and conquer with "paths" that are non overlapping for each pattern, which allows parallelization
      * without using locks, with the hope of improving performance.
+     *
+     * OpenMP: since all the "paths" are discrete for each "pattern", we can safely apply parallelization
+     * for all starting points, which is dynamic because of varying "path" lengths
+     *
+     * we delegated the periodic force calculation, because the mirroring resulted in overlapping of the "paths"
      */
-    void calculateLinkedCellF();
+    void calculateInterCellF();
 
-    //todo
     /**
-     * @brief
+     * @brief calculate the forces acting between particles through the domain border
+     *
+     * delegates the periodic force calculation, which was previously in "calculateLinkedCellF()"
+     * to avoid race conditions, when using OpenMP "parallel for"
+     *
+     * it iterates over all last indexes, a "path" would reach, mirrors them based on the periodic boundaries
+     * and calculates the forces. Just like the inter-cell calculation did, when reaching the end of a path
+     *
+     * the last indexes are determined through the starting point iterator, since every starting point has
+     * a corresponding point outside the domain based on the current pattern/direction. More details are
+     * provided in the StartingPointIterator documentation (f.e. outside())
+     *
+     * OpenMP: since all the points outside the domain are mirrored on the starting points of the "pattern",
+     * which are discrete and each of them corresponds to a discrete "path", the cell combinations through the
+     * periodic boundaries are discrete for each pattern, allowing safe parallelization
      */
     void calculatePeriodicF();
 
@@ -90,30 +105,39 @@ public:
 
     /**
      * @brief calculates the new positions for all particles
-     *        and handles boundary_conditions::reflective
-     *                    boundary_conditions::periodic
-     *                    boundary_conditions::outflow
-     *        by calling updateCells
+     * and checks if their location in the cell structure needs
+     * to be updated, calling for the boundary conditions in that
+     * case
+     *
+     * OpenMP: since the cells don't share any particles, we can safely apply "parallel for", while taking
+     * care of race conditions through shared access to "cell_updates"
     */
     void calculateX();
 
 
     /**
      * @brief calculates the velocities for all particles
+     *
+     * OpenMP: since the cells don't share any particles, we can safely apply "parallel for"
     */
     void calculateV();
 
 
     /**
-     * @brief calculates the forces for all particles by using the LinkedCell 
-     *        Algorithm
+     * @brief calculates the forces for all particles by using the LinkedCellAlgorithm
+     * which is divided into 3 parts: 1.inter-cell calculation 2.periodic force calculation
+     * 3.force calculation with each cell
+     *
+     * OpenMP: since the cells don't share any particles, we can safely apply "parallel for"
+     * for the force calculation within each cell
     */
     void calculateF();
 
 
     /**
-     * @brief shifts the forces of all particles
-     * 
+     * @brief shifts the forces of all particles for correct overwriting
+     *
+     * OpenMP: since the cells don't share any particles, we can safely apply "parallel for"
     */
     void shiftF();
 
@@ -152,25 +176,25 @@ private:
      *
      * when the positions of the particles get changed a list of instructions is being created
      * that summarizes all the changes of particles between cells that have to be made. That
-     * list is being processed in this method. 
-     * This method then also takes care of:  boundary_conditions::reflective
-     *                                       boundary_conditions::periodic
-     *                                       boundary_conditions::outflow
-     * by taking according actions, if the new position of a particle would be outside
-     * the domain bounds
-     *                  
-     * 
+     * list is being processed in this method.
      *
      * @param cell_updates list of instructions to change the location of particles
      */
     void updateCells(instructions& cell_updates);
 
-    //todo
     /**
-     * @brief
-     * @param
-     * @param
-     * @param
+     * @brief helper method to apply boundary conditions on a particle which was detected to
+     * leave it's current cell
+     *
+     * This method takes care of:  boundary_conditions::reflective
+     *                             boundary_conditions::periodic
+     *                             boundary_conditions::outflow
+     * by taking according actions, if the new position of a particle would be outside
+     * the domain bounds
+     *
+     * @param particle_ptr pointer to detected particle
+     * @param new_cell_position the index of the cell the particle "tries" to move into
+     * @param cell_updates for adding the resulting instruction where to move the particle into
      */
     void applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3>& new_cell_position, instructions& cell_updates);
 
@@ -201,27 +225,25 @@ private:
     };
 
     /**
-     * @brief helper method to calculate the forces not covered in "calculateLinkedCellF()"
+     * @brief helper method to calculate the forces not covered in "calculateInterCellF()"
      *
-     * since the "calculateLinkedCellF()" methods only calculates the forces between cells, we are
+     * since the "calculateInterCellF()" methods only calculates the forces between cells, we are
      * now calculating the forces between the particles within a cell.
      *
      * @param current_cell the cell to calculate the force within
      */
-    void finishF(std::vector<Particle*> *current_cell);
+    void calculateFWithin(std::vector<Particle*> *current_cell);
 
     /**
-     * @brief helper method to determine if the particles are in cutoff distance
-     *
-     * calculating the euclidean distance, but comparing the results squared to avoid calculating the square root
-     */
-    bool inCutoffDistance(Particle &p1, Particle &p2, const std::array<double,3> &offset) const;
-
-    /**
-     * @brief helper method to mirror the cell position on the other side
+     * @brief helper method for "calculatePeriodicF()" to mirror the cell position on the other side
      *
      * used to implement the periodic boundaries, writes the changed distance of the
      * particles through the mirroring in the offset for further calculations
+     *
+     * @param position index outside the domain to mirror
+     * @param offset from shifting the positions
+     *
+     * @return bool indicating if the mirroring was successful with the current boundary conditions
      */
     inline bool mirror(std::array<dim_t,3> &position, std::array<double,3> &offset);
 };

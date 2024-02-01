@@ -75,7 +75,7 @@ command line arguments and what is being returned by the executable. This file s
 ![grafik](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/88f0c82f-a23b-49dd-8410-4fc84d12ea93)
 
 - On the upper left side is the program executed with 8 threads, on the upper right side executed with 32 threads and the lower diagram shows the execution with 16 threads (here it should also be possible to see the legend/ description of the diagram). We can see that for 8 and 16 threads, every thread has $\approx$ 100 % CPU utilization, which is in line with the first two bar graph statistics. Then for 32 threads, we can see, that every Thread only has $\approx$ 50 % CPU utilization, as there are only 16 truely parallel hardware threads. Apart from that, we can't really see a reason for the 16 threads not leading to the expected speed-up. Altough there is one short time span, where the threads are spinning/ have overhead due to locks, this is likely an interruption by the OS, as all threads are idle in this time span. Therefore synchronization doesn't seem to be a significant bottleneck for the performance of the execution with 16 threads.
-- When looking at the tables of functions and the respective time  spend within them, there doesn't seem to be a clear difference between running the program with 1 thread(left) or running the program with 16 threads(right). Except with 16 threads ~ 6 % more time is spend in `force_exp`, whereas with 1 thread ~ 5 % more time is spend in `calculateLinkedCellF`. The percentage next to a function f1, represents the time that is spend in the respective function f1 without the time, that is spend in other functions f2, that are called by f1.
+- When looking at the tables of functions and the respective time  spend within them, there doesn't seem to be a clear difference between running the program with 1 thread(left) or running the program with 16 threads(right). Except with 16 threads ~ 6 % more time is spend in `force_exp`, whereas with 1 thread ~ 5 % more time is spend in `calculateInterCellF`. The percentage next to a function f1, represents the time that is spend in the respective function f1 without the time, that is spend in other functions f2, that are called by f1.
 `force_exp` is the function for calculating the Lennard-Jones-Potential (not smoothed). In the regular program, we use function lambdas to dynamically switch between different ways of calculating the force, but direct calls to a function known at compile time make profiling a lot easier and the runtime remains basically unchanged.
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/86917ca4-87e9-4b01-b185-6504faff710a" width="500">
@@ -88,7 +88,7 @@ command line arguments and what is being returned by the executable. This file s
 
 ![annotated_source_16threads](https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/fe879a25-254c-4311-bb13-4d106f7e0156)
 
-- It is clearly visible, that for 16 threads the time spend calculating the actual potential is significantly reduced (e.g. time spend in line 168,169 and 179, 181) compared to the execution with one thread, while the time spend accessing memory(e.g. line 161-163) is significantly increased compared to the execution with one thread. As can be seen in the third statistic for the 1 6thread execution(function call table), another ~ 10% of total execution is spend in the `addF` function, which is called in `calculateLinkedCellF` and two other functions (`calculatePeriodicF` and `finishF`) after the force was calculated between two particles. It just adds a force vector to the force vector of its particle. This time correspond to another ~ 10 % of time spend for accessing memory, as the performed Addition is certainly not responsible for the needed runtime. In total, likely about 40 % of runtime is spend accessing memory in the execution with 16 threads, which is quite high. In general parallelizing memory-bound programs is difficult and can lead to problems.
+- It is clearly visible, that for 16 threads the time spend calculating the actual potential is significantly reduced (e.g. time spend in line 168,169 and 179, 181) compared to the execution with one thread, while the time spend accessing memory(e.g. line 161-163) is significantly increased compared to the execution with one thread. As can be seen in the third statistic for the 1 6thread execution(function call table), another ~ 10% of total execution is spend in the `addF` function, which is called in `calculateInterCellF` and two other functions (`calculatePeriodicF` and `calculateFWithin`) after the force was calculated between two particles. It just adds a force vector to the force vector of its particle. This time correspond to another ~ 10 % of time spend for accessing memory, as the performed Addition is certainly not responsible for the needed runtime. In total, likely about 40 % of runtime is spend accessing memory in the execution with 16 threads, which is quite high. In general parallelizing memory-bound programs is difficult and can lead to problems.
 - When looking at the cache-miss rate for a different number of threads, it becomes apparent, that the 16 threads underperforming, might  be due to a poor cache-performance. 
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/8c8552df-21ed-4662-b812-9dfb183c20d6" width="650">
@@ -101,7 +101,32 @@ command line arguments and what is being returned by the executable. This file s
 - We tried a few different compiler flags such as `-Ofast` , `-march=native`, `-malign-data=cacheline` and`-ftree-loop-optimize`, but none of them increased performance significantly. We also tried using AMD's μProf, but it turned out to not be very useful.
 
 
+### Extra
+- As we did not familiarize ourselfes with the Linux Cluster last week, we initaly wanted to leave performance analysis on it out, but because we were really interested to see, what our implementation could do, we did some smaller analysis in the end. First we repeated the runtime measurement for a different number of threads. The executable was compiled with gcc and `-O3`. It was executed on the Linux Cluster cm2_tiny on a computing node with 56 cores.
+
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/ebabcd02-f3cb-407b-bce9-46c54b83dc16" width="470">
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/6cdbc59e-41be-4b1a-9131-c3a75958e11c" width="480">
+
+
+
+
+
 ### Task 3 
+
+- Simulating the rayleigh-taylor-instability in 3D and with tEnd=100, we get the video below. This video is only a compressed version, the full version, if of interest, is 'rayleig_taylor_instability_3D.mp4' within this folder. The simulation took about 12 hours on a Laptop with AMD Ryzen 7 5700U and compiled with `-O3`.
+
+
+
+
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/2c561c04-c0b9-4cda-bc8f-c7f0fb12f63a
+
+
+
+
+
+
 
 ### Task 4
 

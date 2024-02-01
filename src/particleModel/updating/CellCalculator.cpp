@@ -37,7 +37,7 @@ void CellCalculator::calculateX(){
                             schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
-    for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
+    for (auto cell = begin_CellIterator(); cell != end_CellIterator(); ++cell) {
 
         //iterate trough particles of cell
         for (auto particle_ptr = (*cell).begin(); particle_ptr != (*cell).end();) {
@@ -80,7 +80,7 @@ void CellCalculator::calculateV(){
                             schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
-    for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
+    for (auto cell = begin_CellIterator(); cell != end_CellIterator(); ++cell) {
         for (auto particle_ptr: *cell) {
             Particle &particle = *particle_ptr;
             std::array<double, 3> old_f, f, old_v;
@@ -98,14 +98,14 @@ void CellCalculator::calculateV(){
 }
 
 void CellCalculator::calculateF(){
-    calculateLinkedCellF();
+    calculateInterCellF();
     calculatePeriodicF();
 
     #pragma omp parallel for default(none) schedule(dynamic) \
                             if(parallelization == concurrency_strategy::first_method)
 
-    for (auto iter = begin_CI(); iter != end_CI(); ++iter) {
-        finishF(&(*iter));
+    for (auto iter = begin_CellIterator(); iter != end_CellIterator(); ++iter) {
+        calculateFWithin(&(*iter));
     }
 }
 
@@ -115,21 +115,21 @@ void CellCalculator::shiftF(){
                             schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
-    for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
+    for (auto cell = begin_CellIterator(); cell != end_CellIterator(); ++cell) {
         for (auto particle_ptr: *cell) {
             particle_ptr->shiftF();
         }
     }
 }
 
-void CellCalculator::calculateLinkedCellF() {
+void CellCalculator::calculateInterCellF() {
     for(std::array<dim_t,3> pattern : CellContainer::patterns) {
 
         #pragma omp parallel for default(none) shared(pattern) \
                                 schedule(dynamic) \
                             if(parallelization == concurrency_strategy::first_method)
 
-        for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
+        for (StartPointIterator it = begin_StartIterator(pattern); it != end_StartIterator(); ++it) {
             std::array<double, 3> F_ij{};
             std::vector<Particle*>* cell_1;
             std::vector<Particle*>* cell_2;
@@ -178,7 +178,7 @@ void CellCalculator::calculatePeriodicF() {
                                 schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
-        for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
+        for (StartPointIterator it = begin_StartIterator(pattern); it != end_StartIterator(); ++it) {
 
             std::array<dim_t, 3> current_cell = it.outside();
             std::vector<Particle *> *cell_1 = &particles[current_cell[0] - pattern[0]]
@@ -233,9 +233,6 @@ void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3
                 particle_ptr->setV(i, -v[i]);
             } else if(boundaries[map_boundaries[i]] == boundary_conditions::periodic){
                 //apply periodic in pos direction
-                // auto msg = "Crossed, x: " +  ArrayUtils::to_string(particle_ptr->getX()) + " boundaries: " + 
-                //                                ArrayUtils::to_string(particle_ptr->getBoundariesCrossed()) + "\n";
-                // std::cout << msg;
                 particle_ptr->addX(i,domain_bounds[i]);
                 particle_ptr->decBoundariesCrossedI(i); //crossed boundary in negative i direction
             }
@@ -249,9 +246,6 @@ void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3
             
             } else if(boundaries[map_boundaries[i+3]] == boundary_conditions::periodic) {
                 //apply periodic in neg direction
-                // auto msg = "Crossed, x: " +  ArrayUtils::to_string(particle_ptr->getX()) + " boundaries: " + 
-                //                                ArrayUtils::to_string(particle_ptr->getBoundariesCrossed()) + "\n";
-                // std::cout << msg;
                 particle_ptr->addX(i,-domain_bounds[i]);
                 particle_ptr->incBoundariesCrossedI(i); //crossed boundary in positive i direction
             }
@@ -270,9 +264,9 @@ void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3
         }
 
     }else{
+        //outflow
         SPDLOG_INFO("new halo particle: " + (*particle_ptr).toString());
         //just delete them because we don't have halo particles anyway
-        //cellContainer.getHaloParticles().push_back(particle_ptr);
         #pragma omp critical
         {
             auto &instances = cellContainer.particle_instances;
@@ -327,7 +321,7 @@ inline bool CellCalculator::mirror(std::array<dim_t,3> &position, std::array<dou
 }
 
 
-void CellCalculator::finishF(std::vector<Particle*> *current_cell) {
+void CellCalculator::calculateFWithin(std::vector<Particle*> *current_cell) {
     Particle* p_i;
     Particle* p_j;
     std::array<double, 3> F_ij{};
@@ -350,15 +344,4 @@ void CellCalculator::finishF(std::vector<Particle*> *current_cell) {
         //add gravity
         (*it1)->addF(1, (*it1)->getM() * gravity_factor);
     }
-}
-
-bool CellCalculator::inCutoffDistance(Particle &p1, Particle &p2, const std::array<double,3> &offset) const {
-    static double compare_distance = cutoff * cutoff;
-    const auto& x1 = p1.getX(), x2 = p2.getX();
-
-    double dx = x1[0] - x2[0] + offset[0];
-    double dy = x1[1] - x2[1] + offset[1];
-    double dz = x1[2] - x2[2] + offset[2];
-
-    return dx * dx + dy * dy + dz * dz <= compare_distance;
 }
