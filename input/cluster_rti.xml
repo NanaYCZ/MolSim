@@ -13,7 +13,7 @@
     <tEnd>0.5</tEnd>
     <deltaT>0.0005</deltaT>
     <cutOffRadius>3.0</cutOffRadius>
-    <cellSize>1.5</cellSize>
+    <cellSize>3.0</cellSize>
     <gravityFactor>-12.44</gravityFactor>
     <forceType><LJ/></forceType>
     <parallelizationVersion>

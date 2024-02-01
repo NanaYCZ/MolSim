@@ -107,7 +107,9 @@ command line arguments and what is being returned by the executable. This file s
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/ebabcd02-f3cb-407b-bce9-46c54b83dc16" width="470">
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/6cdbc59e-41be-4b1a-9131-c3a75958e11c" width="480">
 
-
+### Contest 2
+- todo
+- see "Recreate Cluster Measurements"
 
 
 
@@ -214,7 +216,61 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d8ed8fd5-2579-4ca3-9
 
 [^1]: https://en.wikipedia.org/wiki/Argon
 [^2]: http://rkt.chem.ox.ac.uk/lectures/liqsolns/liquids.html
+               
+### Recreate Cluster Measurements
+follow these steps to recreate the measurements for both simulations
 
+- login to the cluster and clone our repository https://github.com/Grazvy/PSEMolDyn_GroupB.git
+- within the cloned project, create a build folder and navigate into it 
+- load the modules: cmake, xerces-c and gcc via "module load ..."
+- run "cmake .." and "make"
+- from the project's input folder, copy and paste cluster_rti.xml and cluster_rti3D.xml into the build folder
+- add job script for 2D performance measurement: 
+```bash
+echo '#!/bin/bash
+#SBATCH -J sim_2D
+#SBATCH -o ./%x.%j.%N.out
+#SBATCH -D ./
+#SBATCH --get-user-env
+#SBATCH --clusters=cm2_tiny
+#SBATCH --partition=cm2_tiny
+#SBATCH --nodes=1-1
+#SBATCH --cpus-per-task=1
+#SBATCH --mail-type=end
+#SBATCH --mail-user= ### your mail ###
+#SBATCH --export=NONE
+#SBATCH --time=00:01:00
+
+module load slurm_setup
+module load gcc
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+ 
+./MolSim -f cluster_rti.xml -p' > sim_2D.cmd
+  ```
+- add job script for 3D performance measurement:
+``` bash
+echo '#!/bin/bash
+#SBATCH -J sim_3D
+#SBATCH -o ./%x.%j.%N.out
+#SBATCH -D ./
+#SBATCH --get-user-env
+#SBATCH --clusters=cm2_tiny
+#SBATCH --partition=cm2_tiny
+#SBATCH --nodes=1-1
+#SBATCH --cpus-per-task=56
+#SBATCH --mail-type=end
+#SBATCH --mail-user= ### your mail ###   
+#SBATCH --export=NONE
+#SBATCH --time=00:10:00
+
+module load slurm_setup
+module load gcc
+export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+ 
+./MolSim -f cluster_rti3D.xml -p' > sim_3D.cmd   
+```  
+- now you can run a job via "sbatch sim_2/3D.cmd" and see the progress via "squeue --clusters cm2_tiny"   
+- when the jobs are done, you can read the measurements in the resulting .out files
 
 ### Misc / Overview
 #### XML File
