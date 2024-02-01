@@ -127,7 +127,6 @@ TEST(test_DiffCoeff1, test_periodic_diff_Coeff_reappearing){
     // the respective other side within one step already
     calculator.calculateX();
 
-    std::cout << container.to_string();
 
 
 
@@ -199,7 +198,6 @@ TEST(test_DiffCoeff2, diff_Coeff_twice_crossed_boundary){
 
     //boundary should get crossed twice
 
-    std::cout << container.to_string();
 
     std::vector<Particle> particles = container.getInstances();
 
@@ -278,7 +276,6 @@ TEST(test_DiffCoeff3, diff_Coeff_very_big){
 
     //boundary should get crossed twice
 
-    std::cout << container.to_string();
 
 
 
