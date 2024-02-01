@@ -432,6 +432,100 @@ domainDimensions (::std::unique_ptr< domainDimensions_type > x)
 }
 
 
+// forceTypeType
+// 
+
+const forceTypeType::gravitational_optional& forceTypeType::
+gravitational () const
+{
+  return this->gravitational_;
+}
+
+forceTypeType::gravitational_optional& forceTypeType::
+gravitational ()
+{
+  return this->gravitational_;
+}
+
+void forceTypeType::
+gravitational (const gravitational_type& x)
+{
+  this->gravitational_.set (x);
+}
+
+void forceTypeType::
+gravitational (const gravitational_optional& x)
+{
+  this->gravitational_ = x;
+}
+
+void forceTypeType::
+gravitational (::std::unique_ptr< gravitational_type > x)
+{
+  this->gravitational_.set (std::move (x));
+}
+
+const forceTypeType::LJ_optional& forceTypeType::
+LJ () const
+{
+  return this->LJ_;
+}
+
+forceTypeType::LJ_optional& forceTypeType::
+LJ ()
+{
+  return this->LJ_;
+}
+
+void forceTypeType::
+LJ (const LJ_type& x)
+{
+  this->LJ_.set (x);
+}
+
+void forceTypeType::
+LJ (const LJ_optional& x)
+{
+  this->LJ_ = x;
+}
+
+void forceTypeType::
+LJ (::std::unique_ptr< LJ_type > x)
+{
+  this->LJ_.set (std::move (x));
+}
+
+const forceTypeType::smoothedLJ_optional& forceTypeType::
+smoothedLJ () const
+{
+  return this->smoothedLJ_;
+}
+
+forceTypeType::smoothedLJ_optional& forceTypeType::
+smoothedLJ ()
+{
+  return this->smoothedLJ_;
+}
+
+void forceTypeType::
+smoothedLJ (const smoothedLJ_type& x)
+{
+  this->smoothedLJ_.set (x);
+}
+
+void forceTypeType::
+smoothedLJ (const smoothedLJ_optional& x)
+{
+  this->smoothedLJ_ = x;
+}
+
+void forceTypeType::
+smoothedLJ (::std::unique_ptr< smoothedLJ_type > x)
+{
+  this->smoothedLJ_.set (std::move (x));
+}
+
+
 // parallelizationSettingsType
 // 
 
@@ -1286,6 +1380,36 @@ spheres (const spheres_sequence& s)
 }
 
 
+// gravitational
+// 
+
+
+// LJ
+// 
+
+
+// smoothedLJ
+// 
+
+const smoothedLJ::r_l_type& smoothedLJ::
+r_l () const
+{
+  return this->r_l_.get ();
+}
+
+smoothedLJ::r_l_type& smoothedLJ::
+r_l ()
+{
+  return this->r_l_.get ();
+}
+
+void smoothedLJ::
+r_l (const r_l_type& x)
+{
+  this->r_l_.set (x);
+}
+
+
 // serial
 // 
 
@@ -1531,7 +1655,7 @@ simulationParamsType (const tEnd_type& tEnd,
                       const deltaT_type& deltaT,
                       const cutOffRadius_type& cutOffRadius,
                       const cellSize_type& cellSize,
-                      const forceType_type& forceType,
+                      ::std::unique_ptr< forceType_type > forceType,
                       ::std::unique_ptr< boundaryConditions_type > boundaryConditions,
                       ::std::unique_ptr< domainDimensions_type > domainDimensions)
 : ::xml_schema::type (),
@@ -1540,7 +1664,7 @@ simulationParamsType (const tEnd_type& tEnd,
   cutOffRadius_ (cutOffRadius, this),
   cellSize_ (cellSize, this),
   gravityFactor_ (this),
-  forceType_ (forceType, this),
+  forceType_ (std::move (forceType), this),
   parallelizationVersion_ (this),
   Rdf_ (this),
   diffusionStatFrequency_ (this),
@@ -1840,6 +1964,127 @@ operator= (const simulationParamsType& x)
 
 simulationParamsType::
 ~simulationParamsType ()
+{
+}
+
+// forceTypeType
+//
+
+forceTypeType::
+forceTypeType ()
+: ::xml_schema::type (),
+  gravitational_ (this),
+  LJ_ (this),
+  smoothedLJ_ (this)
+{
+}
+
+forceTypeType::
+forceTypeType (const forceTypeType& x,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  gravitational_ (x.gravitational_, f, this),
+  LJ_ (x.LJ_, f, this),
+  smoothedLJ_ (x.smoothedLJ_, f, this)
+{
+}
+
+forceTypeType::
+forceTypeType (const ::xercesc::DOMElement& e,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  gravitational_ (this),
+  LJ_ (this),
+  smoothedLJ_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void forceTypeType::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // gravitational
+    //
+    if (n.name () == "gravitational" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< gravitational_type > r (
+        gravitational_traits::create (i, f, this));
+
+      if (!this->gravitational_)
+      {
+        this->gravitational_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // LJ
+    //
+    if (n.name () == "LJ" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< LJ_type > r (
+        LJ_traits::create (i, f, this));
+
+      if (!this->LJ_)
+      {
+        this->LJ_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    // smoothedLJ
+    //
+    if (n.name () == "smoothedLJ" && n.namespace_ ().empty ())
+    {
+      ::std::unique_ptr< smoothedLJ_type > r (
+        smoothedLJ_traits::create (i, f, this));
+
+      if (!this->smoothedLJ_)
+      {
+        this->smoothedLJ_.set (::std::move (r));
+        continue;
+      }
+    }
+
+    break;
+  }
+}
+
+forceTypeType* forceTypeType::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class forceTypeType (*this, f, c);
+}
+
+forceTypeType& forceTypeType::
+operator= (const forceTypeType& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->gravitational_ = x.gravitational_;
+    this->LJ_ = x.LJ_;
+    this->smoothedLJ_ = x.smoothedLJ_;
+  }
+
+  return *this;
+}
+
+forceTypeType::
+~forceTypeType ()
 {
 }
 
@@ -3270,6 +3515,203 @@ operator= (const parameters& x)
 
 parameters::
 ~parameters ()
+{
+}
+
+// gravitational
+//
+
+gravitational::
+gravitational ()
+: ::xml_schema::type ()
+{
+}
+
+gravitational::
+gravitational (const gravitational& x,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c)
+{
+}
+
+gravitational::
+gravitational (const ::xercesc::DOMElement& e,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+: ::xml_schema::type (e, f, c)
+{
+}
+
+gravitational::
+gravitational (const ::xercesc::DOMAttr& a,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+: ::xml_schema::type (a, f, c)
+{
+}
+
+gravitational::
+gravitational (const ::std::string& s,
+               const ::xercesc::DOMElement* e,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+: ::xml_schema::type (s, e, f, c)
+{
+}
+
+gravitational* gravitational::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class gravitational (*this, f, c);
+}
+
+gravitational::
+~gravitational ()
+{
+}
+
+// LJ
+//
+
+LJ::
+LJ ()
+: ::xml_schema::type ()
+{
+}
+
+LJ::
+LJ (const LJ& x,
+    ::xml_schema::flags f,
+    ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c)
+{
+}
+
+LJ::
+LJ (const ::xercesc::DOMElement& e,
+    ::xml_schema::flags f,
+    ::xml_schema::container* c)
+: ::xml_schema::type (e, f, c)
+{
+}
+
+LJ::
+LJ (const ::xercesc::DOMAttr& a,
+    ::xml_schema::flags f,
+    ::xml_schema::container* c)
+: ::xml_schema::type (a, f, c)
+{
+}
+
+LJ::
+LJ (const ::std::string& s,
+    const ::xercesc::DOMElement* e,
+    ::xml_schema::flags f,
+    ::xml_schema::container* c)
+: ::xml_schema::type (s, e, f, c)
+{
+}
+
+LJ* LJ::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class LJ (*this, f, c);
+}
+
+LJ::
+~LJ ()
+{
+}
+
+// smoothedLJ
+//
+
+smoothedLJ::
+smoothedLJ (const r_l_type& r_l)
+: ::xml_schema::type (),
+  r_l_ (r_l, this)
+{
+}
+
+smoothedLJ::
+smoothedLJ (const smoothedLJ& x,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  r_l_ (x.r_l_, f, this)
+{
+}
+
+smoothedLJ::
+smoothedLJ (const ::xercesc::DOMElement& e,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  r_l_ (this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+    this->parse (p, f);
+  }
+}
+
+void smoothedLJ::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_content (); p.next_content (false))
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // r_l
+    //
+    if (n.name () == "r_l" && n.namespace_ ().empty ())
+    {
+      if (!r_l_.present ())
+      {
+        this->r_l_.set (r_l_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!r_l_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "r_l",
+      "");
+  }
+}
+
+smoothedLJ* smoothedLJ::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class smoothedLJ (*this, f, c);
+}
+
+smoothedLJ& smoothedLJ::
+operator= (const smoothedLJ& x)
+{
+  if (this != &x)
+  {
+    static_cast< ::xml_schema::type& > (*this) = x;
+    this->r_l_ = x.r_l_;
+  }
+
+  return *this;
+}
+
+smoothedLJ::
+~smoothedLJ ()
 {
 }
 

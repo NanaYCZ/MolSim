@@ -103,7 +103,7 @@ int main(int argc, char *argsv[])
     if(args.choose_amount_threads.has_value()){
         int number_of_threads = args.choose_amount_threads.value();
         if(number_of_threads < 1){
-            throw std::invalid_argument("It is not possible to simulate with the numer"
+            throw std::invalid_argument("It is not possible to simulate with the number"
                                         " of threads you provided: " + std::to_string(number_of_threads));
         }
         omp_set_num_threads(number_of_threads);
@@ -112,8 +112,8 @@ int main(int argc, char *argsv[])
 
     CellContainer cellContainer(args.domain_dimensions[0],args.domain_dimensions[1],args.domain_dimensions[2],
                                 args.cut_off_radius,args.cell_size);
-    CellCalculator cellCalculator(cellContainer,args.delta_t,args.cut_off_radius,1.9, args.boundaries,
-                                args.force_type, args.gravity_factor,
+    CellCalculator cellCalculator(cellContainer,args.delta_t,args.cut_off_radius,args.r_l.value_or(1.9), args.boundaries,
+                                args.force_type_param, args.gravity_factor,
                                 args.parallelization_version.has_value() ? args.parallelization_version.value() :
                                                                                     concurrency_strategy::serial);
     ThermoStats thermoStats(cellContainer,args.delta_t,

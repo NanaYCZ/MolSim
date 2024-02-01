@@ -136,7 +136,8 @@ struct FileReader::CuboidData {
     double cell_size;
     double gravity_factor = 0;
     double init_temp = 0;
-    std::string force_type = "LJ";
+    force_type force_type_param = force_type::LJ;
+    std::optional<double> r_l = std::nullopt;
     std::optional<concurrency_strategy> parallelization_version = std::nullopt;
     std::optional<int> choose_amount_threads = std::nullopt;
     std::optional<int> diff_frequency = std::nullopt;

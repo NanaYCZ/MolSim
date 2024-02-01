@@ -101,7 +101,32 @@ command line arguments and what is being returned by the executable. This file s
 - We tried a few different compiler flags such as `-Ofast` , `-march=native`, `-malign-data=cacheline` and`-ftree-loop-optimize`, but none of them increased performance significantly. We also tried using AMD's μProf, but it turned out to not be very useful.
 
 
+### Extra
+- As we did not familiarize ourselfes with the Linux Cluster last week, we initaly wanted to leave performance analysis on it out, but because we were really interested to see, what our implementation could do, we did some smaller analysis in the end. First we repeated the runtime measurement for a different number of threads. The executable was compiled with gcc and `-O3`. It was executed on the Linux Cluster cm2_tiny on a computing node with 56 cores.
+
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/ebabcd02-f3cb-407b-bce9-46c54b83dc16" width="470">
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/6cdbc59e-41be-4b1a-9131-c3a75958e11c" width="480">
+
+
+
+
+
 ### Task 3 
+
+- Simulating the rayleigh-taylor-instability in 3D and with tEnd=100, we get the video below. This video is only a compressed version, the full version, if of interest, is 'rayleig_taylor_instability_3D.mp4' within this folder. The simulation took about 12 hours on a Laptop with AMD Ryzen 7 5700U and compiled with `-O3`.
+
+
+
+
+
+
+https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/2c561c04-c0b9-4cda-bc8f-c7f0fb12f63a
+
+
+
+
+
+
 
 ### Task 4
 
