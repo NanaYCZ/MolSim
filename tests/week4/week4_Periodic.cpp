@@ -25,7 +25,7 @@ TEST(test_CellCalculation, test_periodic_forces){
     CellCalculator calculator(container,0.0014,2.0,1.9,
         {boundary_conditions::periodic,boundary_conditions::periodic,
         boundary_conditions::periodic,boundary_conditions::periodic,
-        boundary_conditions::periodic,boundary_conditions::periodic},"LJ");
+        boundary_conditions::periodic,boundary_conditions::periodic},force_type::LJ);
 
 
     //particle p1 in corner 
@@ -46,11 +46,12 @@ TEST(test_CellCalculation, test_periodic_forces){
 
     container.createPointers();
 
+    std::cout << container.to_string() << "\n";
+
     //should calculate forces for the appropriate particles
     calculator.calculateF();
 
-    std::list<Particle>& instances = container.getInstances();
-    std::vector<Particle> particles(instances.begin(),instances.end());
+    std::vector<Particle> particles = container.getInstances();
 
     for(auto& particle : particles){
         //forces should not be zero for all particles
@@ -88,7 +89,7 @@ TEST(test_CellCalculation, test_periodic_reappearing){
     CellCalculator calculator(container,0.0014,2.0,1.9,
         {boundary_conditions::periodic,boundary_conditions::periodic,
         boundary_conditions::periodic,boundary_conditions::periodic,
-        boundary_conditions::periodic,boundary_conditions::periodic},"LJ");
+        boundary_conditions::periodic,boundary_conditions::periodic},force_type::LJ);
 
 
     //all particles will automatically be intialized with force={0,0,0}
@@ -110,8 +111,7 @@ TEST(test_CellCalculation, test_periodic_reappearing){
     // the respective other side within one step already
     calculator.calculateX();
 
-    std::list<Particle>& instances = container.getInstances();
-    std::vector<Particle> particles(instances.begin(),instances.end());
+    std::vector<Particle> particles = container.getInstances();
 
 
     // test if the particle p1 was moved to the opposite side of 
@@ -140,7 +140,7 @@ TEST(test_CellCalculation, test_periodic_corner){
     CellCalculator calculator(container,0.0014,2.0,1.9,
         {boundary_conditions::periodic,boundary_conditions::periodic,
         boundary_conditions::periodic,boundary_conditions::periodic,
-        boundary_conditions::periodic,boundary_conditions::periodic},"LJ");
+        boundary_conditions::periodic,boundary_conditions::periodic},force_type::LJ);
 
 
     //all particles will automatically be intialized with force={0,0,0}
@@ -157,9 +157,7 @@ TEST(test_CellCalculation, test_periodic_corner){
     // the respective other sides within one step already
     calculator.calculateX();
 
-        std::list<Particle>& instances = container.getInstances();
-    std::vector<Particle> particles(instances.begin(),instances.end());
-
+    std::vector<Particle> particles = container.getInstances();
 
     // test if the particle p1 was moved to the opposite side of 
     // the domain (x ~ 10, y ~ 10 wheres in the beginning x[0] = 0  and y = x[1] = 0)
