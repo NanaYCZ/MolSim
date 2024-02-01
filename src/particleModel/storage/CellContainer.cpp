@@ -32,7 +32,7 @@ CellContainer::CellContainer(double d_width, double d_height, double d_depth, do
                      )
     );
 
-    for(auto cells = begin_CI(); cells != end_CI(); ++cells){
+    for(auto cells = begin_CellIterator(); cells != end_CellIterator(); ++cells){
         auto& current_cell = *cells;
         current_cell = {};
     }
@@ -297,7 +297,7 @@ std::string CellContainer::to_string() {
     out_str << "domain_bounds [0]:" << domain_bounds[0] << " [1]:" << domain_bounds[1] << " [2]:" << domain_bounds[2]
             << std::endl;
 
-    for (CellIterator it = begin_CI(); it != end_CI(); ++it) {
+    for (CellIterator it = begin_CellIterator(); it != end_CellIterator(); ++it) {
         out_str << "The cell with index x=" << it.position()[0] << " y=" << it.position()[1] << " z="
                 << it.position()[2] << std::endl;
         out_str << "Has the following Particles: " << std::endl;

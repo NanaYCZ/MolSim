@@ -91,11 +91,11 @@ bool CellContainer::Iterator::operator!=(const CellContainer::Iterator& other){
 
 
 CellIterator::CellIterator(dim_t x, dim_t y, dim_t z) : x(x), y(y), z(z) {
-    total = CellContainer::domain_max_dim[0] * CellContainer::domain_max_dim[1] * CellContainer::domain_max_dim[2];
+    remaining = CellContainer::domain_max_dim[0] * CellContainer::domain_max_dim[1] * CellContainer::domain_max_dim[2];
 }
 
-CellIterator &CellIterator::operator+=(int p) {
-    for (int i = 0; i < p; ++i) {
+CellIterator &CellIterator::operator+=(int amount) {
+    for (int i = 0; i < amount; ++i) {
         next_index();
     }
     return *this;
@@ -123,7 +123,7 @@ void CellIterator::next_index() {
         throw std::runtime_error("too many iterations");
     }
 
-    --total;
+    --remaining;
 
     if (x < CellContainer::domain_max_dim[0]) {
         x++;
@@ -142,28 +142,28 @@ void CellIterator::next_index() {
 }
 
 int operator-(CellIterator a, CellIterator b) {
-    return a.total;
+    return a.remaining;
 }
 
-CellIterator begin_CI() {
+CellIterator begin_CellIterator() {
     return CellIterator{1,1,1};
 }
 
-CellIterator end_CI() {
+CellIterator end_CellIterator() {
     return CellIterator{-1,-1,-1};
 }
 
 
 StartPointIterator::StartPointIterator(std::array<dim_t, 3> pattern) : progress(pattern){
     next_index();
-    total = std::abs(pattern[0]) * CellContainer::domain_max_dim[1] * CellContainer::domain_max_dim[2] +
+    remaining = std::abs(pattern[0]) * CellContainer::domain_max_dim[1] * CellContainer::domain_max_dim[2] +
             std::abs(pattern[1]) * (CellContainer::domain_max_dim[0] - std::abs(pattern[0])) *
             CellContainer::domain_max_dim[2] +
             std::abs(pattern[2]) * (CellContainer::domain_max_dim[0] - std::abs(pattern[0])) *
             (CellContainer::domain_max_dim[1] - std::abs(pattern[1]));
 }
 
-StartPointIterator::StartPointIterator() : progress({0, 0, 0}), plane_axis(finished), total(0) {}
+StartPointIterator::StartPointIterator() : progress({0, 0, 0}), plane_axis(finished), remaining(0) {}
 
 StartPointIterator &StartPointIterator::operator+=(int p) {
     for (int i = 0; i < p; ++i) {
@@ -215,7 +215,7 @@ void StartPointIterator::next_index() {
             throw std::runtime_error("too many iterations");
     }
 
-    --total;
+    --remaining;
 }
 
 //"iterates over every point of a plane"
@@ -239,7 +239,7 @@ void StartPointIterator::next_plane_corner() {
     if (progress[0] != 0) {
         plane_axis = x_axis;
 
-        set_plane_position_on_axis();
+        set_axis();
         current[1] = min[1];
         current[2] = min[2];
 
@@ -250,7 +250,7 @@ void StartPointIterator::next_plane_corner() {
         plane_axis = y_axis;
 
         current[0] = min[0];
-        set_plane_position_on_axis();
+        set_axis();
         current[2] = min[2];
 
         mapping[0] = 0;
@@ -261,7 +261,7 @@ void StartPointIterator::next_plane_corner() {
 
         current[0] = min[0];
         current[1] = min[1];
-        set_plane_position_on_axis();
+        set_axis();
 
         mapping[0] = 0;
         mapping[1] = 0;
@@ -272,9 +272,9 @@ void StartPointIterator::next_plane_corner() {
     }
 }
 
-void StartPointIterator::set_plane_position_on_axis() {
+void StartPointIterator::set_axis() {
     if (progress[plane_axis] < 0) {
-        //position of the next plane on axis
+        //position of the next plane
         current[plane_axis] = CellContainer::domain_max_dim[plane_axis] + progress[plane_axis] + 1;
         //mapping to receive domain exit point from current
         mapping[plane_axis] = -CellContainer::domain_max_dim[plane_axis];
@@ -284,20 +284,24 @@ void StartPointIterator::set_plane_position_on_axis() {
         ++progress[plane_axis];
 
     } else {
+        //position of the next plane
         current[plane_axis] = progress[plane_axis];
+        //mapping to receive domain exit point from current
         mapping[plane_axis] = CellContainer::domain_max_dim[plane_axis];
+        //update limit to avoid overlap with other planes
         min[plane_axis] = std::max(min[plane_axis], current[plane_axis] + 1);
+        //update progress
         --progress[plane_axis];
     }
 }
 
 
-int operator-(StartPointIterator a, StartPointIterator b) { return b.total; }
+int operator-(StartPointIterator a, StartPointIterator b) { return b.remaining; }
 
-StartPointIterator begin_SI(std::array<dim_t,3> pattern) {
+StartPointIterator begin_StartIterator(std::array<dim_t,3> pattern) {
     return {pattern};
 }
 
-StartPointIterator end_SI() {
+StartPointIterator end_StartIterator() {
     return {};
 }

@@ -37,7 +37,7 @@ void CellCalculator::calculateX(){
                             schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
-    for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
+    for (auto cell = begin_CellIterator(); cell != end_CellIterator(); ++cell) {
 
         //iterate trough particles of cell
         for (auto particle_ptr = (*cell).begin(); particle_ptr != (*cell).end();) {
@@ -80,7 +80,7 @@ void CellCalculator::calculateV(){
                             schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
-    for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
+    for (auto cell = begin_CellIterator(); cell != end_CellIterator(); ++cell) {
         for (auto particle_ptr: *cell) {
             Particle &particle = *particle_ptr;
             std::array<double, 3> old_f, f, old_v;
@@ -104,7 +104,7 @@ void CellCalculator::calculateF(){
     #pragma omp parallel for default(none) schedule(dynamic) \
                             if(parallelization == concurrency_strategy::first_method)
 
-    for (auto iter = begin_CI(); iter != end_CI(); ++iter) {
+    for (auto iter = begin_CellIterator(); iter != end_CellIterator(); ++iter) {
         finishF(&(*iter));
     }
 }
@@ -115,7 +115,7 @@ void CellCalculator::shiftF(){
                             schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
-    for (auto cell = begin_CI(); cell != end_CI(); ++cell) {
+    for (auto cell = begin_CellIterator(); cell != end_CellIterator(); ++cell) {
         for (auto particle_ptr: *cell) {
             particle_ptr->shiftF();
         }
@@ -129,7 +129,7 @@ void CellCalculator::calculateLinkedCellF() {
                                 schedule(dynamic) \
                             if(parallelization == concurrency_strategy::first_method)
 
-        for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
+        for (StartPointIterator it = begin_StartIterator(pattern); it != end_StartIterator(); ++it) {
             std::array<double, 3> F_ij{};
             std::vector<Particle*>* cell_1;
             std::vector<Particle*>* cell_2;
@@ -178,7 +178,7 @@ void CellCalculator::calculatePeriodicF() {
                                 schedule(static,chunk_size) \
                             if(parallelization == concurrency_strategy::first_method)
 
-        for (StartPointIterator it = begin_SI(pattern); it != end_SI(); ++it) {
+        for (StartPointIterator it = begin_StartIterator(pattern); it != end_StartIterator(); ++it) {
 
             std::array<dim_t, 3> current_cell = it.outside();
             std::vector<Particle *> *cell_1 = &particles[current_cell[0] - pattern[0]]
