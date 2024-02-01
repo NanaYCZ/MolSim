@@ -12,7 +12,7 @@
  *        are added such, that one particle p1 is on the lower left corner of a 2D rectangle
  *        and the other two are at the left upper (p2) and right lower corner (p3). According to
  *        the logic of the periodic boundary conditions, there should be forces between p1 and p2 
- *        and forces between p1 and p3. The forces are calculated and it is checked, wether
+ *        and forces between p1 and p3. The forces are calculated and it is checked, weather
  *        the particles have the expected forces
  * 
  *        |p3------|
@@ -30,16 +30,16 @@ TEST(test_CellCalculation, test_periodic_forces){
 
     //particle p1 in corner 
     //0.1 so the particles don't overlap
-    container.addParticle({0.1,0.1,0},{0,0,0},1);
+    container.addParticle({0.5,0.5,0},{0,0,0},1);
     //will be particles[0]
 
 
     //particle p2 in lower right corner
-    container.addParticle({9.9,0,0},{0,0,0},1);
+    container.addParticle({9.0,0.5,0},{0,0,0},1);
     //will be particles[1]
 
     //particle p3 in upper left corner
-    container.addParticle({0,9.9,0},{0,0,0},1);
+    container.addParticle({0.5,9.0,0},{0,0,0},1);
     //will be particles[2]
 
     //-> there should be forces between p1 and p2 as well as between p1 and p3
@@ -61,11 +61,11 @@ TEST(test_CellCalculation, test_periodic_forces){
     std::array<double,3> p2_force = particles[1].getF();
     std::array<double,3> p3_force = particles[2].getF();
 
-    ASSERT_NEAR(p1_force[0],-p2_force[0],0.0000001); 
-    // operator- does operation on double -> use standard method for comparing two doubles 
+    ASSERT_NEAR(p1_force[0],-p2_force[0],0.0000001);
+    // operator- does operation on double -> use standard method for comparing two doubles
     ASSERT_NEAR(p1_force[1],-p3_force[1],0.0000001);
     // operator+ does operation on double -> use standard method for comparing two doubles 
-    
+
 }
 
 

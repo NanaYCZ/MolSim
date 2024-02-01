@@ -32,10 +32,13 @@ CellContainer::CellContainer(double d_width, double d_height, double d_depth, do
                      )
     );
 
-    for(auto cells = begin_CellIterator(); cells != end_CellIterator(); ++cells){
-        auto& current_cell = *cells;
+    //clear all
+    for (auto cells = begin_CellIterator(); cells != end_CellIterator(); ++cells) {
+        auto &current_cell = *cells;
         current_cell = {};
     }
+    patterns.clear();
+    //
 
     if (cell_size < r_cutoff) {
         comparing_depth = std::ceil(r_cutoff / cell_size);

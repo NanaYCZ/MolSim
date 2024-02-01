@@ -15,7 +15,7 @@ endif()
 
 find_package(XercesC REQUIRED)
 
-option(BUILD_TEST "Tests" OFF)
+option(BUILD_TEST "Tests" ON)
 
 # string(REPLACE "-O3" "" CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
 # set(CMAKE_CXX_FLAGS_RELEASE "-O2")
