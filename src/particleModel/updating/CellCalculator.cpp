@@ -104,8 +104,8 @@ void CellCalculator::calculateF(){
     #pragma omp parallel for default(none) schedule(dynamic) \
                             if(parallelization == concurrency_strategy::first_method)
 
-    for (auto iter = begin_CellIterator(); iter != end_CellIterator(); ++iter) {
-        calculateFWithin(&(*iter));
+    for (auto iterator = begin_CellIterator(); iterator != end_CellIterator(); ++iterator) {
+        calculateFWithin(&(*iterator));
     }
 }
 
@@ -270,27 +270,28 @@ void CellCalculator::applyBoundaries(Particle* particle_ptr, std::array<dim_t, 3
         #pragma omp critical
         {
             auto &instances = cellContainer.particle_instances;
-            auto it = std::find(instances.begin(), instances.end(), *particle_ptr);
-            if (it != instances.end())
-                instances.erase(it);
+            auto found = std::find(instances.begin(), instances.end(), *particle_ptr);
+            if (found != instances.end())
+                instances.erase(found);
         }
     }
 }
 
 void CellCalculator::updateCells(instructions& cell_updates) {
-    for(auto ins : cell_updates){
+    for(auto instruction : cell_updates){
 
-        std::array<dim_t, 3> &new_cell_position = std::get<1>(ins);
+        std::array<dim_t, 3> &new_cell_position = std::get<1>(instruction);
 
         std::vector<Particle *> *new_cell = &particles[new_cell_position[0]][new_cell_position[1]][new_cell_position[2]];
 
-        new_cell->push_back(std::get<0>(ins));
+        new_cell->push_back(std::get<0>(instruction));
     }
 }
 
 //mirror the last position back into the domain, return true if all boundaries successful
 inline bool CellCalculator::mirror(std::array<dim_t,3> &position, std::array<double,3> &offset) {
     static std::array<unsigned short,6> map_boundaries{3,5,1,2,4,0};//{neg_X, neg_Y, neg_Z, pos_X, pos_Y, pos_Z}
+    //if all exits were on periodic boundaries
     bool mirrored_fully = true;
     //this map is necessary, because in the boundaries member, the order is
     //{positive_z,negative_z,positive_x,negative_x,positive_y,negative_y}

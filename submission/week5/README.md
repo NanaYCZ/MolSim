@@ -48,6 +48,55 @@ command line arguments and what is being returned by the executable. This file s
 ### Task 1
 
 ### Task 2 
+#### Parallelization
+- for our parallelization strategy, we looked for discrete workloads within our code, which was to the most part already the case
+for calculateX, calculateV, shiftF, calculateFWithin and calculateInterCellF (thanks to our parallelization plan from previous tasks).
+So pretty much everything that increases with the simulation size was dividable for concurrency
+- but things where not quite safe yet, we had to make following changes to avoid make everything truly discrete: 
+- First, updateCells
+was reduced to its original purpose to just move the particle pointers based on the instructions, so the boundary checking was
+placed into applyBoundaries, which is used by calculateX every time a particle is detected outside it's previous cell. So now we can
+check the boundary condition for the particles in parallel, after separating the sequential updating of the cells. 
+- Second, calculateInterCellF
+got a glow-up after getting rid of setNextPath as a way of iterating over the paths. We optimised the redundant iteration over patterns, 
+so now they are pre-calculated and stored in CellContainer. Then we had to implement a new starting point iterator, which 
+is much more structured and allows us now to iterate of all discrete paths for each pattern. 
+- Third, calculateInterCellF was
+not fully discrete since we implemented the periodic boundaries. The mirroring mapped on a cell index, which may be the starting
+point for another path. So we delegated the periodic force calculation into calculatePeriodicF(), using our new starting point
+iterator. Now the linked cell algorithm was fully discrete.
+- Fourth, since the overall workload was distributed over multiple for loops with discrete tasks, the plan was to smack
+a nice "#pragma omp parallel for" in front of all of them. But apparently OpenMP can be quite picky about custom iterators,
+so our new iterators had to fulfill a certain structure, which is an implementation of the "+=" and "-" operator, since
+"parallel for" doesn't rely on "!=" to run the for loop, and don't even try using std::vectors as attributes :) Also setNextCell()
+had to leave as a way to iterate over cells and a new shiny cell iterator was implemented as well.
+- So there we are! Everything works in parallel now, next up, we added selection of the strategy and amount of threads via
+xml file input, which creates an enum that can turn our #pragma's on/off via if(parallelization == concurrency_strategy::first_method).
+If OpenMP doesn't exist, the #pragma's won't do anything, and we only had to disable omp.h specific methods such as omp_set_num_threads()
+via #ifdef #endif.
+#### The Pros
+- our method supports a high amount of threads, even though the improvement plateaus at some point, we still had speedup
+until 56 threads
+- the amount of locks is minimized to only one, reducing contention, avoiding deadlocks and improving scalability
+#### The Cons
+- the amount of workloads per path varies, which could lead to imbalance among the threads
+
+#### further
+- some particle distributions can imbalance certain pattern iterations, because it would lead to their paths being very 
+filled with particles and others left empty. But this is not a real problem for us, since we have many different directions
+and as a result, every inhomogeneous distribution would have a diversified workload (in)balances. Homogeneous distributions
+may suffer from the imbalance problem stated in the cons, which why tried to solve, building a sorted starting point
+iterator. This iterator was supposed to apply a heuristic to give the longer paths first, resulting in a dynamic distribution,
+with workloads getting shorter and shorter with each iteration for the homogeneous distribution. But after the designing
+the algorithm/iterator, we decided to drop it in order not to overcomplicate and over-engineer our code.
+- looking back, we were wrong about the dynamic cell sizes. We thought that increasing the comparing_depth would allow more
+concurrency, since more paths would be available and increased runtime, with the cutoff being applied more precise. But we
+were wrong on both, since splitting into more tasks doesn't improve concurrency, if there are already way more tasks than threads.
+And applying the cutoff more precise doesn't remove many combinations, if the cutoff is not that big. But the price of 
+small cell sizes was high.
+- we tried to further improve our code by inlining some small and frequently used methods as well as defining some in a
+header file and removing all avoidable while loops, for better compiler optimisation.
+- we cleaned up unused code and as already mentioned, rebuild our linked cell algorithm to be more structured and readable.
 
 #### Performance
 - we measured and profiled the performance of the execution of our parallel version with Intel's Vtune profiler and perf. Measurements were performed within a Linux environment on an AMD Ryzen 7 5700U without VTK output and logging enabled. We used gcc with the optimization level -O3 and for all measurements we used the rayleigh-taylor instability example in 3D (but with tEnd=0.1 only). Measuring the runtime for a different number of threads yields the following:
@@ -108,8 +157,9 @@ command line arguments and what is being returned by the executable. This file s
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/6cdbc59e-41be-4b1a-9131-c3a75958e11c" width="480">
 
 ### Contest 2
-- todo
-- see "Recreate Cluster Measurements"
+- the 2D simulation without output was performed in 2.05 seconds, with 1000 iterations and 10.000 particles we get 4.88 MMUPS
+- the 3D simulation without output was performed in 51.69 seconds, with 1000 iterations and 100.000 particles resulting in 1.93 MMUPS
+- down below, you can find the instructions to recreate our measurements
 
 
 
