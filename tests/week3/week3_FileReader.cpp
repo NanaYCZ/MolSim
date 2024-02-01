@@ -307,9 +307,9 @@ TEST(test_readProgArgs,test_big){
         1.0,            //cell size
         -12.44,     //gravity factor
         10.0,       //initial temp
-        force_type::LJ,
+        force_type::smoothedLJ,
         1.9,
-        concurrency_strategy::serial,
+        concurrency_strategy::first_method,
         16,
         20.0,       //max temp diff
         std::pair<double,int>(1.0,100),
