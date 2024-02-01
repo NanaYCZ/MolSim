@@ -1,6 +1,11 @@
 #include <gtest/gtest.h>
 #include "particleModel/storage/CellContainer.h"
 
+/**
+ * checks if the CellContainer, when initialized, calculates
+ * the patterns and stores them correctly, by comparing them with an example
+ * of an expected vector of arrays.
+*/
 TEST(test_precalculating_patterns,test_depth_2_3D){
     double width = 30;
     double height = 30;
