@@ -36,6 +36,7 @@ CellContainer::CellContainer(double d_width, double d_height, double d_depth, do
         auto &current_cell = *cells;
         current_cell = {};
     }
+    patterns.clear();
 
     if (cell_size < r_cutoff) {
         comparing_depth = std::ceil(r_cutoff / cell_size);
