@@ -11,10 +11,10 @@ TEST(forceCalculation,advanced_test_force_calculations){
 
     //by default CellCalculator uses sigma=1.0 , epsilon=5.0 
     CellContainer container(10,10,10,1.0,1.0);
-    CellCalculator calculator(container,0.0014,1.0,
+    CellCalculator calculator(container,0.0014,20.0,1.9,
         {boundary_conditions::outflow,boundary_conditions::outflow,
         boundary_conditions::outflow,boundary_conditions::outflow,
-        boundary_conditions::outflow,boundary_conditions::outflow});
+        boundary_conditions::outflow,boundary_conditions::outflow},force_type::LJ);
 
     
 
@@ -42,10 +42,10 @@ TEST(forceCalculation,advanced_test_force_calculations1){
 
     //by default CellCalculator uses sigma=1.0 , epsilon=5.0 
     CellContainer container(10,10,10,1.0,1.0);
-    CellCalculator calculator(container,0.0014,1.0,
+    CellCalculator calculator(container,0.0014,20.0,1.9,
         {boundary_conditions::outflow,boundary_conditions::outflow,
         boundary_conditions::outflow,boundary_conditions::outflow,
-        boundary_conditions::outflow,boundary_conditions::outflow});
+        boundary_conditions::outflow,boundary_conditions::outflow},force_type::LJ);
 
 
     
@@ -74,10 +74,10 @@ TEST(forceCalculation,advanced_test_force_calculations2){
 
     //by default CellCalculator uses sigma=1.0 , epsilon=5.0 
     CellContainer container(10,10,10,1.0,1.0);
-    CellCalculator calculator(container,0.0014,1.0,
+    CellCalculator calculator(container,0.0014,20.0,1.9,
         {boundary_conditions::outflow,boundary_conditions::outflow,
         boundary_conditions::outflow,boundary_conditions::outflow,
-        boundary_conditions::outflow,boundary_conditions::outflow});
+        boundary_conditions::outflow,boundary_conditions::outflow},force_type::LJ);
 
 
 

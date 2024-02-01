@@ -11,14 +11,47 @@
 std::string to_string(boundary_conditions cond){
     if(cond == boundary_conditions::reflective)
         return "reflective";
-    else if(cond == boundary_conditions::ghost_reflective)
-        return "ghost_reflective";
     else if(cond == boundary_conditions::periodic)
         return "periodic";
     else if(cond == boundary_conditions::outflow)
         return "outflow";
     else    
         throw std::invalid_argument("Not a correct boundary condition");
+}
+
+std::string to_string(force_type force,double r_l){
+    if(force == force_type::smoothedLJ)
+        return "<smoothedLJ>\n"
+               "        <r_l>" + std::to_string(r_l) + "</r_l>\n"
+               "</smoothedLJ>";
+    else if(force == force_type::LJ)
+        return "<LJ/>";
+    else if(force == force_type::gravitational)
+        return "<gravitational/>";
+    else
+        throw std::invalid_argument("Not a correct force type");
+}
+
+
+std::string to_string(concurrency_strategy strategy,std::optional<int> numThreads){
+    if(strategy == concurrency_strategy::first_method){
+        std::string string_return = "<first_method>\n";
+        if(numThreads)
+                   string_return += "                <numThreads>" +  std::to_string(numThreads.value()) + "</numThreads>\n";
+        string_return += "</first_method>";
+        return  string_return;
+    }
+    else if(strategy == concurrency_strategy::second_method){
+        std::string string_return = "<second_method>\n";
+        if(numThreads)
+            string_return += "                <numThreads>" +  std::to_string(numThreads.value()) + "</numThreads>\n";
+        string_return += "</second_method>";
+        return  string_return;
+
+    }else if(strategy == concurrency_strategy::serial)
+        return "<serial/>";
+    else
+        throw std::invalid_argument("Not a correct concurrency strategy");
 }
 
 
@@ -60,6 +93,21 @@ void writeArgsIntoXMLFile(const FileReader::ProgramArgs &programArgs,std::string
     xmlStream << "    <cutOffRadius>" << programArgs.cut_off_radius << "</cutOffRadius>" << std::endl;
     xmlStream << "    <cellSize>" << programArgs.cell_size << "</cellSize>" << std::endl;
     xmlStream << "    <gravityFactor>" << programArgs.gravity_factor << "</gravityFactor>" << std::endl;
+    xmlStream << "     <forceType>" << to_string(programArgs.force_type_param,programArgs.r_l.value_or(1.9)) << "</forceType> " << std::endl;
+    if(programArgs.parallelization_version){
+        xmlStream << "      <parallelizationVersion>" <<
+        to_string(programArgs.parallelization_version.value(),programArgs.choose_amount_threads)
+        << "</parallelizationVersion> " << std::endl;
+    }
+    if(programArgs.rdf_interval_and_frequency){
+        xmlStream << "      <Rdf>" <<
+                        "<rdfIntervalSize>" + std::to_string(programArgs.rdf_interval_and_frequency->first) + "</rdfIntervalSize>\n"
+                        +"<rdfStatFrequency> " + std::to_string(programArgs.rdf_interval_and_frequency->second) +  "  </rdfStatFrequency>\n"
+                  << "</Rdf> " << std::endl;
+    }
+    if(programArgs.diff_frequency){
+        xmlStream << "    <diffusionStatFrequency>" << programArgs.diff_frequency.value() << "</diffusionStatFrequency>" << std::endl;
+    }
     if(programArgs.calculate_thermostats){
     xmlStream << "    <Thermostats>" << std::endl;
     xmlStream << "      <initTemp>" << programArgs.init_temp << "</initTemp>" << std::endl;                    
@@ -259,7 +307,13 @@ TEST(test_readProgArgs,test_big){
         1.0,            //cell size
         -12.44,     //gravity factor
         10.0,       //initial temp
+        force_type::smoothedLJ,
+        1.9,
+        concurrency_strategy::first_method,
+        16,
         20.0,       //max temp diff
+        std::pair<double,int>(1.0,100),
+        0.5,
         30.0,       //target temp
         50,          //thermostat write frequency
         {boundary_conditions::reflective,boundary_conditions::reflective,

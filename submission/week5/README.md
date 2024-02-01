@@ -151,10 +151,18 @@ header file and removing all avoidable while loops, for better compiler optimisa
 
 
 ### Extra
-- As we did not familiarize ourselfes with the Linux Cluster last week, we initaly wanted to leave performance analysis on it out, but because we were really interested to see, what our implementation could do, we did some smaller analysis in the end. First we repeated the runtime measurement for a different number of threads. The executable was compiled with gcc and `-O3`. It was executed on the Linux Cluster cm2_tiny on a computing node with 56 cores.
+- As we did not familiarize ourselfes with the Linux Cluster last week, we initaly wanted to leave performance analysis on it out, but because we were really interested to see, what our implementation could do, we did some smaller analysis in the end. First we repeated the runtime measurement for a different number of threads. The executable was compiled with gcc and `-O3`. It was executed on the Linux Cluster cm2_tiny on a computing node with 56 cores. We used the the rayleigh-taylor instability example in 3D (but with tEnd=0.5 only).
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/ebabcd02-f3cb-407b-bce9-46c54b83dc16" width="470">
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/6cdbc59e-41be-4b1a-9131-c3a75958e11c" width="480">
+
+
+- as we can see now we get a significant speed-up, that corresponds to the number of threads until ca. 32 threads. 56 threads do not provide the expected speed-up of 56 similar to the 16 threads on our local machine.  
+- as the Linux Cluster seems to be running Intel processors, further  analysis of the program is possible and more statistics are available. The executable was compiled with gcc and `-O3`. We used the rayleigh-taylor instability example in 3D (but with tEnd=0.1 only). The HPC analysis of Intel Vtune suggests, that there is an increases in Pipeline slots, that were blocked due to memory access, meaning the pipeline stalled and could not continue with the execution, as some instructions waited for memory accesses. On the
+left is the analysis for 1 thread, on the right for 32 threads. (unfortunately there is no data on how often the pipeline stalled due to DRAM accesses as Hyper Threading is enabled on the Linux Cluster)
+
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/402f60dc-4867-4df3-bd29-be1bec223483" width="480">
+<img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d635bc7e-79c7-411e-b5e1-f45d91a559af" width="470">
 
 ### Contest 2
 - the 2D simulation without output was performed in 2.05 seconds, with 1000 iterations and 10.000 particles we get 4.88 MMUPS

@@ -293,8 +293,31 @@ struct FileReader::CuboidData {
         std::cout << "Comparison failed: init_temp" << std::endl;
         return false;
     }
+    if (!(force_type_param == other.force_type_param)) {
+        std::cout << "Comparison failed: force_type_param" << std::endl;
+        return false;
+    }
+    if (!(r_l == other.r_l)) {
+        std::cout << "Comparison failed: r_l" << std::endl;
+        return false;
+    }
+    if (!(parallelization_version == other.parallelization_version)) {
+        std::cout << "Comparison failed: parallelization_version" << std::endl;
+        return false;
+    }
+    if (!(choose_amount_threads == other.choose_amount_threads)) {
+        std::cout << "Comparison failed: choose_amount_threads" << std::endl;
+        return false;
+    }
+    if (!(diff_frequency == other.diff_frequency)) {
+        std::cout << "Comparison failed: diff_frequency" << std::endl;
+        return false;
+    }
+    if (!(rdf_interval_and_frequency == other.rdf_interval_and_frequency)) {
+        std::cout << "Comparison failed: rdf_interval_and_frequency" << std::endl;
+        return false;
+    }
 
-    // Seperate if clauses for all the other comparisons using ==
     if (!(target_temp == other.target_temp)) {
         std::cout << "Comparison failed: target_temp" << std::endl;
         return false;
