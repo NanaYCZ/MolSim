@@ -12,9 +12,6 @@
 #include <omp.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
-template <typename T>
-std::string print_vec(const std::vector<T>& vec);
-
 void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoStats &thermoStats,
                    const double end_time, const double delta_t, const size_t write_frequency, 
                    std::optional<int> thermostats_frequency, std::optional<int> diffusion_frequency,
@@ -24,8 +21,6 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     auto logger = spdlog::get("logger");
 
     std::chrono::high_resolution_clock::time_point perf_time_start, perf_time_end;
-
-
 
     double current_time = 0;
     int iteration = 0;
@@ -56,13 +51,9 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     std::ostringstream pot_log;
     std::ostringstream temp_log;
 
-
-
-
     // for this loop, we assume: current x, current f and current v are known
     if (performance_measurement)
         perf_time_start = std::chrono::high_resolution_clock::now();
-    
 
     while (current_time < end_time) {
         SPDLOG_TRACE(std::to_string(current_time));
@@ -74,9 +65,6 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
         calculator.calculateX();
         calculator.calculateF();
         calculator.calculateV();
-
-        //std::cout << "one iteration done\n";
-    
         
         iteration++;
 
@@ -111,8 +99,6 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
                             std::to_string(stats[i]) + ")";
             }
         }
-
-
 
         /// loading bar
         static int loading_factor = std::max(write_frequency * 5.0, std::ceil(end_time / (delta_t * 100)));
@@ -154,19 +140,4 @@ void plotParticles(CellContainer &container, int iteration) {
   std::string out_name("MD_vtk");
   outputWriter::XYZWriter writer;
   writer.plotParticles(container, out_name, iteration);
-}
-
-template <typename T>
-std::string print_vec(const std::vector<T>& vec) {
-    std::ostringstream o;
-    o << "[";
-    if (!vec.empty()) {
-        auto lastElement = vec.end() - 1;
-        for (auto it = vec.begin(); it != lastElement; ++it) {
-            o << *it << ", ";
-        }
-        o << *lastElement;
-    }
-    o << "]";
-    return o.str();
 }

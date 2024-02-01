@@ -22,8 +22,6 @@ enum class force_type{
     smoothedLJ
 };
 
-extern double min_distance;
-
 extern int chunk_size;
 
 extern std::vector<std::vector<double>> sigma_mixed;

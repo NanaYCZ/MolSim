@@ -32,13 +32,10 @@ CellContainer::CellContainer(double d_width, double d_height, double d_depth, do
                      )
     );
 
-    //clear all
     for (auto cells = begin_CellIterator(); cells != end_CellIterator(); ++cells) {
         auto &current_cell = *cells;
         current_cell = {};
     }
-    patterns.clear();
-    //
 
     if (cell_size < r_cutoff) {
         comparing_depth = std::ceil(r_cutoff / cell_size);
@@ -146,6 +143,7 @@ bool CellContainer::setNext3dPattern(std::array<dim_t, 3> &pattern) {
                 ++pattern[2];
             } else {
                 //finished
+                status = first_subset;
                 return false;
             }
             break;
@@ -180,6 +178,7 @@ bool CellContainer::setNext2dPattern(std::array<dim_t, 3> &pattern) {
 
             } else {
                 //finished
+                status = first_subset;
                 return false;
             }
             break;

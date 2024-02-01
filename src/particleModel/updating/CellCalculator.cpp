@@ -6,7 +6,6 @@
 #include <list>
 #include <algorithm>
 
-double min_distance = 0.7;
 int chunk_size = 16;
 
 std::vector<std::vector<double>> sigma_mixed{{1.0}};
