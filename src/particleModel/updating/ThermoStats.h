@@ -12,7 +12,15 @@ class ThermoStats{
                 std::optional<double> target_temp_param = std::nullopt,
                 std::optional<double> max_temp_diff_param = std::nullopt);
 
-
+        /**
+         * @brief calculates the current temperature based on the particles and their velocities
+         *        in container. The temperature is calculated accoring to:
+         *        @f$ T = \frac{\sum_{\forall particle i} v_i * m_i }{dim * k_{boltzmann} * (#particle)} @f$
+         *        where v_i is the velocity vector of particle i, m_i is the mass of particle i and k_{boltzmann}
+         *        is the boltzmann constant(always 1 for us) and #particle is the amount of particles in the system
+         *
+         * @return current temperature of system
+         */
         double currentTemp();
 
         /**
@@ -32,8 +40,8 @@ class ThermoStats{
          * @brief calculates the potential energy of the system according to:
          * for all unique particle pairs i,j:
          * E_pot += 4 * epsilon * (
-         *      (sigma/ || particle_i position - particle_j position ||)^12
-         *     -(sigma/ || particle_i position - particle_j position ||)^6
+         *      (sigma  /   ||particle_i position - particle_j position|| )^12
+         *     -(sigma  /   ||particle_i position - particle_j position|| )^6
          *     )
          *
          * @return potential energy of the system

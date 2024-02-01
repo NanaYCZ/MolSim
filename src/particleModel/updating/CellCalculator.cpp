@@ -54,7 +54,6 @@ void CellCalculator::calculateX(){
             new_x = old_x + delta_t * v + (delta_t * delta_t / (2 * mass)) * old_f;
 
             particle.setX(new_x);
-            //std::cout << new_x << " nex\n";
 
             std::array<dim_t, 3> new_cell;
             cellContainer.allocateCellFromPosition(new_x, new_cell);
@@ -152,7 +151,7 @@ void CellCalculator::calculateInterCellF() {
                     for (auto &p_j: *cell_2) {
 
 
-                            F_ij = force_exp(*p_i, *p_j, {0, 0, 0});
+                            F_ij = force(*p_i, *p_j, {0, 0, 0});
 
                             for (int i = 0; i < 3; i++) {
                                 p_i->addF(i, F_ij[i]);
@@ -196,7 +195,7 @@ void CellCalculator::calculatePeriodicF() {
                     for (auto &p_j: *cell_2) {
 
 
-                            F_ij = force_exp(*p_i, *p_j, particle_offset);
+                            F_ij = force(*p_i, *p_j, particle_offset);
 
                             for (int i = 0; i < 3; i++) {
                                 p_i->addF(i, F_ij[i]);
@@ -332,7 +331,7 @@ void CellCalculator::calculateFWithin(std::vector<Particle*> *current_cell) {
             p_j = *it2;
 
 
-                F_ij = force_exp(*p_i, *p_j, {0, 0, 0});
+                F_ij = force(*p_i, *p_j, {0, 0, 0});
 
                 for (int i = 0; i < 3; i++) {
                     p_i->addF(i, F_ij[i]);

@@ -41,8 +41,8 @@ using ForceCalculation = std::function<std::array<double, 3>(const Particle &, c
  *
  * (offset is always applied, when the difference between the positions of p_i and p_j is calculated)
  *
- * @param sigma_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
- * @param epsilon_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param sigma_mixed the matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param epsilon_mixed the matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
  * @param cutoff upper cutoff radius for the force
  *
  * @return Three-dimensional vector that corresponds to \f$ f_{ij} \f$
@@ -83,8 +83,8 @@ ForceCalculation inline forceSimpleGravitational(double cutoff){
  * (offset is always applied, when the difference between the positions of p_i and p_j is calculated)
  *
  *
- * @param sigma_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
- * @param epsilon_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param sigma_mixed the matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param epsilon_mixed the matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
  * @param cutoff upper cutoff radius for the force
  *
  * @return Three-dimensional vector that corresponds to \f$ f_{ij} \f$
@@ -145,12 +145,12 @@ ForceCalculation inline forceLennJonesPotentialFunction(std::vector<std::vector<
  *
  * (offset is always applied, when the difference between the positions of p_i and p_j is calculated)
  *
- * @param sigma_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
- * @param epsilon_mixed Matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param sigma_mixed the matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param epsilon_mixed the matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
  * @param cutoff upper cutoff radius for the force
- * @param r_l Lower cutoff radius for the force
+ * @param r_l lower cutoff radius for the force
  *
- * @return Three-dimensional vector corresponding to the force \( F_{ij} \)
+ * @return Three-dimensional vector corresponding to the force \( f_{ij} \)
  */
 ForceCalculation inline forceSmoothedLennJonesPotentialFunction(std::vector<std::vector<double>>& sigma_mixed,
                                                  std::vector<std::vector<double>>& epsilon_mixed, double cutoff, double r_l){
@@ -159,20 +159,20 @@ ForceCalculation inline forceSmoothedLennJonesPotentialFunction(std::vector<std:
               const auto& x_i = p_i.getX(), x_j = p_j.getX();
     double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
     double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
-    //make formula more readable, compiler will optimize away
 
+    //make formula more readable, compiler will optimize
     double r_c = cutoff;
     double r_c_squared = r_c * r_c;
 
     std::array<double, 3> delta_x = x_i - x_j + offset;
     double scalar_product = ArrayUtils::scalarProduct(delta_x,delta_x);
 
-    /*instantly return 0 if r_c <= norm */
+    /*instantly return 0 if r_c <= norm (sqrt not calculated !)*/
     if(r_c_squared <= scalar_product)
         return {0,0,0};
 
     double norm = std::sqrt(scalar_product);
-    //norm = std::max(min_distance, norm);
+
 
     /* r_l <= norm  < r_c */
     if(r_l < norm){
