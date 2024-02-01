@@ -20,7 +20,7 @@ TEST(test_iterators,cell_iterator_2D){
                                               {1,3,1},{2,3,1},{3,3,1}};
 
     int counter = 0;
-    for(auto iterator = begin_CI(); iterator != end_CI(); ++iterator) {
+    for(auto iterator = begin_CellIterator(); iterator != end_CellIterator(); ++iterator) {
         ++counter;
         auto found = std::find(cells.begin(), cells.end(), iterator.position());
         ASSERT_NE(found, cells.end());
@@ -49,7 +49,7 @@ TEST(test_iterators,cell_iterator_3D){
                                               {1,2,3},{2,2,3},{3,2,3},
                                               {1,3,3},{2,3,3},{3,3,3}};
     int counter = 0;
-    for(auto iterator = begin_CI(); iterator != end_CI(); ++iterator) {
+    for(auto iterator = begin_CellIterator(); iterator != end_CellIterator(); ++iterator) {
         ++counter;
         auto found = std::find(cells.begin(), cells.end(), iterator.position());
         ASSERT_NE(found, cells.end());
@@ -74,7 +74,7 @@ TEST(test_iterators,start_point_iterator_2D_1DM){
                                                {2,1,1},{2,2,1},{2,3,1},{2,4,1}};
 
     int counter = 0;
-    for(auto iterator = begin_SI(pattern); iterator != end_SI(); ++iterator) {
+    for(auto iterator = begin_StartIterator(pattern); iterator != end_StartIterator(); ++iterator) {
         ++counter;
         auto found = std::find(points.begin(), points.end(), *iterator);
         ASSERT_NE(found, points.end());
@@ -100,7 +100,7 @@ TEST(test_iterators,start_point_iterator_2D_2DM){
                                                {3,3,1},{4,3,1}};
 
     int counter = 0;
-    for(auto iterator = begin_SI(pattern); iterator != end_SI(); ++iterator) {
+    for(auto iterator = begin_StartIterator(pattern); iterator != end_StartIterator(); ++iterator) {
         ++counter;
         auto found = std::find(points.begin(), points.end(), *iterator);
         ASSERT_NE(found, points.end());
@@ -127,7 +127,7 @@ TEST(test_iterators,start_point_iterator_3D_1DM){
                                                {1,1,3},{1,2,3},{1,3,3}};
 
     int counter = 0;
-    for(auto iterator = begin_SI(pattern); iterator != end_SI(); ++iterator) {
+    for(auto iterator = begin_StartIterator(pattern); iterator != end_StartIterator(); ++iterator) {
         ++counter;
         auto found = std::find(points.begin(), points.end(), *iterator);
         ASSERT_NE(found, points.end());
@@ -156,7 +156,7 @@ TEST(test_iterators,start_point_iterator_3D_2DM){
                                                {1,3,3},{2,1,3},{3,1,3}};
 
     int counter = 0;
-    for(auto iterator = begin_SI(pattern); iterator != end_SI(); ++iterator) {
+    for(auto iterator = begin_StartIterator(pattern); iterator != end_StartIterator(); ++iterator) {
         ++counter;
         auto found = std::find(points.begin(), points.end(), *iterator);
         ASSERT_NE(found, points.end())<<"("<<(*iterator)[0]<<","<<(*iterator)[1]<<","<<(*iterator)[2]<<") not found";
@@ -188,7 +188,7 @@ TEST(test_iterators,start_point_iterator_3D_3DM){
                                                {2,3,2},{3,3,2}};
 
     int counter = 0;
-    for(auto iterator = begin_SI(pattern); iterator != end_SI(); ++iterator) {
+    for(auto iterator = begin_StartIterator(pattern); iterator != end_StartIterator(); ++iterator) {
         ++counter;
         auto found = std::find(points.begin(), points.end(), *iterator);
         ASSERT_NE(found, points.end())<<"("<<(*iterator)[0]<<","<<(*iterator)[1]<<","<<(*iterator)[2]<<") not found";
@@ -214,7 +214,7 @@ TEST(test_iterators,periodic_iterator_2D_1DM){
     std::vector<std::array<dim_t,3>> points = {{0,1,1},{0,2,1},{0,3,1},{0,4,1}};
 
     int counter = 0;
-    for(auto iterator = begin_SI(pattern); iterator != end_SI(); ++iterator) {
+    for(auto iterator = begin_StartIterator(pattern); iterator != end_StartIterator(); ++iterator) {
         ++counter;
         auto found = std::find(points.begin(), points.end(), iterator.outside());
         ASSERT_NE(found, points.end());
@@ -241,7 +241,7 @@ TEST(test_iterators,periodic_iterator_2D_2DM){
                                                {1,5,1},{2,5,1},{3,5,1}};
 
     int counter = 0;
-    for(auto iterator = begin_SI(pattern); iterator != end_SI(); ++iterator) {
+    for(auto iterator = begin_StartIterator(pattern); iterator != end_StartIterator(); ++iterator) {
         ++counter;
         auto found = std::find(points.begin(), points.end(), iterator.outside());
         ASSERT_NE(found, points.end());
@@ -270,7 +270,7 @@ TEST(test_iterators,periodic_iterator_3D_1DM){
                                                {0,1,4},{0,2,4},{0,3,4},{0,4,4}};
 
     int counter = 0;
-    for(auto iterator = begin_SI(pattern); iterator != end_SI(); ++iterator) {
+    for(auto iterator = begin_StartIterator(pattern); iterator != end_StartIterator(); ++iterator) {
         ++counter;
         auto found = std::find(points.begin(), points.end(), iterator.outside());
         ASSERT_NE(found, points.end());
@@ -302,7 +302,7 @@ TEST(test_iterators,periodic_iterator_3D_2DM){
                                                {0,2,4},{0,3,4},{0,4,4},{0,5,4}};
 
     int counter = 0;
-    for(auto iterator = begin_SI(pattern); iterator != end_SI(); ++iterator) {
+    for(auto iterator = begin_StartIterator(pattern); iterator != end_StartIterator(); ++iterator) {
         ++counter;
         auto found = std::find(points.begin(), points.end(), iterator.outside());
         ASSERT_NE(found, points.end());
@@ -337,7 +337,7 @@ TEST(test_iterators,periodic_iterator_3D_3DM){
                                                {1,4,5}};
 
     int counter = 0;
-    for(auto iterator = begin_SI(pattern); iterator != end_SI(); ++iterator) {
+    for(auto iterator = begin_StartIterator(pattern); iterator != end_StartIterator(); ++iterator) {
         ++counter;
         auto found = std::find(points.begin(), points.end(), iterator.outside());
         ASSERT_NE(found, points.end())<<"("<<iterator.outside()[0]<<","<<iterator.outside()[1]<<","<<iterator.outside()[2]<<") not found";

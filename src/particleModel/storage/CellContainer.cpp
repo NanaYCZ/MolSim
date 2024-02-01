@@ -184,26 +184,6 @@ bool CellContainer::setNext2dPattern(std::array<dim_t, 3> &pattern) {
     return true;
 }
 
-CellContainer::CustomIterator CellContainer::begin_custom(dim_t low_x, dim_t upp_x,
-                                                          dim_t low_y, dim_t upp_y,
-                                                          dim_t low_z, dim_t upp_z){
-    return CustomIterator(*this,low_x,upp_x,low_y,upp_y,low_z,upp_z);
-
-}
-
-CellContainer::CustomIterator CellContainer::end_custom(){
-    return CustomIterator(*this,-1,1,1,1,1,1);
-}
-
-CellContainer::Iterator CellContainer::begin(){
-    return  Iterator(*this);
-}
-
-CellContainer::Iterator CellContainer::end(){
-    //corresponds to last index
-    return Iterator(*this,-1,1,1);
-}
-
 void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg) {
     addParticle(x_arg, v_arg, m_arg, sigma_mixed[0][0], epsilon_mixed[0][0]);
 }
@@ -269,7 +249,6 @@ void CellContainer::createPointers(){
         allocateCellFromPosition(x_arg, pos);
         particles.at(pos[0]).at(pos[1]).at(pos[2]).push_back(&particle);
         particle_amount++;
-        //std::cout << "new pointer ------\n";
     }
 }
 
@@ -316,13 +295,7 @@ std::string CellContainer::to_string() {
 
 
 std::list<Particle> CellContainer::to_list(){
-    std::list<Particle> particles;
-    for(auto iter = begin(); iter != end(); ++iter){
-        for(Particle* particle_ptr : *iter){
-            particles.push_back(*particle_ptr);
-        }
-    }
-    return particles;
+    return {particle_instances.begin(),particle_instances.end()};
 }
 
 

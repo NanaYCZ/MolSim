@@ -21,6 +21,8 @@ public:
      * linked cell algorithm and the comparing depth is being determined based on the cell size and
      * cutoff radius.
      *
+     * precalculates patterns based on comparing depth, for CellCalculator to use
+     *
      * @param domain_width width of the domain
      * @param domain_height height of the domain
      * @param domain_depth depth of the domain, set smaller than cell size to create 2d structure
@@ -33,28 +35,6 @@ public:
     CellContainer(double domain_width, double domain_height, double domain_depth, double r_cutoff, double cell_size);
 
     virtual ~CellContainer();
-
-    class BoundaryIterator;
-
-    class Iterator;
-
-    class CustomIterator;
-
-
-    /**
-     * @returns Iterator that iterates over all cells of the container
-    */
-    Iterator begin();
-
-    Iterator end();
-
-
-    CustomIterator begin_custom(dim_t low_x, dim_t upp_x,
-                                dim_t low_y, dim_t upp_y,
-                                dim_t low_z, dim_t upp_z);
-
-    CustomIterator end_custom();
-
     /**
      * @brief creates a particle instance with the given parameters
      *
@@ -77,13 +57,10 @@ public:
      * 
      * In the actual cells no Particles, but particle pointer are stored, because the particles
      * need to be frequently moved to other cells and moving pointers is cheaper.
-     * 
     */
     void createPointers();
 
     void plotParticles(outputWriter::VTKWriter &writer);
-
-
 
     /**
      * @brief returns the string representation of the CellContainer
@@ -99,11 +76,9 @@ public:
 
     std::list<Particle> to_list();
 
-
     /**
      * Getter(we did not anotate each of those :3):
     */
-
     std::vector<Particle>& getInstances() {
         return particle_instances;
     }
@@ -162,17 +137,21 @@ private:
     friend class StartPointIterator;
 
     /**
-      * @brief helper method to set the next 3d pattern for "setNextPath(...)"
+      * @brief helper method to set the next 3d pattern in the pre-calculation
       *
-      * @param pattern to set the next pattern to
+      * reuse of legacy code
+      *
+      * @param pattern to store the next pattern iteration
       * @return bool indicating that last pattern is not reached
       */
     bool setNext3dPattern(std::array<dim_t, 3> &pattern);
 
     /**
-      * @brief helper method to set the next 2d pattern for "setNextPath(...)"
+      * @brief helper method to set the next 2d pattern in the pre-calculation
       *
-      * @param pattern to set the next pattern to
+      * reuse of legacy code
+      *
+      * @param pattern to store the next pattern iteration
       * @return bool indicating that last pattern is not reached
       */
     bool setNext2dPattern(std::array<dim_t, 3> &pattern);

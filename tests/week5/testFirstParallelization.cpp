@@ -51,7 +51,7 @@ TEST(test_first_parallel,compare_2D) {
         cellCalculator_serial.shiftF();
     }
 
-    std::list<Particle> result_serial = cellContainer_serial.getInstances();
+    std::vector<Particle> result_serial = cellContainer_serial.getInstances();
 
     //run parallel
     CellContainer cellContainer_parallel{30, 30, 0, 3.0, 3.0};
@@ -76,7 +76,7 @@ TEST(test_first_parallel,compare_2D) {
         cellCalculator_parallel.shiftF();
     }
 
-    std::list<Particle> result_parallel = cellContainer_parallel.getInstances();
+    std::vector<Particle> result_parallel = cellContainer_parallel.getInstances();
 
     //compare results
     for(Particle& p1 : result_serial) {
@@ -117,7 +117,7 @@ TEST(test_first_parallel,compare_3D){
         cellCalculator_serial.shiftF();
     }
 
-    std::list<Particle> result_serial = cellContainer_serial.getInstances();
+    std::vector<Particle> result_serial = cellContainer_serial.getInstances();
 
     //run parallel
     CellContainer cellContainer_parallel{30, 30, 30, 3.0, 3.0};
@@ -142,7 +142,7 @@ TEST(test_first_parallel,compare_3D){
         cellCalculator_parallel.shiftF();
     }
 
-    std::list<Particle> result_parallel = cellContainer_parallel.getInstances();
+    std::vector<Particle> result_parallel = cellContainer_parallel.getInstances();
 
     //compare results
     for(Particle& p1 : result_serial) {
