@@ -141,6 +141,10 @@ private:
       *
       * reuse of legacy code
       *
+      * iterates in total over 3 sets of directions, which together make up the
+      * half of all possible directions from a starting point, since we are applying
+      * newtons 3rd law and have to traverse in only one direction.
+      *
       * @param pattern to store the next pattern iteration
       * @return bool indicating that last pattern is not reached
       */
@@ -150,6 +154,18 @@ private:
       * @brief helper method to set the next 2d pattern in the pre-calculation
       *
       * reuse of legacy code
+      *
+      * iterates in total over 2 sets of directions, which together make up the
+      * half of all possible directions from a starting point, since we are applying
+      * newtons 3rd law and have to traverse in only one direction.
+      *
+      * example of the two sets:
+      *
+      *         - - - - -
+      *         - - - - -
+      *         - - x 1 1
+      *         2 2 2 2 2
+      *         2 2 2 2 2
       *
       * @param pattern to store the next pattern iteration
       * @return bool indicating that last pattern is not reached
