@@ -53,7 +53,7 @@ TEST(test_Thermo_Stat,test_basic){
     CellCalculator calculator(container,0.0014,3.0,1.9,
         {boundary_conditions::outflow,boundary_conditions::outflow,
         boundary_conditions::outflow,boundary_conditions::outflow,
-        boundary_conditions::outflow,boundary_conditions::outflow},"LJ");
+        boundary_conditions::outflow,boundary_conditions::outflow},force_type::LJ);
     ThermoStats thermoStats(container,0.0014,30.0);
 
     container.addParticle({1,1,0},{2,2,2},3);
@@ -91,7 +91,7 @@ TEST(test_Thermo_Stat,test_heating){
         {boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective
-        },"LJ");  
+        },force_type::LJ);
     ThermoStats thermoStats(container,0.0014,100.0,5.0);
 
 
@@ -147,7 +147,7 @@ TEST(test_Thermo_Stat,test_cooling){
         {boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective
-        },"LJ");  
+        },force_type::LJ);
 
     ThermoStats thermoStats(container,0.0014,20.0,1.0);
     //max_temp_diff is 5 and target_temp is 20
@@ -232,7 +232,7 @@ TEST(test_Thermo_Stat,test_initial_Temp){
         2.0,            //cell size
         0.0,            //gravity factor
         30.0,       //initial temp
-        "LJ",
+        force_type::LJ,
         std::nullopt,
         std::nullopt,
         std::nullopt,
@@ -240,6 +240,7 @@ TEST(test_Thermo_Stat,test_initial_Temp){
         std::nullopt,       //max temp diff
         std::nullopt,       //target temp
         50,          //thermostat write frequency
+        1000,
         {boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective,
         boundary_conditions::reflective,boundary_conditions::reflective

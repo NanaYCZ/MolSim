@@ -38,7 +38,7 @@ TEST(test_first_parallel,compare_2D) {
     cellContainer_serial.addParticle({3,29,0},{0,1,0},1);
     cellContainer_serial.createPointers();
 
-    CellCalculator cellCalculator_serial(cellContainer_serial,0.0005, 3.0, 1.9, bc,"LJ",0,concurrency_strategy::serial);
+    CellCalculator cellCalculator_serial(cellContainer_serial,0.0005, 3.0, 1.9, bc,force_type::LJ,0,concurrency_strategy::serial);
     ASSERT_EQ(cellCalculator_serial.parallelization, concurrency_strategy::serial);
 
     cellCalculator_serial.calculateF();
@@ -63,7 +63,7 @@ TEST(test_first_parallel,compare_2D) {
     cellContainer_parallel.addParticle({3,29,0},{0,1,0},1);
     cellContainer_parallel.createPointers();
 
-    CellCalculator cellCalculator_parallel(cellContainer_parallel,0.0005, 3.0, 1.9, bc,"LJ",0,concurrency_strategy::first_method);
+    CellCalculator cellCalculator_parallel(cellContainer_parallel,0.0005, 3.0, 1.9, bc, force_type::LJ,0,concurrency_strategy::first_method);
     ASSERT_EQ(cellCalculator_parallel.parallelization, concurrency_strategy::first_method);
 
     cellCalculator_parallel.calculateF();
@@ -104,7 +104,7 @@ TEST(test_first_parallel,compare_3D){
     cellContainer_serial.addParticle({3,29,0},{0,1,0},1);
     cellContainer_serial.createPointers();
 
-    CellCalculator cellCalculator_serial(cellContainer_serial,0.0005, 3.0, 1.9, bc,"LJ",0,concurrency_strategy::serial);
+    CellCalculator cellCalculator_serial(cellContainer_serial,0.0005, 3.0, 1.9, bc,force_type::LJ,0,concurrency_strategy::serial);
     ASSERT_EQ(cellCalculator_serial.parallelization, concurrency_strategy::serial);
 
     cellCalculator_serial.calculateF();
@@ -119,7 +119,7 @@ TEST(test_first_parallel,compare_3D){
 
     std::vector<Particle> result_serial = cellContainer_serial.getInstances();
 
-    //run parallel
+    //run parallellist
     CellContainer cellContainer_parallel{30, 30, 30, 3.0, 3.0};
     cellContainer_parallel.addParticle({1,1,0},{-1,0,0},1);
     cellContainer_parallel.addParticle({1,2,0},{-1,0,0},1);
@@ -129,7 +129,7 @@ TEST(test_first_parallel,compare_3D){
     cellContainer_parallel.addParticle({3,29,0},{0,1,0},1);
     cellContainer_parallel.createPointers();
 
-    CellCalculator cellCalculator_parallel(cellContainer_parallel,0.0005, 3.0, 1.9, bc,"LJ",0,concurrency_strategy::first_method);
+    CellCalculator cellCalculator_parallel(cellContainer_parallel,0.0005, 3.0, 1.9, bc,force_type::LJ,0,concurrency_strategy::first_method);
     ASSERT_EQ(cellCalculator_parallel.parallelization, concurrency_strategy::first_method);
 
     cellCalculator_parallel.calculateF();

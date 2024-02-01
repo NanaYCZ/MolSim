@@ -21,7 +21,7 @@ TEST(test_CellCalculation, test_periodic_corner){
     CellCalculator calculator(container_corner,0.001,2.0,1.9,
         {boundary_conditions::periodic,boundary_conditions::periodic,
         boundary_conditions::periodic,boundary_conditions::periodic,
-        boundary_conditions::periodic,boundary_conditions::periodic},"smoothedLJ");
+        boundary_conditions::periodic,boundary_conditions::periodic},force_type::smoothedLJ);
     ThermoStats thermoStats(container_corner,0.001);
 
 
@@ -80,7 +80,7 @@ TEST(test_DiffCoeff1, test_periodic_diff_Coeff_reappearing){
     CellCalculator calculator(container,0.05,2.0,1.9,
         {boundary_conditions::periodic,boundary_conditions::periodic,
         boundary_conditions::periodic,boundary_conditions::periodic,
-        boundary_conditions::periodic,boundary_conditions::periodic},"smoothedLJ");
+        boundary_conditions::periodic,boundary_conditions::periodic},force_type::smoothedLJ);
     ThermoStats thermoStats(container,0.05);
 
     std::cout << container.to_string();
@@ -133,7 +133,7 @@ TEST(test_DiffCoeff2, diff_Coeff_twice_crossed_boundary){
     CellCalculator calculator(container,0.6,2.0,1.9,
         {boundary_conditions::periodic,boundary_conditions::periodic,
         boundary_conditions::periodic,boundary_conditions::periodic,
-        boundary_conditions::periodic,boundary_conditions::periodic},"smoothedLJ");
+        boundary_conditions::periodic,boundary_conditions::periodic},force_type::smoothedLJ);
     ThermoStats thermoStats(container,0.06);
 
 
@@ -185,7 +185,7 @@ TEST(test_DiffCoeff3, diff_Coeff_very_big){
     CellCalculator calculator(container,0.6,2.0,1.9,
                               {boundary_conditions::periodic,boundary_conditions::periodic,
                                boundary_conditions::periodic,boundary_conditions::periodic,
-                               boundary_conditions::periodic,boundary_conditions::periodic},"smoothedLJ");
+                               boundary_conditions::periodic,boundary_conditions::periodic},force_type::smoothedLJ);
     ThermoStats thermoStats(container,0.06);
 
     auto old_positions = thermoStats.getParticlePositionsPreviousIteration();

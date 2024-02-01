@@ -34,9 +34,9 @@ TEST(test_Checkpointing,test_basic){
 
     container.createPointers();
 
-    std::list<Particle>& particles = container.getInstances();
+    std::vector<Particle>& particles = container.getInstances();
 
-    
+
 
     std::list<Particle> particles_list(particles.begin(),particles.end());
 
@@ -112,9 +112,9 @@ TEST(test_Checkpointing,test_advanced){
 
     container_for_reading.createPointers();
 
-    std::list<Particle>& particles_written = container.getInstances();
+    std::vector<Particle>& particles_written = container.getInstances();
 
-    std::list<Particle>& particles_read = container_for_reading.getInstances();
+    std::vector<Particle>& particles_read = container_for_reading.getInstances();
 
     std::cout << "Checking list sizes" << std::endl;
     ASSERT_TRUE(particles_read.size() == particles_written.size());
