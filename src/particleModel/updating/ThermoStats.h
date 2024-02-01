@@ -40,7 +40,6 @@ class ThermoStats{
          */
         double getPotentialEnergy();
 
-        double getPressure();
 
         /**
          * @brief calculates radial distribution function for the particles currently in CellContainer

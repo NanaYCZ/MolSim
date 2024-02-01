@@ -32,18 +32,6 @@ double ThermoStats::getPotentialEnergy(){
 
 
 
-double ThermoStats::getPressure(){
-  double sum = 0;
-  auto& instances = cellContainer.getInstances();
-
-  for(auto p1 = instances.begin(); p1 != instances.end(); p1++){
-      sum += (p1->getM() * ArrayUtils::scalarProduct(p1->getV(),p1->getV()) +
-                        ArrayUtils::scalarProduct(p1->getF(),p1->getX())  );
-  }
-
-  return sum;
-}
-
 void ThermoStats::initDiffusionCoefficient(){
   particle_positions_previous_iteration = {};
   std::vector<Particle>& particles = cellContainer.getInstances();

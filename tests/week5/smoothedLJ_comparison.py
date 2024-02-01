@@ -36,9 +36,13 @@ r_l = 1.5
 result1 = smoothed_LJ([1.0,1,1],[2.0,1.1,1.2])
 result2 = smoothed_LJ([5.7,4.5,1],[5.9,4.0,0.5])
 result3 = smoothed_LJ([0.0,0.1,0.01],[0.1,0.7,0.3])
+result4 = smoothed_LJ([0.34,0.231,0.13],[1.4,0.0,0.3])
+result5 = smoothed_LJ([20.3,34.1,45.14],[19.7,33.9,45.6])
 
 print("1: " + str(result1))
 print("2: " + str(result2))
 print("3: " + str(result3))
+print("4: " + str(result4))
+print("5: " + str(result5))
 
 
