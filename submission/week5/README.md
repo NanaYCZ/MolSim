@@ -250,9 +250,10 @@ https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/e59e897d-79dc-464f-b
 - Again it is possible to see a distinct structure forming in the simulation, but it is hard to recognize a certain structure. Again the particles are more condensed at the end.
 - The rdf seems to have a similar trend to the rdf of the normal cooling simulation, except that it is oscillating even more strongly. Compared to the rdf at time=10 and the rdf at time=30, which are really smooth functions, the rdf at time=50 and later shows a clear oscillation. Again this might be due to a regular repeating structure forming, altough it is difficult to find information on the structure of Argon in an amorphous glass state.
 - The diffusion coefficient and the temperature plot show an intersting behaviour. At a temperature of $\approx$ 0.6 and time $\approx$ 33 the cooling slows down and the slope of the temperature function is less steep then before. This roughly fits the freezing point of Argon, which is at 83.81 K and therefore at $\frac{83.81}{120} \approx 0.698$ (simulation temperature). Looking at the temperature graph, the phase transition from liquid to solid happens at time $\approx$ 31.
-- The potential energy again fits the point of the phase transition, we can read from the temperature plot
+- The potential energy again fits the point of the phase transition at $\approx$ 31 from the temperature plot. After this point, we can observe a sharp decline in potential Energy within the system, that  stops at time $\approx$ 50, which is when the system has reach its final temperature of 0.02  (simulation temperature).
 
-- just for fun we did some bigger simulations: 
+  
+- In the following we did the simulations from above but made everything a bit bigger, because why not now that we have a super fast parallelized program :)) 
 
 Cooling until Crystalization of Argon:
 
