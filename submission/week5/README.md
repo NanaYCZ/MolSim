@@ -165,7 +165,7 @@ left is the analysis for 1 thread, on the right for 32 threads. (unfortunately t
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d635bc7e-79c7-411e-b5e1-f45d91a559af" width="470">
 
 - The Threading analysis of VTune executed on the cluster with 32 threads once again showed, that also on the cluster only about 8 % are spend for synchronization, which is similar to the case of 16 threads fairly low.  
-- in conclusion, the program is likely memory bound for a high number of threads, as our profiling suggests, that we have little runtime loss due to synchonisation. Optimizing this memory access will be a hard task, as the physical behaviour can lead to almost random distribution of the particles pointers in the Cell datastructure. It would be interesting to see if a second parallelization strategy could somehow avoid the limitations due to memory access. 
+- In conclusion, the program is likely memory bound for a high number of threads, as our profiling suggests, that we have little runtime loss due to synchonisation. Optimizing this memory access will be a hard task, as the physical behaviour can lead to almost random distribution of the particles pointers in the Cell datastructure. It would be interesting to see if a second parallelization strategy could somehow avoid the limitations due to memory access. 
 
 ### Contest 2
 - the 2D simulation without output was performed in 2.05 seconds, with 1000 iterations and 10.000 particles we get 4.88 MMUPS
