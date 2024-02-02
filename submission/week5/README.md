@@ -79,7 +79,7 @@ via #ifdef #endif.
 until 56 threads
 - the amount of locks is minimized to only one, reducing contention, avoiding deadlocks and improving scalability
 #### The Cons
-- the amount of workloads per path varies, which could lead to imbalance among the threads
+- the amount of workloads per path varies, which could lead to imbalance among the threads. But for now we didn't see any significant problems with synchronization or vastly different workloads for the threads, as can be seen in the performance analysis. 
 
 #### further
 - some particle distributions can imbalance certain pattern iterations, because it would lead to their paths being very 
@@ -157,13 +157,14 @@ header file and removing all avoidable while loops, for better compiler optimisa
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/6cdbc59e-41be-4b1a-9131-c3a75958e11c" width="480">
 
 
-- as we can see now we get a significant speed-up, that corresponds to the number of threads until ca. 32 threads. 56 threads do not provide the expected speed-up of 56 similar to the 16 threads not providing a speed-up of 16 on our local machine.  
+- as we can see now we get a significant speed-up, that corresponds to the number of threads until ca. 32 threads. 56 threads do not provide the expected speed-up of 56 similar to the 16 threads not providing a speed-up of 16 on our local machine. 
 - as the Linux Cluster seems to be running Intel processors, further  analysis of the program is possible and more statistics are available. The executable was compiled with gcc and `-O3`. We used the rayleigh-taylor instability example in 3D (but with tEnd=0.1 only). The HPC analysis of Intel Vtune suggests, that there is an increases in Pipeline slots, that were blocked due to memory access, meaning the pipeline stalled and could not continue with the execution, as some instructions waited for memory accesses. On the
 left is the analysis for 1 thread, on the right for 32 threads. (unfortunately there is no data on how often the pipeline stalled due to DRAM accesses as Hyper Threading is enabled on the Linux Cluster)
 
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/402f60dc-4867-4df3-bd29-be1bec223483" width="480">
 <img src="https://github.com/Grazvy/PSEMolDyn_GroupB/assets/101070208/d635bc7e-79c7-411e-b5e1-f45d91a559af" width="470">
 
+- The Threading analysis of VTune executed on the cluster with 32 threads once again showed, that also on the cluster only about 8 % are spend for synchronization, which is similar to the case of 16 threads fairly low.  
 - in conclusion, the program is likely memory bound for a high number of threads, as our profiling suggests, that we have little runtime loss due to synchonisation. Optimizing this memory access will be a hard task, as the physical behaviour can lead to almost random distribution of the particles pointers in the Cell datastructure. It would be interesting to see if a second parallelization strategy could somehow avoid the limitations due to memory access. 
 
 ### Contest 2
