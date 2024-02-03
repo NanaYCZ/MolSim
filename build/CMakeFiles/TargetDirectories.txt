@@ -1,9 +1,0 @@
-/home/nana/GroupB/build/CMakeFiles/MolSim.dir
-/home/nana/GroupB/build/CMakeFiles/doc_doxygen.dir
-/home/nana/GroupB/build/CMakeFiles/test.dir
-/home/nana/GroupB/build/CMakeFiles/edit_cache.dir
-/home/nana/GroupB/build/CMakeFiles/rebuild_cache.dir
-/home/nana/GroupB/build/libs/spdlog/CMakeFiles/spdlog.dir
-/home/nana/GroupB/build/libs/spdlog/CMakeFiles/test.dir
-/home/nana/GroupB/build/libs/spdlog/CMakeFiles/edit_cache.dir
-/home/nana/GroupB/build/libs/spdlog/CMakeFiles/rebuild_cache.dir
