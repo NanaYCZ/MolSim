@@ -41,7 +41,7 @@
         <position>
             <x>15</x>
             <y>15</y>
-            <z>1.5</z>
+            <z>140</z>
         </position>
         <velocity>
             <x>0</x>
@@ -60,6 +60,21 @@
         <sigma>1.0</sigma>
         <epsilon>1.0</epsilon>
     </membranes>
+
+    <!-- SpecialForces -->
+    <SpecialForces>
+        <tS>150</tS>
+        <f>
+            <x>0</x>
+            <y>0</y>
+            <z>0.8</z>
+        </f>
+        <position>
+            <x>17</x>
+            <y>24</y>
+            <z>0</z>
+        </position>
+    </SpecialForces>
 
 
 </parameters>

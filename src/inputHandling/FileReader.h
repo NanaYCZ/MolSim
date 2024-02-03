@@ -17,6 +17,8 @@ class FileReader {
 
   struct MembraneData;
 
+  struct SpecialForcesData;
+
   struct ProgramArgs;
 
 

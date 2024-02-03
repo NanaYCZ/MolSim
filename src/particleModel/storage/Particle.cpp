@@ -77,6 +77,8 @@ double Particle::getRZ() const { return RZ; }
 
 double Particle::getFP() const { return FP; }
 
+std::array<double, 3> Particle::getSpecial() const {return special;}
+
 void Particle::setX(int index, double value) { x[index] = value; }
 
 void Particle::setX(std::array<double,3> new_x) {x = new_x;};
@@ -90,6 +92,9 @@ void Particle::setGrid(std::array<int,3> index){grid = index;};
 void Particle::setRZ(double value) { RZ = value; }
 
 void Particle::setFP(double value) { FP = value; }
+
+void Particle::setSpecial(std::array<double, 3> value) { special = value; }
+
 
 void Particle::addX(int index, double value){
   x[index] += value;
@@ -112,6 +117,7 @@ void Particle::addF(int index, double value) {
 void Particle::addF(std::array<double,3> add_f){
   if (secondIsOld) {
     f_1 = f_1 + add_f;
+    f_1=f_1;
   } else {
     f_2 = f_2 + add_f;
   }

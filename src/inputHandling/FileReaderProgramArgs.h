@@ -184,6 +184,43 @@ struct FileReader::MembraneData {
 
 
 /**
+* @struct SpecialForcesData
+*
+* contains relevant information for SpecialForces
+*
+*/
+struct FileReader::SpecialForcesData {
+    /// initial velocity and position vectors
+    std::array<double, 3> position, f;
+
+    double tS;
+
+    std::string to_string() const {
+        std::stringstream ss;
+
+        ss << "SpecialForcesData:" << std::endl;
+        ss << "  tS: " << tS << std::endl;
+        ss << "  f: (" << f[0] << ", " << f[1] << ", " << f[2] << ")"
+           << std::endl;
+        ss << "  position: (" << position[0] << ", " << position[1] << ", " << position[2] << ")"
+           << std::endl;
+        return ss.str();
+    }
+
+    /**
+     * @brief Compare two MembraneData structs. Used for Testing
+     *
+     * @return True if this MembraneData struct has the same content as other
+     */
+    bool operator==(const SpecialForcesData &other) const {
+        return (position == other.position && f == other.f && tS == other.tS);
+    }
+};
+
+
+
+
+/**
  * @struct ProgramArgs
  * @brief contains all arguments relevant for starting the program
  *
@@ -223,6 +260,7 @@ struct FileReader::ProgramArgs {
     std::list<CuboidData> cuboids;
     std::list<SphereData> spheres;
     std::list<MembraneData> membranes;
+    std::list<SpecialForcesData> specialForces;
 
 
     std::string to_string() const{
@@ -306,6 +344,12 @@ struct FileReader::ProgramArgs {
         oss << "Membranes: [" << std::endl;
         for (const auto& membrane : membranes) {
             oss << "  " << membrane.to_string() << std::endl;
+        }
+        oss << "]" << std::endl;
+
+        oss << "SpecialForces: [" << std::endl;
+        for (const auto& specialForce : specialForces) {
+            oss << "  " << specialForce.to_string() << std::endl;
         }
         oss << "]" << std::endl;
 

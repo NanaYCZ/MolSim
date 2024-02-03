@@ -1507,6 +1507,71 @@ epsilon (const epsilon_type& x)
   this->epsilon_.set (x);
 }
 
+const SpecialForcesType::tSEnd_type& SpecialForcesType::
+tSEnd () const
+{
+    return this->tSEnd_.get ();
+}
+
+SpecialForcesType::tSEnd_type& SpecialForcesType::
+tSEnd ()
+{
+    return this->tSEnd_.get ();
+}
+
+void SpecialForcesType::
+tSEnd (const tSEnd_type& x)
+{
+    this->tSEnd_.set (x);
+}
+
+const SpecialForcesType::Strength_type& SpecialForcesType::
+Strength () const
+{
+    return this->Strength_.get ();
+}
+
+SpecialForcesType::Strength_type& SpecialForcesType::
+Strength ()
+{
+    return this->Strength_.get ();
+}
+
+void SpecialForcesType::
+Strength (const Strength_type& x)
+{
+    this->Strength_.set (x);
+}
+
+void SpecialForcesType::
+Strength (::std::unique_ptr<  Strength_type > x)
+{
+    this->Strength_.set (std::move (x));
+}
+
+const SpecialForcesType::PositionIndex_type& SpecialForcesType::
+PositionIndex () const
+{
+    return this->PositionIndex_.get ();
+}
+
+SpecialForcesType::PositionIndex_type& SpecialForcesType::
+PositionIndex ()
+{
+    return this->PositionIndex_.get ();
+}
+
+void SpecialForcesType::
+PositionIndex (const PositionIndex_type& x)
+{
+    this->PositionIndex_.set (x);
+}
+
+void SpecialForcesType::
+PositionIndex (::std::unique_ptr< PositionIndex_type > x)
+{
+    this->PositionIndex_.set (std::move (x));
+}
 
 // parameters
 //
@@ -1613,7 +1678,23 @@ spheres (const spheres_sequence& s)
   this->spheres_ = s;
 }
 
+const parameters::SpecialForces_sequence& parameters::
+SpecialForces () const
+{
+    return this->SpecialForces_;
+}
 
+parameters::SpecialForces_sequence& parameters::
+SpecialForces ()
+{
+    return this->SpecialForces_;
+}
+
+void parameters::
+SpecialForces (const SpecialForces_sequence& s)
+{
+    this->SpecialForces_ = s;
+}
 // gravitational
 // 
 
@@ -3914,6 +3995,153 @@ sphereType::
 {
 }
 
+
+
+
+
+/////
+SpecialForcesType::
+SpecialForcesType (const tSEnd_type& tSEnd,
+            const Strength_type& Strength,
+            const PositionIndex_type& PositionIndex)
+        : ::xml_schema::type (),
+          tSEnd_ (tSEnd, this),
+          Strength_ (Strength, this),
+          PositionIndex_ (this)
+{
+}
+
+SpecialForcesType::
+SpecialForcesType (const tSEnd_type& tSEnd, ::std::unique_ptr< Strength_type > Strength,
+            ::std::unique_ptr< PositionIndex_type > PositionIndex)
+        : ::xml_schema::type (),
+          tSEnd_ (tSEnd, this),
+          Strength_ (std::move (Strength), this),
+          PositionIndex_ (std::move (PositionIndex), this)
+{
+}
+
+SpecialForcesType::
+SpecialForcesType (const SpecialForcesType& x,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+        : ::xml_schema::type (x, f, c),
+          tSEnd_ (x.tSEnd_, f, this),
+          Strength_ (x.Strength_, f, this),
+          PositionIndex_ (x.PositionIndex_, f, this)
+{
+}
+
+SpecialForcesType::
+SpecialForcesType (const ::xercesc::DOMElement& e,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+        : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+          tSEnd_ (this),
+          Strength_ (this),
+          PositionIndex_ (this)
+{
+    if ((f & ::xml_schema::flags::base) == 0)
+    {
+        ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+        this->parse (p, f);
+    }
+}
+
+void SpecialForcesType::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+    for (; p.more_content (); p.next_content (false)) {
+        const ::xercesc::DOMElement &i(p.cur_element());
+        const ::xsd::cxx::xml::qualified_name<char> n(
+                ::xsd::cxx::xml::dom::name<char>(i));
+
+        // center_position
+        //
+        if (n.name() == "f" && n.namespace_().empty()) {
+            ::std::unique_ptr<Strength_type> r(
+                    Strength_traits::create(i, f, this));
+
+            if (!Strength_.present()) {
+                this->Strength_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        // velocity
+        //
+        if (n.name() == "position" && n.namespace_().empty()) {
+            ::std::unique_ptr<PositionIndex_type> r(
+                    PositionIndex_traits::create(i, f, this));
+
+            if (!PositionIndex_.present()) {
+                this->PositionIndex_.set(::std::move(r));
+                continue;
+            }
+        }
+
+        // meanVelocity
+        //
+        if (n.name() == "tS" && n.namespace_().empty()) {
+            if (!tSEnd_.present()) {
+                this->tSEnd_.set(tSEnd_traits::create(i, f, this));
+                continue;
+            }
+        }
+
+
+        if (!PositionIndex_.present()) {
+            throw ::xsd::cxx::tree::expected_element<char>(
+                    "position",
+                    "");
+        }
+
+        if (!Strength_.present()) {
+            throw ::xsd::cxx::tree::expected_element<char>(
+                    "f",
+                    "");
+        }
+
+        if (!tSEnd_.present()) {
+            throw ::xsd::cxx::tree::expected_element<char>(
+                    "tS",
+                    "");
+        }
+
+    }
+}
+
+SpecialForcesType* SpecialForcesType::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+    return new class SpecialForcesType (*this, f, c);
+}
+
+SpecialForcesType& SpecialForcesType::
+operator= (const SpecialForcesType& x)
+{
+    if (this != &x)
+    {
+        static_cast< ::xml_schema::type& > (*this) = x;
+        this->tSEnd_ = x.tSEnd_;
+        this->Strength_ = x.Strength_;
+        this->PositionIndex_ = x.PositionIndex_;
+    }
+
+    return *this;
+}
+
+SpecialForcesType::
+~SpecialForcesType ()
+{
+}
+
+
+
+
+
 // parameters
 //
 
@@ -3924,7 +4152,9 @@ parameters (const outputParameters_type& outputParameters,
   outputParameters_ (outputParameters, this),
   simulationParameters_ (simulationParameters, this),
   cuboids_ (this),
-  spheres_ (this)
+  spheres_ (this),
+  membranes_(this),
+  SpecialForces_(this)
 {
 }
 
@@ -3935,7 +4165,9 @@ parameters (::std::unique_ptr< outputParameters_type > outputParameters,
   outputParameters_ (std::move (outputParameters), this),
   simulationParameters_ (std::move (simulationParameters), this),
   cuboids_ (this),
-  spheres_ (this)
+  spheres_ (this),
+    membranes_(this),
+            SpecialForces_(this)
 {
 }
 
@@ -3947,7 +4179,9 @@ parameters (const parameters& x,
   outputParameters_ (x.outputParameters_, f, this),
   simulationParameters_ (x.simulationParameters_, f, this),
   cuboids_ (x.cuboids_, f, this),
-  spheres_ (x.spheres_, f, this)
+  spheres_ (x.spheres_, f, this),
+    membranes_(this),
+            SpecialForces_(this)
 {
 }
 
@@ -3959,7 +4193,9 @@ parameters (const ::xercesc::DOMElement& e,
   outputParameters_ (this),
   simulationParameters_ (this),
   cuboids_ (this),
-  spheres_ (this)
+  spheres_ (this),
+            membranes_(this),
+            SpecialForces_(this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -4039,6 +4275,15 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       continue;
     }
 
+      if (n.name () == "SpecialForces" && n.namespace_ ().empty ())
+      {
+          ::std::unique_ptr< SpecialForces_type > r (
+                  SpecialForces_traits::create (i, f, this));
+
+          this->SpecialForces_.push_back (::std::move (r));
+          continue;
+      }
+
     break;
   }
 
@@ -4075,6 +4320,7 @@ operator= (const parameters& x)
     this->cuboids_ = x.cuboids_;
     this->membranes_ = x.membranes_;
     this->spheres_ = x.spheres_;
+      this->SpecialForces_ = x.SpecialForces_;
   }
 
   return *this;

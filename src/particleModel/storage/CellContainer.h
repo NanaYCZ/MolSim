@@ -48,11 +48,11 @@ public:
      */
     void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg);
 
-    void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<int,3> grid_index, double rz, double fP, double m_arg);
+    void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<int,3> grid_index, double rz, double fP, double m_arg, std::array<double,3> specialF);
 
     void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, double sigma, double epsilon);
 
-    void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, std::array<int,3> grid_index,  double rz, double fP,double sigma, double epsilon);
+    void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, std::array<int,3> grid_index,  double rz, double fP,double sigma, double epsilon, std::array<double,3> specialF);
 
     void addParticle(const Particle& particle,double sigma, double epsilon);
 
@@ -122,12 +122,6 @@ public:
         }
     }
 
-
-    int special_time = 150;
-    std::array<int,3> special_grid0={17,24,1};
-    std::array<int,3> special_grid1={18,24,1};
-    std::array<int,3> special_grid2={17,25,1};
-    std::array<int,3> special_grid3={18,25,0};
 
 private:
     bool three_dimensions;

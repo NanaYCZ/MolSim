@@ -123,7 +123,7 @@ int main(int argc, char *argsv[])
 
     addCuboids(cellContainer,args.cuboids);
     addSpheres(cellContainer,args.spheres,2);
-    addMembranes(cellContainer,args.membranes);
+    addMembranes(cellContainer,args.specialForces,args.membranes);
 
     if(args.checkpoint_input_file.has_value()){
         Checkpointer::addCheckpointparticles(cellContainer,args.checkpoint_input_file.value());

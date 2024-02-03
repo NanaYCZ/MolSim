@@ -69,6 +69,7 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
     auto cuboids = params->cuboids();
     auto membranes = params->membranes();
     auto spheres = params->spheres();
+    auto specialForces = params->SpecialForces();
     auto rdf_params = sim_params.Rdf();
     auto boundary_conditions_xml = sim_params.boundaryConditions();
 
@@ -199,6 +200,15 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
         membraneData.epsilon = membrane.epsilon();
 
         args.membranes.push_back(membraneData);
+    }
+
+    for(size_t i = 0; i < specialForces.size() ; i++){
+        SpecialForcesData specialForcesData;
+        auto specialForce = specialForces[i];
+        specialForcesData.tS = specialForce.tSEnd();
+        specialForcesData.f = {specialForce.Strength().x(), specialForce.Strength().y(), specialForce.Strength().z()};
+        specialForcesData.position = {specialForce.PositionIndex().x(), specialForce.PositionIndex().y(), specialForce.PositionIndex().z()};
+        args.specialForces.push_back(specialForcesData);
     }
 
 

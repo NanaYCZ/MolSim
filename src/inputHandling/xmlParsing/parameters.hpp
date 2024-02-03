@@ -574,6 +574,7 @@ class boundaryConditionsType;
 class cuboidType;
 class membraneType;
 class sphereType;
+class SpecialForcesType;
 class parameters;
 class gravitational;
 class Membrane;
@@ -4925,6 +4926,7 @@ class sphereType: public ::xml_schema::type
 
   //@}
 
+
   /**
    * @name velocity
    *
@@ -5316,6 +5318,9 @@ class sphereType: public ::xml_schema::type
               const sigma_type&,
               const epsilon_type&);
 
+
+
+
   /**
    * @brief Create an instance from a DOM element.
    *
@@ -5375,28 +5380,292 @@ class sphereType: public ::xml_schema::type
   virtual
   ~sphereType ();
 
+
+protected:
+    void
+    parse (::xsd::cxx::xml::dom::parser< char >&,
+           ::xml_schema::flags);
+
+protected:
+    ::xsd::cxx::tree::one< center_position_type > center_position_;
+    ::xsd::cxx::tree::one< velocity_type > velocity_;
+    meanVelocity_optional meanVelocity_;
+    ::xsd::cxx::tree::one< mass_type > mass_;
+    ::xsd::cxx::tree::one< radius_type > radius_;
+    ::xsd::cxx::tree::one< meshWidth_type > meshWidth_;
+    ::xsd::cxx::tree::one< sigma_type > sigma_;
+    ::xsd::cxx::tree::one< epsilon_type > epsilon_;
+
+    //@endcond
+};
   // Implementation.
   //
 
   //@cond
+/**
+ * @brief Class corresponding to the %membraneType schema type.
+ *
+ * @nosubgrouping
+ */
+    class SpecialForcesType: public ::xml_schema::type
+    {
+    public:
+        /**
+     * @name averageBondLength
+     *
+     * @brief Accessor and modifier functions for the %mass
+     * required element.
+     */
 
-  protected:
-  void
-  parse (::xsd::cxx::xml::dom::parser< char >&,
-         ::xml_schema::flags);
+/**
+     * @brief Element type.
+     */
+        typedef ::xml_schema::double_ tSEnd_type;
 
-  protected:
-  ::xsd::cxx::tree::one< center_position_type > center_position_;
-  ::xsd::cxx::tree::one< velocity_type > velocity_;
-  meanVelocity_optional meanVelocity_;
-  ::xsd::cxx::tree::one< mass_type > mass_;
-  ::xsd::cxx::tree::one< radius_type > radius_;
-  ::xsd::cxx::tree::one< meshWidth_type > meshWidth_;
-  ::xsd::cxx::tree::one< sigma_type > sigma_;
-  ::xsd::cxx::tree::one< epsilon_type > epsilon_;
 
-  //@endcond
+        /**
+         * @brief Element traits type.
+         */
+        typedef ::xsd::cxx::tree::traits< tSEnd_type, char, ::xsd::cxx::tree::schema_type::double_ > tSEnd_traits;
+
+        /**
+         * @brief Return a read-only (constant) reference to the element.
+         *
+         * @return A constant reference to the element.
+         */
+        const tSEnd_type&
+        tSEnd () const;
+
+        /**
+         * @brief Return a read-write reference to the element.
+         *
+         * @return A reference to the element.
+         */
+        tSEnd_type&
+        tSEnd ();
+
+        /**
+         * @brief Set the element value.
+         *
+         * @param x A new value to set.
+         *
+         * This function makes a copy of its argument and sets it as
+         * the new value of the element.
+         */
+        void
+        tSEnd (const tSEnd_type& x);
+
+        //@}
+        /**
+     * @name forceParameter
+     *
+     * @brief Accessor and modifier functions for the %forceParameter
+     * required element.
+     */
+
+
+        /**
+         * @brief Element type.
+         */
+        typedef ::vector3DType Strength_type;
+
+        /**
+         * @brief Element traits type.
+         */
+        typedef ::xsd::cxx::tree::traits< Strength_type, char > Strength_traits;
+
+        /**
+         * @brief Return a read-only (constant) reference to the element.
+         *
+         * @return A constant reference to the element.
+         */
+        const Strength_type&
+        Strength () const;
+
+        /**
+         * @brief Return a read-write reference to the element.
+         *
+         * @return A reference to the element.
+         */
+        Strength_type&
+        Strength ();
+
+        /**
+         * @brief Set the element value.
+         *
+         * @param x A new value to set.
+         *
+         * This function makes a copy of its argument and sets it as
+         * the new value of the element.
+         */
+        void
+        Strength (const Strength_type& x);
+
+        /**
+         * @brief Set the element value without copying.
+         *
+         * @param p A new value to use.
+         *
+         * This function will try to use the passed value directly
+         * instead of making a copy.
+         */
+        void
+        Strength (::std::unique_ptr< Strength_type > p);
+
+
+
+        //@}
+        /**
+         * @name position
+        /**
+         * @brief Element type.
+         */
+        typedef ::vector3DType PositionIndex_type;
+
+        /**
+         * @brief Element traits type.
+         */
+        typedef ::xsd::cxx::tree::traits< PositionIndex_type, char > PositionIndex_traits;
+
+        /**
+         * @brief Return a read-only (constant) reference to the element.
+         *
+         * @return A constant reference to the element.
+         */
+        const PositionIndex_type&
+        PositionIndex () const;
+
+        /**
+         * @brief Return a read-write reference to the element.
+         *
+         * @return A reference to the element.
+         */
+        PositionIndex_type&
+        PositionIndex ();
+
+        /**
+         * @brief Set the element value.
+         *
+         * @param x A new value to set.
+         *
+         * This function makes a copy of its argument and sets it as
+         * the new value of the element.
+         */
+        void
+        PositionIndex (const PositionIndex_type& x);
+
+        /**
+         * @brief Set the element value without copying.
+         *
+         * @param p A new value to use.
+         *
+         * This function will try to use the passed value directly
+         * instead of making a copy.
+         */
+        void
+        PositionIndex (::std::unique_ptr< PositionIndex_type > p);
+
+        //@}
+
+
+    /**
+       * @brief Create an instance from the ultimate base and
+       * initializers for required elements and attributes.
+       */
+    SpecialForcesType (
+            const tSEnd_type&,
+            const Strength_type&,
+            const PositionIndex_type&);
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes
+     * (::std::unique_ptr version).
+     *
+     * This constructor will try to use the passed values directly
+     * instead of making copies.
+     */
+    SpecialForcesType (const tSEnd_type&, ::std::unique_ptr< PositionIndex_type >, ::std::unique_ptr< Strength_type >);
+
+    /**
+     * @brief Create an instance from a DOM element.
+     *
+     * @param e A DOM element to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    SpecialForcesType (const ::xercesc::DOMElement& e,
+                       ::xml_schema::flags f = 0,
+                       ::xml_schema::container* c = 0);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param x An instance to make a copy of.
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    SpecialForcesType (const SpecialForcesType& x,
+                       ::xml_schema::flags f = 0,
+                       ::xml_schema::container* c = 0);
+
+    /**
+     * @brief Copy the instance polymorphically.
+     *
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     * @return A pointer to the dynamically allocated copy.
+     *
+     * This function ensures that the dynamic type of the instance is
+     * used for copying and should be used for polymorphic object
+     * models instead of the copy constructor.
+     */
+    virtual SpecialForcesType*
+    _clone (::xml_schema::flags f = 0,
+            ::xml_schema::container* c = 0) const;
+
+    /**
+     * @brief Copy assignment operator.
+     *
+     * @param x An instance to make a copy of.
+     * @return A reference to itself.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    SpecialForcesType&
+    operator= (const SpecialForcesType& x);
+
+    //@}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual
+    ~SpecialForcesType();
+
+    // Implementation.
+    //
+
+    //@cond
+
+protected:
+    void
+    parse (::xsd::cxx::xml::dom::parser< char >&,
+           ::xml_schema::flags);
+
+protected:
+
+    ::xsd::cxx::tree::one< PositionIndex_type > PositionIndex_;
+    ::xsd::cxx::tree::one< Strength_type > Strength_;
+    ::xsd::cxx::tree::one< tSEnd_type > tSEnd_;
+
+    //@endcond
 };
+
+
 
 /**
  * @brief Class corresponding to the %parameters schema type.
@@ -5721,6 +5990,72 @@ class parameters: public ::xml_schema::type
    */
   //@{
 
+
+    /**
+     * @name cuboids
+     *
+     * @brief Accessor and modifier functions for the %cuboids
+     * sequence element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::SpecialForcesType SpecialForces_type;
+
+    /**
+     * @brief Element sequence container type.
+     */
+    typedef ::xsd::cxx::tree::sequence< SpecialForces_type > SpecialForces_sequence;
+
+    /**
+     * @brief Element iterator type.
+     */
+    typedef SpecialForces_sequence::iterator SpecialForces_iterator;
+
+    /**
+     * @brief Element constant iterator type.
+     */
+    typedef SpecialForces_sequence::const_iterator SpecialForces_const_iterator;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< SpecialForces_type, char > SpecialForces_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * sequence.
+     *
+     * @return A constant reference to the sequence container.
+     */
+    const SpecialForces_sequence&
+    SpecialForces () const;
+
+    /**
+     * @brief Return a read-write reference to the element sequence.
+     *
+     * @return A reference to the sequence container.
+     */
+    SpecialForces_sequence&
+    SpecialForces ();
+
+    /**
+     * @brief Copy elements from a given sequence.
+     *
+     * @param s A sequence to copy elements from.
+     *
+     * For each element in @a s this function makes a copy and adds it
+     * to the sequence. Note that this operation completely changes the
+     * sequence and all old elements will be lost.
+     */
+    void
+    SpecialForces (const SpecialForces_sequence& s);
+
+    //@}
+
+
   /**
    * @brief Create an instance from the ultimate base and
    * initializers for required elements and attributes.
@@ -5814,6 +6149,7 @@ class parameters: public ::xml_schema::type
   cuboids_sequence cuboids_;
   membranes_sequence membranes_;
   spheres_sequence spheres_;
+  SpecialForces_sequence SpecialForces_;
 
   //@endcond
 };

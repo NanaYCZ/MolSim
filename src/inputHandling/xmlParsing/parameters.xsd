@@ -199,4 +199,12 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="SpecialForcesType">
+    <xs:sequence>
+      <xs:element name="tS" type="xs:double" />
+      <xs:element name="velocityStrength" type="vector3DType" />
+      <xs:element name="position" type="vector3DType" />
+    </xs:sequence>
+  </xs:complexType>
+
 </xs:schema>

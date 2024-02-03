@@ -44,9 +44,11 @@ private:
     int type;
 
 
-   double RZ;
+    double RZ;
 
     double FP;
+
+    std::array<double, 3> special={0,0,0};
 
     /**
     * Force (which was) effective on this particle
@@ -146,8 +148,11 @@ public:
 
     void setFP(double value);
 
+    void setSpecial(std::array<double, 3> value);
+
     double getFP() const;
 
+    std::array<double, 3> getSpecial() const;
 
     void setX(int index, double value);
 
