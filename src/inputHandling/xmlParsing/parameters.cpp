@@ -433,7 +433,7 @@ domainDimensions (::std::unique_ptr< domainDimensions_type > x)
 
 
 // forceTypeType
-// 
+//
 
 const forceTypeType::gravitational_optional& forceTypeType::
 gravitational () const
@@ -463,6 +463,36 @@ void forceTypeType::
 gravitational (::std::unique_ptr< gravitational_type > x)
 {
   this->gravitational_.set (std::move (x));
+}
+
+const forceTypeType::Membrane_optional& forceTypeType::
+Membrane () const
+{
+    return this->Membrane_;
+}
+
+forceTypeType::Membrane_optional& forceTypeType::
+Membrane ()
+{
+    return this->Membrane_;
+}
+
+void forceTypeType::
+Membrane (const Membrane_type& x)
+{
+    this->Membrane_.set (x);
+}
+
+void forceTypeType::
+Membrane (const Membrane_optional& x)
+{
+    this->Membrane_ = x;
+}
+
+void forceTypeType::
+Membrane (::std::unique_ptr< Membrane_type > x)
+{
+    this->Membrane_.set (std::move (x));
 }
 
 const forceTypeType::LJ_optional& forceTypeType::
@@ -527,7 +557,7 @@ smoothedLJ (::std::unique_ptr< smoothedLJ_type > x)
 
 
 // parallelizationSettingsType
-// 
+//
 
 const parallelizationSettingsType::serial_optional& parallelizationSettingsType::
 serial () const
@@ -621,7 +651,7 @@ second_method (::std::unique_ptr< second_method_type > x)
 
 
 // rdfType
-// 
+//
 
 const rdfType::rdfIntervalSize_type& rdfType::
 rdfIntervalSize () const
@@ -661,7 +691,7 @@ rdfStatFrequency (const rdfStatFrequency_type& x)
 
 
 // thermoStatsType
-// 
+//
 
 const thermoStatsType::initTemp_type& thermoStatsType::
 initTemp () const
@@ -749,7 +779,7 @@ maxTempDiff (const maxTempDiff_optional& x)
 
 
 // vector3DType
-// 
+//
 
 const vector3DType::x_type& vector3DType::
 x () const
@@ -807,7 +837,7 @@ z (const z_type& x)
 
 
 // boundaryConditionsType
-// 
+//
 
 const boundaryConditionsType::boundaryConditionsPositiveZ_type& boundaryConditionsType::
 boundaryConditionsPositiveZ () const
@@ -955,7 +985,7 @@ boundaryConditionsNegativeY (::std::unique_ptr< boundaryConditionsNegativeY_type
 
 
 // cuboidType
-// 
+//
 
 const cuboidType::position_type& cuboidType::
 position () const
@@ -1125,9 +1155,195 @@ epsilon (const epsilon_type& x)
   this->epsilon_.set (x);
 }
 
+// membraneType
+//
+
+const membraneType::position_type& membraneType::
+position () const
+{
+    return this->position_.get ();
+}
+
+membraneType::position_type& membraneType::
+position ()
+{
+    return this->position_.get ();
+}
+
+void membraneType::
+position (const position_type& x)
+{
+    this->position_.set (x);
+}
+
+void membraneType::
+position (::std::unique_ptr< position_type > x)
+{
+    this->position_.set (std::move (x));
+}
+
+const membraneType::velocity_type& membraneType::
+velocity () const
+{
+    return this->velocity_.get ();
+}
+
+membraneType::velocity_type& membraneType::
+velocity ()
+{
+    return this->velocity_.get ();
+}
+
+void membraneType::
+velocity (const velocity_type& x)
+{
+    this->velocity_.set (x);
+}
+
+void membraneType::
+velocity (::std::unique_ptr< velocity_type > x)
+{
+    this->velocity_.set (std::move (x));
+}
+
+const membraneType::dimensions_type& membraneType::
+dimensions () const
+{
+    return this->dimensions_.get ();
+}
+
+membraneType::dimensions_type& membraneType::
+dimensions ()
+{
+    return this->dimensions_.get ();
+}
+
+void membraneType::
+dimensions (const dimensions_type& x)
+{
+    this->dimensions_.set (x);
+}
+
+void membraneType::
+dimensions (::std::unique_ptr< dimensions_type > x)
+{
+    this->dimensions_.set (std::move (x));
+}
+
+
+
+const membraneType::mass_type& membraneType::
+mass () const
+{
+    return this->mass_.get ();
+}
+
+membraneType::mass_type& membraneType::
+mass ()
+{
+    return this->mass_.get ();
+}
+
+void membraneType::
+mass (const mass_type& x)
+{
+    this->mass_.set (x);
+}
+
+const membraneType::meshWidth_type& membraneType::
+meshWidth () const
+{
+    return this->meshWidth_.get ();
+}
+
+membraneType::meshWidth_type& membraneType::
+meshWidth ()
+{
+    return this->meshWidth_.get ();
+}
+
+void membraneType::
+meshWidth (const meshWidth_type& x)
+{
+    this->meshWidth_.set (x);
+}
+
+const membraneType::sigma_type& membraneType::
+sigma () const
+{
+    return this->sigma_.get ();
+}
+
+membraneType::sigma_type& membraneType::
+sigma ()
+{
+    return this->sigma_.get ();
+}
+
+void membraneType::
+sigma (const sigma_type& x)
+{
+    this->sigma_.set (x);
+}
+
+const membraneType::epsilon_type& membraneType::
+epsilon () const
+{
+    return this->epsilon_.get ();
+}
+
+membraneType::epsilon_type& membraneType::
+epsilon ()
+{
+    return this->epsilon_.get ();
+}
+
+void membraneType::
+epsilon (const epsilon_type& x)
+{
+    this->epsilon_.set (x);
+}
+
+
+const membraneType::epsilon_type& membraneType::
+averageBondLength () const
+{
+    return this->averageBondLength_.get ();
+}
+
+membraneType::epsilon_type& membraneType::
+averageBondLength ()
+{
+    return this->averageBondLength_.get ();
+}
+
+void membraneType::
+averageBondLength (const epsilon_type& x)
+{
+    this->averageBondLength_.set (x);
+}
+
+const membraneType::epsilon_type& membraneType::
+forceParameter () const
+{
+    return this->forceParameter_.get ();
+}
+
+membraneType::epsilon_type& membraneType::
+forceParameter ()
+{
+    return this->forceParameter_.get ();
+}
+
+void membraneType::
+forceParameter (const epsilon_type& x)
+{
+    this->forceParameter_.set (x);
+}
+
 
 // sphereType
-// 
+//
 
 const sphereType::center_position_type& sphereType::
 center_position () const
@@ -1293,7 +1509,7 @@ epsilon (const epsilon_type& x)
 
 
 // parameters
-// 
+//
 
 const parameters::outputParameters_type& parameters::
 outputParameters () const
@@ -1361,6 +1577,24 @@ cuboids (const cuboids_sequence& s)
   this->cuboids_ = s;
 }
 
+const parameters::membranes_sequence& parameters::
+membranes() const
+{
+    return this->membranes_;
+}
+
+parameters::membranes_sequence& parameters::
+membranes ()
+{
+    return this->membranes_;
+}
+
+void parameters::
+membranes (const membranes_sequence& s)
+{
+    this->membranes_ = s;
+}
+
 const parameters::spheres_sequence& parameters::
 spheres () const
 {
@@ -1385,11 +1619,11 @@ spheres (const spheres_sequence& s)
 
 
 // LJ
-// 
+//
 
 
 // smoothedLJ
-// 
+//
 
 const smoothedLJ::r_l_type& smoothedLJ::
 r_l () const
@@ -1411,11 +1645,11 @@ r_l (const r_l_type& x)
 
 
 // serial
-// 
+//
 
 
 // first_method
-// 
+//
 
 const first_method::numThreads_optional& first_method::
 numThreads () const
@@ -1443,7 +1677,7 @@ numThreads (const numThreads_optional& x)
 
 
 // second_method
-// 
+//
 
 const second_method::numThreads_optional& second_method::
 numThreads () const
@@ -1975,6 +2209,7 @@ forceTypeType ()
 : ::xml_schema::type (),
   gravitational_ (this),
   LJ_ (this),
+  Membrane_ (this),
   smoothedLJ_ (this)
 {
 }
@@ -1986,6 +2221,7 @@ forceTypeType (const forceTypeType& x,
 : ::xml_schema::type (x, f, c),
   gravitational_ (x.gravitational_, f, this),
   LJ_ (x.LJ_, f, this),
+  Membrane_ (x.Membrane_, f, this),
   smoothedLJ_ (x.smoothedLJ_, f, this)
 {
 }
@@ -1997,6 +2233,7 @@ forceTypeType (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   gravitational_ (this),
   LJ_ (this),
+  Membrane_ (this),
   smoothedLJ_ (this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -2029,6 +2266,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
         continue;
       }
     }
+
+      // Membrane
+      //
+      if (n.name () == "Membrane" && n.namespace_ ().empty ())
+      {
+          ::std::unique_ptr< Membrane_type > r (
+                  Membrane_traits::create (i, f, this));
+
+          if (!this->Membrane_)
+          {
+              this->Membrane_.set (::std::move (r));
+              continue;
+          }
+      }
 
     // LJ
     //
@@ -2078,6 +2329,7 @@ operator= (const forceTypeType& x)
     this->gravitational_ = x.gravitational_;
     this->LJ_ = x.LJ_;
     this->smoothedLJ_ = x.smoothedLJ_;
+      this->Membrane_ = x.Membrane_;
   }
 
   return *this;
@@ -3091,6 +3343,309 @@ cuboidType::
 {
 }
 
+// membraneType
+//
+
+membraneType::
+membraneType (const position_type& position,
+            const velocity_type& velocity,
+            const dimensions_type& dimensions,
+            const mass_type& mass,
+            const meshWidth_type& meshWidth,
+            const averageBondLength_type & averageBondLength,
+            const forceParameter_type & forceParameter,
+            const sigma_type& sigma,
+            const epsilon_type& epsilon)
+        : ::xml_schema::type (),
+          position_ (position, this),
+          velocity_ (velocity, this),
+          dimensions_ (dimensions, this),
+          mass_ (mass, this),
+          meshWidth_ (meshWidth, this),
+          averageBondLength_ (this),
+          forceParameter_(this),
+          sigma_ (sigma, this),
+          epsilon_ (epsilon, this)
+{
+}
+
+membraneType::
+membraneType (::std::unique_ptr< position_type > position,
+            ::std::unique_ptr< velocity_type > velocity,
+            ::std::unique_ptr< dimensions_type > dimensions,
+            const mass_type& mass,
+            const meshWidth_type& meshWidth,
+              const averageBondLength_type & averageBondLength,
+              const forceParameter_type & forceParameter,
+            const sigma_type& sigma,
+            const epsilon_type& epsilon)
+        : ::xml_schema::type (),
+          position_ (std::move (position), this),
+          velocity_ (std::move (velocity), this),
+          dimensions_ (std::move (dimensions), this),
+          mass_ (mass, this),
+          meshWidth_ (meshWidth, this),
+          averageBondLength_ (this),
+          forceParameter_(this),
+          sigma_ (sigma, this),
+          epsilon_ (epsilon, this)
+{
+}
+
+membraneType::
+membraneType (const membraneType& x,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+        : ::xml_schema::type (x, f, c),
+          position_ (x.position_, f, this),
+          velocity_ (x.velocity_, f, this),
+          dimensions_ (x.dimensions_, f, this),
+          mass_ (x.mass_, f, this),
+          meshWidth_ (x.meshWidth_, f, this),
+          averageBondLength_ (x.averageBondLength_, f, this),
+          forceParameter_ (x.forceParameter_, f, this),
+          sigma_ (x.sigma_, f, this),
+          epsilon_ (x.epsilon_, f, this)
+{
+}
+
+membraneType::
+membraneType (const ::xercesc::DOMElement& e,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+        : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+          position_ (this),
+          velocity_ (this),
+          dimensions_ (this),
+          mass_ (this),
+          meshWidth_ (this),
+          averageBondLength_ (this),
+          forceParameter_(this),
+          sigma_ (this),
+          epsilon_ (this)
+{
+    if ((f & ::xml_schema::flags::base) == 0)
+    {
+        ::xsd::cxx::xml::dom::parser< char > p (e, true, false, false);
+        this->parse (p, f);
+    }
+}
+
+void membraneType::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+    for (; p.more_content (); p.next_content (false))
+    {
+        const ::xercesc::DOMElement& i (p.cur_element ());
+        const ::xsd::cxx::xml::qualified_name< char > n (
+                ::xsd::cxx::xml::dom::name< char > (i));
+
+        // position
+        //
+        if (n.name () == "position" && n.namespace_ ().empty ())
+        {
+            ::std::unique_ptr< position_type > r (
+                    position_traits::create (i, f, this));
+
+            if (!position_.present ())
+            {
+                this->position_.set (::std::move (r));
+                continue;
+            }
+        }
+
+        // velocity
+        //
+        if (n.name () == "velocity" && n.namespace_ ().empty ())
+        {
+            ::std::unique_ptr< velocity_type > r (
+                    velocity_traits::create (i, f, this));
+
+            if (!velocity_.present ())
+            {
+                this->velocity_.set (::std::move (r));
+                continue;
+            }
+        }
+
+        // dimensions
+        //
+        if (n.name () == "dimensions" && n.namespace_ ().empty ())
+        {
+            ::std::unique_ptr< dimensions_type > r (
+                    dimensions_traits::create (i, f, this));
+
+            if (!dimensions_.present ())
+            {
+                this->dimensions_.set (::std::move (r));
+                continue;
+            }
+        }
+
+        // meanVelocity
+        //
+        if (n.name () == "forceParameter" && n.namespace_ ().empty ())
+        {
+            if (!this->forceParameter_.present ())
+            {
+                this->forceParameter_.set (forceParameter_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        if (n.name () == "averageBondLength" && n.namespace_ ().empty ())
+        {
+            if (!this->averageBondLength_.present ())
+            {
+                this->averageBondLength_.set (forceParameter_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        // mass
+        //
+        if (n.name () == "mass" && n.namespace_ ().empty ())
+        {
+            if (!mass_.present ())
+            {
+                this->mass_.set (mass_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        // meshWidth
+        //
+        if (n.name () == "meshWidth" && n.namespace_ ().empty ())
+        {
+            if (!meshWidth_.present ())
+            {
+                this->meshWidth_.set (meshWidth_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        // sigma
+        //
+        if (n.name () == "sigma" && n.namespace_ ().empty ())
+        {
+            if (!sigma_.present ())
+            {
+                this->sigma_.set (sigma_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        // epsilon
+        //
+        if (n.name () == "epsilon" && n.namespace_ ().empty ())
+        {
+            if (!epsilon_.present ())
+            {
+                this->epsilon_.set (epsilon_traits::create (i, f, this));
+                continue;
+            }
+        }
+
+        break;
+    }
+
+    if (!position_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "position",
+                "");
+    }
+
+    if (!velocity_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "velocity",
+                "");
+    }
+
+    if (!dimensions_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "dimensions",
+                "");
+    }
+
+    if (!mass_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "mass",
+                "");
+    }
+
+    if (!meshWidth_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "meshWidth",
+                "");
+    }
+
+    if (!forceParameter_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "forceParameter",
+                "");
+    }
+
+    if (!averageBondLength_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "averageBondLength",
+                "");
+    }
+
+    if (!sigma_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "sigma",
+                "");
+    }
+
+    if (!epsilon_.present ())
+    {
+        throw ::xsd::cxx::tree::expected_element< char > (
+                "epsilon",
+                "");
+    }
+}
+
+membraneType* membraneType::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+    return new class membraneType (*this, f, c);
+}
+
+membraneType& membraneType::
+operator= (const membraneType& x)
+{
+    if (this != &x)
+    {
+        static_cast< ::xml_schema::type& > (*this) = x;
+        this->position_ = x.position_;
+        this->velocity_ = x.velocity_;
+        this->dimensions_ = x.dimensions_;
+        this->mass_ = x.mass_;
+        this->meshWidth_ = x.meshWidth_;
+        this->averageBondLength_ = x.averageBondLength_;
+        this->forceParameter_ = x.forceParameter_;
+        this->sigma_ = x.sigma_;
+        this->epsilon_ = x.epsilon_;
+    }
+
+    return *this;
+}
+
+membraneType::
+~membraneType ()
+{
+}
+
 // sphereType
 //
 
@@ -3462,6 +4017,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       continue;
     }
 
+      // membranes
+      //
+      if (n.name () == "membranes" && n.namespace_ ().empty ())
+      {
+          ::std::unique_ptr< membranes_type > r (
+                  membranes_traits::create (i, f, this));
+
+          this->membranes_.push_back (::std::move (r));
+          continue;
+      }
+
     // spheres
     //
     if (n.name () == "spheres" && n.namespace_ ().empty ())
@@ -3507,6 +4073,7 @@ operator= (const parameters& x)
     this->outputParameters_ = x.outputParameters_;
     this->simulationParameters_ = x.simulationParameters_;
     this->cuboids_ = x.cuboids_;
+    this->membranes_ = x.membranes_;
     this->spheres_ = x.spheres_;
   }
 
@@ -3569,6 +4136,60 @@ _clone (::xml_schema::flags f,
 
 gravitational::
 ~gravitational ()
+{
+}
+
+// Membrane
+//
+
+Membrane::
+Membrane ()
+        : ::xml_schema::type ()
+{
+}
+
+Membrane::
+Membrane (const Membrane& x,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+        : ::xml_schema::type (x, f, c)
+{
+}
+
+Membrane::
+Membrane (const ::xercesc::DOMElement& e,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+        : ::xml_schema::type (e, f, c)
+{
+}
+
+Membrane::
+Membrane (const ::xercesc::DOMAttr& a,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+        : ::xml_schema::type (a, f, c)
+{
+}
+
+Membrane::
+Membrane (const ::std::string& s,
+               const ::xercesc::DOMElement* e,
+               ::xml_schema::flags f,
+               ::xml_schema::container* c)
+        : ::xml_schema::type (s, e, f, c)
+{
+}
+
+Membrane* Membrane::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+    return new class Membrane (*this, f, c);
+}
+
+Membrane::
+~Membrane ()
 {
 }
 

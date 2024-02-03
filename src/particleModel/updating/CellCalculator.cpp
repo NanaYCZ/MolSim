@@ -9,7 +9,7 @@
 int chunk_size = 16;
 
 std::vector<std::vector<double>> sigma_mixed{{1.0}};
-std::vector<std::vector<double>> epsilon_mixed{{5.0}};
+std::vector<std::vector<double>> epsilon_mixed{{1.0}};
 
 CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, double cutoff,
                                double r_l_, std::array<boundary_conditions,6> boundaries_cond,
@@ -24,6 +24,8 @@ CellCalculator::CellCalculator(CellContainer &cellContainer, double delta_t, dou
         force = forceLennJonesPotentialFunction(sigma_mixed,epsilon_mixed,cutoff);
     }else if(forceType == force_type::gravitational){
         force = forceSimpleGravitational(cutoff);
+    }else if(forceType == force_type::Membrane){
+        force = forceHarmonicForce(sigma_mixed,epsilon_mixed,cutoff);
     }else{
         throw std::invalid_argument("Force Type was not correctly specified");
     }

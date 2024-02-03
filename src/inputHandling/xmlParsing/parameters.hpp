@@ -572,9 +572,11 @@ class thermoStatsType;
 class vector3DType;
 class boundaryConditionsType;
 class cuboidType;
+class membraneType;
 class sphereType;
 class parameters;
 class gravitational;
+class Membrane;
 class LJ;
 class smoothedLJ;
 class serial;
@@ -764,7 +766,7 @@ class outputParamsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -840,7 +842,7 @@ class outputParamsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -928,7 +930,7 @@ class outputParamsType: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~outputParamsType ();
 
   // Implementation.
@@ -1202,7 +1204,7 @@ class simulationParamsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -1325,7 +1327,7 @@ class simulationParamsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -1401,7 +1403,7 @@ class simulationParamsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -1477,7 +1479,7 @@ class simulationParamsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -1542,7 +1544,7 @@ class simulationParamsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -1767,7 +1769,7 @@ class simulationParamsType: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~simulationParamsType ();
 
   // Implementation.
@@ -1861,7 +1863,7 @@ class forceTypeType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -1880,6 +1882,82 @@ class forceTypeType: public ::xml_schema::type
   gravitational (::std::unique_ptr< gravitational_type > p);
 
   //@}
+
+    /**
+     * @name Membrane
+     *
+     * @brief Accessor and modifier functions for the %Membrane
+     * optional element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::Membrane Membrane_type;
+
+    /**
+     * @brief Element optional container type.
+     */
+    typedef ::xsd::cxx::tree::optional< Membrane_type > Membrane_optional;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< Membrane_type, char > Membrane_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * container.
+     *
+     * @return A constant reference to the optional container.
+     */
+    const Membrane_optional&
+    Membrane () const;
+
+    /**
+     * @brief Return a read-write reference to the element container.
+     *
+     * @return A reference to the optional container.
+     */
+    Membrane_optional&
+    Membrane ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    Membrane (const Membrane_type& x);
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x An optional container with the new value to set.
+     *
+     * If the value is present in @a x then this function makes a copy
+     * of this value and sets it as the new value of the element.
+     * Otherwise the element container is set the 'not present' state.
+     */
+    void
+    Membrane (const Membrane_optional& x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly instead
+     * of making a copy.
+     */
+    void
+    Membrane (::std::unique_ptr< Membrane_type > p);
+
+    //@}
 
   /**
    * @name LJ
@@ -1937,7 +2015,7 @@ class forceTypeType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -2013,7 +2091,7 @@ class forceTypeType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -2100,7 +2178,7 @@ class forceTypeType: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~forceTypeType ();
 
   // Implementation.
@@ -2116,6 +2194,7 @@ class forceTypeType: public ::xml_schema::type
   protected:
   gravitational_optional gravitational_;
   LJ_optional LJ_;
+  Membrane_optional Membrane_;
   smoothedLJ_optional smoothedLJ_;
 
   //@endcond
@@ -2185,7 +2264,7 @@ class parallelizationSettingsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -2261,7 +2340,7 @@ class parallelizationSettingsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -2337,7 +2416,7 @@ class parallelizationSettingsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -2424,7 +2503,7 @@ class parallelizationSettingsType: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~parallelizationSettingsType ();
 
   // Implementation.
@@ -2615,7 +2694,7 @@ class rdfType: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~rdfType ();
 
   // Implementation.
@@ -2746,7 +2825,7 @@ class thermoStatsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -2858,7 +2937,7 @@ class thermoStatsType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -2935,7 +3014,7 @@ class thermoStatsType: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~thermoStatsType ();
 
   // Implementation.
@@ -3175,7 +3254,7 @@ class vector3DType: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~vector3DType ();
 
   // Implementation.
@@ -3624,7 +3703,7 @@ class boundaryConditionsType: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~boundaryConditionsType ();
 
   // Implementation.
@@ -3886,7 +3965,7 @@ class cuboidType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -4172,7 +4251,7 @@ class cuboidType: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~cuboidType ();
 
   // Implementation.
@@ -4196,6 +4275,588 @@ class cuboidType: public ::xml_schema::type
   ::xsd::cxx::tree::one< epsilon_type > epsilon_;
 
   //@endcond
+};
+/**
+ * @brief Class corresponding to the %membraneType schema type.
+ *
+ * @nosubgrouping
+ */
+class membraneType: public ::xml_schema::type
+{
+public:
+    /**
+ * @name averageBondLength
+ *
+ * @brief Accessor and modifier functions for the %mass
+ * required element.
+ */
+
+/**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ averageBondLength_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< averageBondLength_type, char, ::xsd::cxx::tree::schema_type::double_ > averageBondLength_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const averageBondLength_type&
+    averageBondLength () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    averageBondLength_type&
+    averageBondLength ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    averageBondLength (const averageBondLength_type& x);
+
+    //@}
+    /**
+ * @name forceParameter
+ *
+ * @brief Accessor and modifier functions for the %forceParameter
+ * required element.
+ */
+
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ forceParameter_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< forceParameter_type, char, ::xsd::cxx::tree::schema_type::double_ > forceParameter_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const forceParameter_type&
+    forceParameter () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    forceParameter_type&
+    forceParameter ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    forceParameter (const forceParameter_type& x);
+
+    //@}
+    /**
+     * @name position
+     *
+     * @brief Accessor and modifier functions for the %position
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::vector3DType position_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< position_type, char > position_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const position_type&
+    position () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    position_type&
+    position ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    position (const position_type& x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void
+    position (::std::unique_ptr< position_type > p);
+
+    //@}
+
+    /**
+     * @name velocity
+     *
+     * @brief Accessor and modifier functions for the %velocity
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::vector3DType velocity_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< velocity_type, char > velocity_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const velocity_type&
+    velocity () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    velocity_type&
+    velocity ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    velocity (const velocity_type& x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void
+    velocity (::std::unique_ptr< velocity_type > p);
+
+    //@}
+
+    /**
+     * @name dimensions
+     *
+     * @brief Accessor and modifier functions for the %dimensions
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::vector3DType dimensions_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< dimensions_type, char > dimensions_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const dimensions_type&
+    dimensions () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    dimensions_type&
+    dimensions ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    dimensions (const dimensions_type& x);
+
+    /**
+     * @brief Set the element value without copying.
+     *
+     * @param p A new value to use.
+     *
+     * This function will try to use the passed value directly
+     * instead of making a copy.
+     */
+    void
+    dimensions (::std::unique_ptr< dimensions_type > p);
+
+
+    /**
+     * @name mass
+     *
+     * @brief Accessor and modifier functions for the %mass
+     * required element.
+     */
+
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ mass_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< mass_type, char, ::xsd::cxx::tree::schema_type::double_ > mass_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const mass_type&
+    mass () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    mass_type&
+    mass ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    mass (const mass_type& x);
+
+    //@}
+
+    /**
+     * @name meshWidth
+     *
+     * @brief Accessor and modifier functions for the %meshWidth
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ meshWidth_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< meshWidth_type, char, ::xsd::cxx::tree::schema_type::double_ > meshWidth_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const meshWidth_type&
+    meshWidth () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    meshWidth_type&
+    meshWidth ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    meshWidth (const meshWidth_type& x);
+
+    //@}
+
+    /**
+     * @name sigma
+     *
+     * @brief Accessor and modifier functions for the %sigma
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ sigma_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< sigma_type, char, ::xsd::cxx::tree::schema_type::double_ > sigma_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const sigma_type&
+    sigma () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    sigma_type&
+    sigma ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    sigma (const sigma_type& x);
+
+    //@}
+
+    /**
+     * @name epsilon
+     *
+     * @brief Accessor and modifier functions for the %epsilon
+     * required element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::xml_schema::double_ epsilon_type;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< epsilon_type, char, ::xsd::cxx::tree::schema_type::double_ > epsilon_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element.
+     *
+     * @return A constant reference to the element.
+     */
+    const epsilon_type&
+    epsilon () const;
+
+    /**
+     * @brief Return a read-write reference to the element.
+     *
+     * @return A reference to the element.
+     */
+    epsilon_type&
+    epsilon ();
+
+    /**
+     * @brief Set the element value.
+     *
+     * @param x A new value to set.
+     *
+     * This function makes a copy of its argument and sets it as
+     * the new value of the element.
+     */
+    void
+    epsilon (const epsilon_type& x);
+
+    //@}
+
+    /**
+     * @name Constructors
+     */
+    //@{
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes.
+     */
+    membraneType (
+                  const position_type&,
+                  const velocity_type&,
+                  const dimensions_type&,
+                  const mass_type&,
+                  const meshWidth_type&,
+                  const averageBondLength_type&,
+                  const forceParameter_type&,
+                  const sigma_type&,
+                  const epsilon_type&);
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes
+     * (::std::unique_ptr version).
+     *
+     * This constructor will try to use the passed values directly
+     * instead of making copies.
+     */
+    membraneType (
+                  ::std::unique_ptr< position_type >,
+                  ::std::unique_ptr< velocity_type >,
+                  ::std::unique_ptr< dimensions_type >,
+                  const mass_type&,
+                  const meshWidth_type&,
+                  const averageBondLength_type&,
+                  const forceParameter_type&,
+                  const sigma_type&,
+                  const epsilon_type&);
+
+    /**
+     * @brief Create an instance from a DOM element.
+     *
+     * @param e A DOM element to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    membraneType (const ::xercesc::DOMElement& e,
+                  ::xml_schema::flags f = 0,
+                  ::xml_schema::container* c = 0);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param x An instance to make a copy of.
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    membraneType (const membraneType& x,
+                  ::xml_schema::flags f = 0,
+                  ::xml_schema::container* c = 0);
+
+    /**
+     * @brief Copy the instance polymorphically.
+     *
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     * @return A pointer to the dynamically allocated copy.
+     *
+     * This function ensures that the dynamic type of the instance is
+     * used for copying and should be used for polymorphic object
+     * models instead of the copy constructor.
+     */
+    virtual membraneType*
+    _clone (::xml_schema::flags f = 0,
+            ::xml_schema::container* c = 0) const;
+
+    /**
+     * @brief Copy assignment operator.
+     *
+     * @param x An instance to make a copy of.
+     * @return A reference to itself.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    membraneType&
+    operator= (const membraneType& x);
+
+    //@}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual
+    ~membraneType();
+
+    // Implementation.
+    //
+
+    //@cond
+
+protected:
+    void
+    parse (::xsd::cxx::xml::dom::parser< char >&,
+           ::xml_schema::flags);
+
+protected:
+
+    ::xsd::cxx::tree::one< position_type > position_;
+    ::xsd::cxx::tree::one< velocity_type > velocity_;
+    ::xsd::cxx::tree::one< dimensions_type > dimensions_;
+    ::xsd::cxx::tree::one< mass_type > mass_;
+    ::xsd::cxx::tree::one< meshWidth_type > meshWidth_;
+    ::xsd::cxx::tree::one< averageBondLength_type > averageBondLength_;
+    ::xsd::cxx::tree::one< forceParameter_type > forceParameter_;
+    ::xsd::cxx::tree::one< sigma_type > sigma_;
+    ::xsd::cxx::tree::one< epsilon_type > epsilon_;
+
+    //@endcond
 };
 
 /**
@@ -4378,7 +5039,7 @@ class sphereType: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -4711,7 +5372,7 @@ class sphereType: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~sphereType ();
 
   // Implementation.
@@ -4916,14 +5577,80 @@ class parameters: public ::xml_schema::type
    *
    * @param s A sequence to copy elements from.
    *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
+   * For each element in @a s this function makes a copy and adds it
+   * to the sequence. Note that this operation completely changes the
    * sequence and all old elements will be lost.
    */
   void
   cuboids (const cuboids_sequence& s);
 
   //@}
+
+
+    //@{
+    /**
+     * @name membranes
+     *
+     * @brief Accessor and modifier functions for the %membranes
+     * sequence element.
+     */
+    //@{
+
+    /**
+     * @brief Element type.
+     */
+    typedef ::membraneType membranes_type;
+
+    /**
+     * @brief Element sequence container type.
+     */
+    typedef ::xsd::cxx::tree::sequence< membranes_type > membranes_sequence;
+
+    /**
+     * @brief Element iterator type.
+     */
+    typedef membranes_sequence::iterator membranes_iterator;
+
+    /**
+     * @brief Element constant iterator type.
+     */
+    typedef membranes_sequence::const_iterator membranes_const_iterator;
+
+    /**
+     * @brief Element traits type.
+     */
+    typedef ::xsd::cxx::tree::traits< membranes_type, char > membranes_traits;
+
+    /**
+     * @brief Return a read-only (constant) reference to the element
+     * sequence.
+     *
+     * @return A constant reference to the sequence container.
+     */
+    const membranes_sequence&
+    membranes () const;
+
+    /**
+     * @brief Return a read-write reference to the element sequence.
+     *
+     * @return A reference to the sequence container.
+     */
+    membranes_sequence&
+    membranes ();
+
+    /**
+     * @brief Copy elements from a given sequence.
+     *
+     * @param s A sequence to copy elements from.
+     *
+     * For each element in @a s this function makes a copy and adds it
+     * to the sequence. Note that this operation completely changes the
+     * sequence and all old elements will be lost.
+     */
+    void
+    membranes (const membranes_sequence& s);
+
+    //@}
 
   /**
    * @name spheres
@@ -4980,8 +5707,8 @@ class parameters: public ::xml_schema::type
    *
    * @param s A sequence to copy elements from.
    *
-   * For each element in @a s this function makes a copy and adds it 
-   * to the sequence. Note that this operation completely changes the 
+   * For each element in @a s this function makes a copy and adds it
+   * to the sequence. Note that this operation completely changes the
    * sequence and all old elements will be lost.
    */
   void
@@ -5068,7 +5795,7 @@ class parameters: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~parameters ();
 
   // Implementation.
@@ -5085,6 +5812,7 @@ class parameters: public ::xml_schema::type
   ::xsd::cxx::tree::one< outputParameters_type > outputParameters_;
   ::xsd::cxx::tree::one< simulationParameters_type > simulationParameters_;
   cuboids_sequence cuboids_;
+  membranes_sequence membranes_;
   spheres_sequence spheres_;
 
   //@endcond
@@ -5180,10 +5908,103 @@ class gravitational: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~gravitational ();
 };
 
+/**
+ * @brief Class corresponding to the %Membrane schema type.
+ *
+ * @nosubgrouping
+ */
+class Membrane: public ::xml_schema::type
+{
+public:
+    /**
+     * @name Constructors
+     */
+    //@{
+
+    /**
+     * @brief Create an instance from the ultimate base and
+     * initializers for required elements and attributes.
+     */
+    Membrane ();
+
+    /**
+     * @brief Create an instance from a DOM element.
+     *
+     * @param e A DOM element to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    Membrane (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f = 0,
+                   ::xml_schema::container* c = 0);
+
+    /**
+     * @brief Create an instance from a DOM attribute.
+     *
+     * @param a A DOM attribute to extract the data from.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    Membrane (const ::xercesc::DOMAttr& a,
+                   ::xml_schema::flags f = 0,
+                   ::xml_schema::container* c = 0);
+
+    /**
+     * @brief Create an instance from a string fragment.
+     *
+     * @param s A string fragment to extract the data from.
+     * @param e A pointer to DOM element containing the string fragment.
+     * @param f Flags to create the new instance with.
+     * @param c A pointer to the object that will contain the new
+     * instance.
+     */
+    Membrane (const ::std::string& s,
+                   const ::xercesc::DOMElement* e,
+                   ::xml_schema::flags f = 0,
+                   ::xml_schema::container* c = 0);
+
+    /**
+     * @brief Copy constructor.
+     *
+     * @param x An instance to make a copy of.
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     *
+     * For polymorphic object models use the @c _clone function instead.
+     */
+    Membrane (const Membrane& x,
+                   ::xml_schema::flags f = 0,
+                   ::xml_schema::container* c = 0);
+
+    /**
+     * @brief Copy the instance polymorphically.
+     *
+     * @param f Flags to create the copy with.
+     * @param c A pointer to the object that will contain the copy.
+     * @return A pointer to the dynamically allocated copy.
+     *
+     * This function ensures that the dynamic type of the instance is
+     * used for copying and should be used for polymorphic object
+     * models instead of the copy constructor.
+     */
+    virtual Membrane*
+    _clone (::xml_schema::flags f = 0,
+            ::xml_schema::container* c = 0) const;
+
+    //@}
+
+    /**
+     * @brief Destructor.
+     */
+    virtual
+    ~Membrane ();
+};
 /**
  * @brief Class corresponding to the %LJ schema type.
  *
@@ -5274,7 +6095,7 @@ class LJ: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~LJ ();
 };
 
@@ -5400,7 +6221,7 @@ class smoothedLJ: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~smoothedLJ ();
 
   // Implementation.
@@ -5509,7 +6330,7 @@ class serial: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~serial ();
 };
 
@@ -5577,7 +6398,7 @@ class first_method: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -5653,7 +6474,7 @@ class first_method: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~first_method ();
 
   // Implementation.
@@ -5736,7 +6557,7 @@ class second_method: public ::xml_schema::type
    *
    * @param x An optional container with the new value to set.
    *
-   * If the value is present in @a x then this function makes a copy 
+   * If the value is present in @a x then this function makes a copy
    * of this value and sets it as the new value of the element.
    * Otherwise the element container is set the 'not present' state.
    */
@@ -5812,7 +6633,7 @@ class second_method: public ::xml_schema::type
   /**
    * @brief Destructor.
    */
-  virtual 
+  virtual
   ~second_method ();
 
   // Implementation.
@@ -5847,7 +6668,7 @@ class second_method: public ::xml_schema::type
  *
  * @param uri A URI or a local file name.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * This function uses exceptions to report parsing errors.
@@ -5863,7 +6684,7 @@ parameters_ (const ::std::string& uri,
  * @param uri A URI or a local file name.
  * @param eh An error handler.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * This function reports parsing errors by calling the error handler.
@@ -5881,7 +6702,7 @@ parameters_ (const ::std::string& uri,
  * @param uri A URI or a local file name.
  * @param eh A Xerces-C++ DOM error handler.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * This function reports parsing errors by calling the error handler.
@@ -5897,7 +6718,7 @@ parameters_ (const ::std::string& uri,
  *
  * @param is A standrad input stream.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * This function uses exceptions to report parsing errors.
@@ -5913,7 +6734,7 @@ parameters_ (::std::istream& is,
  * @param is A standrad input stream.
  * @param eh An error handler.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * This function reports parsing errors by calling the error handler.
@@ -5931,7 +6752,7 @@ parameters_ (::std::istream& is,
  * @param is A standrad input stream.
  * @param eh A Xerces-C++ DOM error handler.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * This function reports parsing errors by calling the error handler.
@@ -5948,7 +6769,7 @@ parameters_ (::std::istream& is,
  * @param is A standrad input stream.
  * @param id A resource id.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * The resource id is used to identify the document being parsed in
@@ -5970,7 +6791,7 @@ parameters_ (::std::istream& is,
  * @param id A resource id.
  * @param eh An error handler.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * The resource id is used to identify the document being parsed in
@@ -5993,7 +6814,7 @@ parameters_ (::std::istream& is,
  * @param id A resource id.
  * @param eh A Xerces-C++ DOM error handler.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * The resource id is used to identify the document being parsed in
@@ -6013,7 +6834,7 @@ parameters_ (::std::istream& is,
  *
  * @param is A Xerces-C++ input source.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * This function uses exceptions to report parsing errors.
@@ -6029,7 +6850,7 @@ parameters_ (::xercesc::InputSource& is,
  * @param is A Xerces-C++ input source.
  * @param eh An error handler.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * This function reports parsing errors by calling the error handler.
@@ -6047,7 +6868,7 @@ parameters_ (::xercesc::InputSource& is,
  * @param is A Xerces-C++ input source.
  * @param eh A Xerces-C++ DOM error handler.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * This function reports parsing errors by calling the error handler.
@@ -6063,7 +6884,7 @@ parameters_ (::xercesc::InputSource& is,
  *
  * @param d A Xerces-C++ DOM document.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  */
 ::std::unique_ptr< ::parameters >
@@ -6076,7 +6897,7 @@ parameters_ (const ::xercesc::DOMDocument& d,
  *
  * @param d A pointer to the Xerces-C++ DOM document.
  * @param f Parsing flags.
- * @param p Parsing properties. 
+ * @param p Parsing properties.
  * @return A pointer to the root of the object model.
  *
  * This function is normally used together with the keep_dom and

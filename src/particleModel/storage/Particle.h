@@ -27,15 +27,24 @@ private:
     std::array<double, 3> v;
 
     /**
+    * index of the particle
+    */
+    std::array<int, 3> grid;
+
+    /**
     * Mass of this particle
     */
     double m;
+
 
     /**
     * Type of the particle. Use it for whatever you want (e.g. to separate
     * molecules belonging to different bodies, matters, and so on)
     */
     int type;
+
+
+    int RZ;
 
     /**
     * Force (which was) effective on this particle
@@ -78,8 +87,7 @@ public:
     Particle(
         // for visualization, we need always 3 coordinates
         // -> in case of 2d, we use only the first and the second
-        std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg,
-        int type = 0);
+        std::array<double, 3> x_arg, std::array<double, 3> v_arg,double m_arg, int type = 0);
 
     virtual ~Particle();
 
@@ -120,6 +128,8 @@ public:
 
     const std::array<double, 3> &getV() const;
 
+    const std::array<int,3> &getGrid() const;
+
     const std::array<double, 3> &getF() const;
 
     const std::array<double, 3> &getOldF() const;
@@ -128,16 +138,20 @@ public:
 
     int getType() const;
 
+    int getRZ() const;
 
 
     void setX(int index, double value);
 
     void setX(std::array<double,3> new_x);
 
+    void setGrid(std::array<int,3> index);
+
 
     void setV(int index, double value);
 
     void setV(std::array<double,3> new_v);
+
     
     void addX(int index, double value);
 

@@ -44,6 +44,7 @@ Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
     SPDLOG_TRACE("Particle generated!");
 }
 
+
 Particle::~Particle() {
     SPDLOG_TRACE("Particle destructed!");
 }
@@ -51,6 +52,8 @@ Particle::~Particle() {
 const std::array<double, 3> &Particle::getX() const { return x; }
 
 const std::array<double, 3> &Particle::getV() const { return v; }
+
+const std::array<int, 3> &Particle::getGrid() const { return grid; }
 
 const std::array<double, 3> &Particle::getF() const {
   if (secondIsOld) {
@@ -70,6 +73,8 @@ double Particle::getM() const { return m; }
 
 int Particle::getType() const { return type; }
 
+int Particle::getRZ() const { return RZ; }
+
 void Particle::setX(int index, double value) { x[index] = value; }
 
 void Particle::setX(std::array<double,3> new_x) {x = new_x;};
@@ -77,6 +82,8 @@ void Particle::setX(std::array<double,3> new_x) {x = new_x;};
 void Particle::setV(int index, double value) { v[index] = value; }
 
 void Particle::setV(std::array<double,3> new_v){v = new_v;};
+
+void Particle::setGrid(std::array<int,3> index){grid = index;};
 
 void Particle::addX(int index, double value){
   x[index] += value;

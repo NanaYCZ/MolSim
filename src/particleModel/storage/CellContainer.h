@@ -48,7 +48,11 @@ public:
      */
     void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg);
 
+    void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<int,3> grid_index, double m_arg);
+
     void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, double sigma, double epsilon);
+
+    void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, std::array<int,3> grid_index,  double sigma, double epsilon);
 
     void addParticle(const Particle& particle,double sigma, double epsilon);
 
@@ -124,6 +128,7 @@ private:
     std::array<double, 3> domain_bounds;
     dim_t comparing_depth = 1;
     size_t particle_amount = 0;
+    std::array<int,3> default_grid_index ={0, 0, 0};
 
     std::vector<Particle> particle_instances;
 

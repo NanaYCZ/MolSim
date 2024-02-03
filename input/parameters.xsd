@@ -9,6 +9,7 @@
         <xs:element name="outputParameters" type="outputParamsType" />
         <xs:element name="simulationParameters" type="simulationParamsType" />
         <xs:element name="cuboids" type="cuboidType" maxOccurs="unbounded" minOccurs="0" />
+        <xs:element name="membranes" type="membraneType" maxOccurs="unbounded" minOccurs="0" />
         <xs:element name="spheres" type="sphereType" maxOccurs="unbounded" minOccurs="0" />
       </xs:sequence>
     </xs:complexType>
@@ -179,6 +180,20 @@
       <xs:element name="mass" type="xs:double" />
       <xs:element name="radius" type="xs:double" />
       <xs:element name="meshWidth" type="xs:double" />
+      <xs:element name="sigma" type="xs:double" />
+      <xs:element name="epsilon" type="xs:double" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="membraneType">
+    <xs:sequence>
+      <xs:element name="position" type="vector3DType" />
+      <xs:element name="velocity" type="vector3DType" />
+      <xs:element name="dimensions" type="vector3DType" />
+      <xs:element name="mass" type="xs:double" />
+      <xs:element name="meshWidth" type="xs:double" />
+      <xs:element name="averageBondLength" type="xs:double" />
+      <xs:element name="forceParameter" type="xs:double" />
       <xs:element name="sigma" type="xs:double" />
       <xs:element name="epsilon" type="xs:double" />
     </xs:sequence>

@@ -15,25 +15,27 @@ class FileReader {
 
   struct CuboidData;
 
-  struct ProgramArgs; 
+  struct MembraneData;
+
+  struct ProgramArgs;
 
 
   /**
    * @brief read all program arguments
-   * 
+   *
    * Reads all the Arguments that are specified within the ProgramArgs struct.
    * That means delta_t and end_t for the simulation, how often output files
    * should be written, the basename of these files and lastly an arbitrary
    * amount of cuboids and then an arbitrary amount of spheres. This data
-   * should be specified in a certain xsd format (that is specified within 
+   * should be specified in a certain xsd format (that is specified within
    * 'project_root_dir'/input/parameters.xsd) and is then read into a struct that
    * is returned
-   * 
-   * 
+   *
+   *
    * @param filename name from which the arguments are read (has to be in xml format)
-   * 
+   *
    * @return struct contains all necessary info for the program
-   * 
+   *
   */
   ProgramArgs readProgramArguments(std::string filename);
 

@@ -19,7 +19,8 @@ enum class concurrency_strategy{
 enum class force_type{
     gravitational,
     LJ,
-    smoothedLJ
+    smoothedLJ,
+    Membrane
 };
 
 extern int chunk_size;

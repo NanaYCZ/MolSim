@@ -1,4 +1,3 @@
-
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
 
 #include "FileReader.h"
@@ -49,16 +48,16 @@ void set_boundary_conditional(boundary_conditions& boundary,std::string specifie
 
 /**
  * @brief reads xml file and constructs ProgramsArgs struct corresponding to xml file
- * 
- * 
+ *
+ *
  * Reads an XML file 'filename' and uses Codesynthesis to parse/ validate the xml file then.
  * The information of the object returned from the XML file parser is then writen into an ProgramArgs struct
- * 
- * 
+ *
+ *
  * @param filename XML file according to parameters.xsd (can be found in input/ folder)
- * 
+ *
  * @returns a ProgramArgs struct with the information from the file
- * 
+ *
 */
 FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
 
@@ -68,6 +67,7 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
     auto out_params = params->outputParameters();
     auto sim_params = params->simulationParameters();
     auto cuboids = params->cuboids();
+    auto membranes = params->membranes();
     auto spheres = params->spheres();
     auto rdf_params = sim_params.Rdf();
     auto boundary_conditions_xml = sim_params.boundaryConditions();
@@ -96,6 +96,8 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
         args.force_type_param    = force_type::gravitational;
     }else if(force_type_param.LJ().present()){
         args.force_type_param    = force_type::LJ;
+    }else if(force_type_param.Membrane().present()){
+        args.force_type_param    = force_type::Membrane;
     }else if(force_type_param.smoothedLJ().present()){
         args.force_type_param = force_type::smoothedLJ;
         args.r_l = force_type_param.smoothedLJ().get().r_l();
@@ -143,7 +145,7 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
     }//if not Thermostats present, struct will have default dummy values
 
     args.boundaries = {positive_z,negative_z,positive_x,negative_x,positive_y,negative_y};
-    
+
     args.domain_dimensions = {sim_params.domainDimensions().x(),sim_params.domainDimensions().y(),sim_params.domainDimensions().z()};
 
     args.file_basename = out_params.baseName();
@@ -162,7 +164,7 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
         auto cuboid = cuboids[i];
         c.x = { cuboid.position().x(), cuboid.position().y(), cuboid.position().z() };
         c.v = { cuboid.velocity().x(), cuboid.velocity().y(), cuboid.velocity().z() };
-    
+
 
         c.N1 = cuboid.dimensions().x();
         c.N2 = cuboid.dimensions().y();
@@ -179,6 +181,26 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
         args.cuboids.push_back(c);
     }
 
+    for(size_t i = 0; i < membranes.size() ; i++){
+        MembraneData membraneData;
+        auto membrane = membranes[i];
+        membraneData.x = { membrane.position().x(), membrane.position().y(), membrane.position().z() };
+        membraneData.v = { membrane.velocity().x(), membrane.velocity().y(), membrane.velocity().z() };
+        membraneData.a=membrane.averageBondLength();
+        membraneData.f=membrane.forceParameter();
+
+        membraneData.N1 = membrane.dimensions().x();
+        membraneData.N2 = membrane.dimensions().y();
+        membraneData.N3 = membrane.dimensions().z();
+
+        membraneData.m = membrane.mass();
+        membraneData.h = membrane.meshWidth();
+        membraneData.sigma = membrane.sigma();
+        membraneData.epsilon = membrane.epsilon();
+
+        args.membranes.push_back(membraneData);
+    }
+
 
     for(size_t i = 0; i < spheres.size() ; i++){
         SphereData s;
@@ -193,49 +215,59 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
 
         //zero by default
         s.avg_v = sphere.meanVelocity().present() ? std::optional<double>(sphere.meanVelocity().get()) : std::nullopt;
-        
+
 
         args.spheres.push_back(s);
     }
 
 
-    return args;    
+    return args;
 }
 
 
 void FileReader::initializeCorrectInitialTemp(FileReader::ProgramArgs& args){
-    bool initial_temp_zero = true; 
+    bool initial_temp_zero = true;
+    for(FileReader::CuboidData& cuboid : args.cuboids){
+        if( ! (cuboid.v[0] == 0 && cuboid.v[1] == 0 && cuboid.v[2] == 0)){
+            std::string msg = "don't initalize Temp, because of velocity: " +
+                              std::to_string(cuboid.v[0]) + " , " + std::to_string(cuboid.v[1])
+                              + " , " +  std::to_string(cuboid.v[2]) + "\n";
+            SPDLOG_INFO(msg);
+            initial_temp_zero = false;
+            break;
+        }
+    }
+    for(FileReader::SphereData& sphere : args.spheres){
+        if( ! (sphere.Velocity[0] == 0 && sphere.Velocity[1] == 0 && sphere.Velocity[2] == 0)){
+            std::string msg = "don't initalize Temp, because of velocity: " +
+                              std::to_string(sphere.Velocity[0]) + " , " + std::to_string(sphere.Velocity[1])
+                              + " , " +  std::to_string(sphere.Velocity[2]) + "\n";
+            SPDLOG_INFO(msg);
+            initial_temp_zero = false;
+            break;
+        }
+    }
+    for(FileReader::MembraneData& membrane : args.membranes){
+        if( ! (membrane.v[0] == 0 && membrane.v[1] == 0 && membrane.v[2] == 0)){
+            std::string msg = "don't initalize Temp, because of velocity: " +
+                              std::to_string(membrane.v[0]) + " , " + std::to_string(membrane.v[1])
+                              + " , " +  std::to_string(membrane.v[2]) + "\n";
+            SPDLOG_INFO(msg);
+            initial_temp_zero = false;
+            break;
+        }
+    }
+    if(initial_temp_zero){
+        //initalize Particles with Maxwell-Boltzmann to right temperature
         for(FileReader::CuboidData& cuboid : args.cuboids){
-            if( ! (cuboid.v[0] == 0 && cuboid.v[1] == 0 && cuboid.v[2] == 0)){
-                std::string msg = "don't initalize Temp, because of velocity: " +
-                            std::to_string(cuboid.v[0]) + " , " + std::to_string(cuboid.v[1])
-                            + " , " +  std::to_string(cuboid.v[2]) + "\n";
-                SPDLOG_INFO(msg);
-                initial_temp_zero = false;
-                break;
-            }
+            cuboid.avg_v = sqrt(args.init_temp/cuboid.m);
         }
         for(FileReader::SphereData& sphere : args.spheres){
-            if( ! (sphere.Velocity[0] == 0 && sphere.Velocity[1] == 0 && sphere.Velocity[2] == 0)){
-                std::string msg = "don't initalize Temp, because of velocity: " +
-                            std::to_string(sphere.Velocity[0]) + " , " + std::to_string(sphere.Velocity[1])
-                            + " , " +  std::to_string(sphere.Velocity[2]) + "\n";
-                SPDLOG_INFO(msg);
-                initial_temp_zero = false;
-                break;
-            }
+            sphere.avg_v = sqrt(args.init_temp/sphere.mass);
         }
-        if(initial_temp_zero){
-            //initalize Particles with Maxwell-Boltzmann to right temperature
-            for(FileReader::CuboidData& cuboid : args.cuboids){
-                cuboid.avg_v = sqrt(args.init_temp/cuboid.m);
-            }
-            for(FileReader::SphereData& sphere : args.spheres){
-                sphere.avg_v = sqrt(args.init_temp/sphere.mass);
-            }
-        }else{
-            SPDLOG_INFO("Didn't apply inital Temperature of Thermostats,\n because not all initial velocities were zero");
-        }
+    }else{
+        SPDLOG_INFO("Didn't apply inital Temperature of Thermostats,\n because not all initial velocities were zero");
+    }
 }
 
 
