@@ -2,6 +2,7 @@
 
 #include "inputHandling/generators/CuboidGeneration.h"
 #include "inputHandling/generators/SphereGeneration.h"
+#include "inputHandling/generators/MembraneGeneration.h"
 #include "inputHandling/Checkpointer.h"
 #include "inputHandling/FileReaderProgramArgs.h"
 #include "Simulation.h"
@@ -122,6 +123,7 @@ int main(int argc, char *argsv[])
 
     addCuboids(cellContainer,args.cuboids);
     addSpheres(cellContainer,args.spheres,2);
+    addMembranes(cellContainer,args.membranes);
 
     if(args.checkpoint_input_file.has_value()){
         Checkpointer::addCheckpointparticles(cellContainer,args.checkpoint_input_file.value());

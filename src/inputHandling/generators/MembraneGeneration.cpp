@@ -17,7 +17,7 @@ void generateMembrane(FileReader::MembraneData& membrane, CellContainer& contain
                 cords[2] += z * membrane.h;
 
 
-                container.addParticle(cords, vel, grid,membrane.m);
+                container.addParticle(cords, vel, grid,membrane.a, membrane.h, membrane.m);
 
             }
         }

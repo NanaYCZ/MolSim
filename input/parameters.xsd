@@ -42,6 +42,8 @@
               or
               <LJ/>
               or
+              <Membrane/>
+              or
               <smoothedLJ>
                      <r_l>1.0</r_l>
               </smoothedLJ>
@@ -77,6 +79,10 @@
     <xs:choice>
       <!--   gravitational is basically a enum value, bc of empty complex type   -->
       <xs:element name="gravitational">
+        <xs:complexType>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="Membrane">
         <xs:complexType>
         </xs:complexType>
       </xs:element>

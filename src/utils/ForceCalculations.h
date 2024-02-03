@@ -42,10 +42,10 @@ ForceCalculation inline forceHarmonicForce (std::vector<std::vector<double>>& si
         if (abs(grid_i[0] - grid_j[0]) + abs(grid_i[1] - grid_j[1])
             + abs(grid_i[2] - grid_j[2]) == 1) {
             factor = 1;
-            return 300 * (norm - factor*r_zero) / norm * delta_x;
+            return p_i.getFP() * (norm - factor*r_zero) / norm * delta_x;
         }else if (abs(grid_i[0] - grid_j[0]) <= 1 && abs(grid_i[1] - grid_j[1]) <= 1
         && abs(grid_i[2] - grid_j[2]) <= 1){
-            return 300 * (norm - factor*r_zero) / norm* delta_x;
+            return p_i.getFP() * (norm - factor*r_zero) / norm* delta_x;
         }else{
             double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
             double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];

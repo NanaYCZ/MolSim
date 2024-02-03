@@ -16,7 +16,7 @@
         <cutOffRadius>4.0</cutOffRadius>
         <cellSize>4.0</cellSize>
         <gravityFactor>-0.001</gravityFactor>
-        <forceType><LJ/></forceType>
+        <forceType><Membrane/></forceType>
         <parallelizationVersion>
             <first_method>
             </first_method>
@@ -41,7 +41,7 @@
         <position>
             <x>15</x>
             <y>15</y>
-            <z>15</z>
+            <z>1.5</z>
         </position>
         <velocity>
             <x>0</x>

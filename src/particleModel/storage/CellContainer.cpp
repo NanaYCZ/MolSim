@@ -188,24 +188,24 @@ bool CellContainer::setNext2dPattern(std::array<dim_t, 3> &pattern) {
 }
 
 void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg) {
-    addParticle(x_arg, v_arg, m_arg, default_grid_index, sigma_mixed[0][0], epsilon_mixed[0][0]);
+    addParticle(x_arg, v_arg, m_arg, default_grid_index, 1,1,sigma_mixed[0][0], epsilon_mixed[0][0]);
 }
 
 void CellContainer::addParticle(const Particle& particle,double sigma, double epsilon){
-    addParticle(particle.getX(), particle.getV(), particle.getM(), default_grid_index, sigma, epsilon);
+    addParticle(particle.getX(), particle.getV(), particle.getM(), default_grid_index, 1,1,sigma, epsilon);
 }
 
-void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<int,3> grid, double m_arg){
-    addParticle(x_arg, v_arg, m_arg, grid,sigma_mixed[0][0], epsilon_mixed[0][0]);
+void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<int,3> grid, double rz, double fp, double m_arg){
+    addParticle(x_arg, v_arg, m_arg, grid,1,1,sigma_mixed[0][0], epsilon_mixed[0][0]);
 }
 
 void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, double sigma, double epsilon)
 {
-    addParticle(x_arg, v_arg, m_arg, default_grid_index,sigma, epsilon);
+    addParticle(x_arg, v_arg, m_arg, default_grid_index,1,1,sigma, epsilon);
 }
 
 void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
-                                double m_arg, std::array<int,3> grid, double sigma, double epsilon) {
+                                double m_arg, std::array<int,3> grid, double rz, double fp,double sigma, double epsilon) {
     if(domain_bounds[0] <= x_arg[0] || domain_bounds[1] <= x_arg[1] || (domain_bounds[2] <= x_arg[2] && three_dimensions) ||
       x_arg[0] < 0 || x_arg[1] < 0 || x_arg[2] < 0)
     {
@@ -243,6 +243,8 @@ void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 
     }
     Particle newp = Particle(x_arg, v_arg, m_arg, type);
     newp.setGrid(grid);
+    newp.setRZ(rz);
+    newp.setFP(fp);
     particle_instances.push_back(newp);
 }
 

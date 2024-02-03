@@ -36,7 +36,6 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
         SPDLOG_INFO("scheduled chunk size: " + std::to_string(chunk_size));
     }
     #endif
-
     calculator.calculateF();
     calculator.shiftF();
 

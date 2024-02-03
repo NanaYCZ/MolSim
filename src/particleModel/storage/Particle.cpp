@@ -73,7 +73,9 @@ double Particle::getM() const { return m; }
 
 int Particle::getType() const { return type; }
 
-int Particle::getRZ() const { return RZ; }
+double Particle::getRZ() const { return RZ; }
+
+double Particle::getFP() const { return FP; }
 
 void Particle::setX(int index, double value) { x[index] = value; }
 
@@ -84,6 +86,10 @@ void Particle::setV(int index, double value) { v[index] = value; }
 void Particle::setV(std::array<double,3> new_v){v = new_v;};
 
 void Particle::setGrid(std::array<int,3> index){grid = index;};
+
+void Particle::setRZ(double value) { RZ = value; }
+
+void Particle::setFP(double value) { FP = value; }
 
 void Particle::addX(int index, double value){
   x[index] += value;

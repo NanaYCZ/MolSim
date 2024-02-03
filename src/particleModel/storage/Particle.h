@@ -44,7 +44,9 @@ private:
     int type;
 
 
-    int RZ;
+   double RZ;
+
+    double FP;
 
     /**
     * Force (which was) effective on this particle
@@ -138,7 +140,13 @@ public:
 
     int getType() const;
 
-    int getRZ() const;
+    void setRZ(double value);
+
+    double getRZ() const;
+
+    void setFP(double value);
+
+    double getFP() const;
 
 
     void setX(int index, double value);

@@ -343,6 +343,6 @@ void CellCalculator::calculateFWithin(std::vector<Particle*> *current_cell) {
         }
 
         //add gravity
-        (*it1)->addF(1, (*it1)->getM() * gravity_factor);
+        (*it1)->addF(2, (*it1)->getM() * gravity_factor);
     }
 }
