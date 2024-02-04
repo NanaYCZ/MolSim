@@ -10,7 +10,7 @@ void generateMembrane(FileReader::MembraneData& membrane, FileReader::SpecialFor
                 std::array<double, 3> special = {0,0,0};
                 std::array<double, 3> cords(membrane.x);
                 std::array<double, 3> vel(membrane.v);
-                std::array<int, 3> grid({x,y,z});
+                std::array<int, 3> grid = {x,y,z};
 
                 cords[0] += x * membrane.h;
                 cords[1] += y * membrane.h;
@@ -20,9 +20,11 @@ void generateMembrane(FileReader::MembraneData& membrane, FileReader::SpecialFor
                     special=specialForces.f;
                 }
 
-                container.addParticle(cords, vel, grid,membrane.a, membrane.h, membrane.m, {0,0,7});
+                container.addParticle(cords, vel, grid,membrane.a, membrane.f, membrane.m, {0,0,7});
 
             }
+
+
         }
     }
 }

@@ -100,7 +100,7 @@ void CellCalculator::calculateV(){
 void CellCalculator::calculateF(){
     calculateInterCellF();
     calculatePeriodicF();
-    cellContainer.addSpecialF();
+    calculateSpecialForce();
     #pragma omp parallel for default(none) schedule(dynamic) \
                             if(parallelization == concurrency_strategy::first_method)
 
@@ -322,6 +322,19 @@ inline bool CellCalculator::mirror(std::array<dim_t,3> &position, std::array<dou
     return mirrored_fully;
 }
 
+
+void CellCalculator::calculateSpecialForce(){
+    for (auto cell = begin_CellIterator(); cell != end_CellIterator(); ++cell) {
+        for (auto particle_ptr: *cell) {
+            Particle &particle = *particle_ptr;
+
+            if ((particle.getGrid()[0]==17||particle.getGrid()[0]==18)&&
+                    (particle.getGrid()[1]==24||particle.getGrid()[1]==25)){
+                particle_ptr->addF({0,0,0.7});
+            }
+        }
+    }
+}
 
 void CellCalculator::calculateFWithin(std::vector<Particle*> *current_cell) {
     Particle* p_i;

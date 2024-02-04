@@ -241,16 +241,16 @@ void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 
             }
         }
     }
-    Particle newp = Particle(x_arg, v_arg, m_arg, type);
-    newp.setGrid(grid);
-    newp.setRZ(rz);
-    newp.setFP(fp);
+    Particle newp = Particle(x_arg, v_arg, m_arg, type, grid, rz, fp, specialF);
+//    std::cout<<"grid:"<<newp.getGrid()<<std::endl;
+//    newp.setGrid(grid);
+//    std::cout<<"grid after:"<<newp.getGrid()<<std::endl;
     particle_instances.push_back(newp);
 //    std::cout << "SPECIAL:" << newp.getSpecial() << std::endl;
 //    newp.setSpecial(specialF);
 //    std::cout << "newSPECIAL:" << newp.getSpecial() << std::endl;
 //    particle_instances.emplace_back(x_arg, v_arg, m_arg, type, grid, rz, fp, specialF);
-    std::cout<<particle_instances<<std::endl;
+//    std::cout<<particle_instances<<std::endl;
 }
 
 
@@ -337,6 +337,10 @@ size_t CellContainer::size() {
 std::array<dim_t, 3> CellContainer::domain_max_dim{};
 std::vector<std::array<dim_t,3>> CellContainer::patterns{};
 std::vector<std::vector<std::vector<std::vector<Particle*>>>> CellContainer::particles{};
+
+std::vector<Particle> CellContainer::getParticleInstances(){
+    return particle_instances;
+}
 
 
 

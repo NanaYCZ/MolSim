@@ -189,4 +189,8 @@ private:
       * @param epsilon threshold
       */
     bool isApproximatelyEqual(double a, double b, double epsilon = 1e-8);
-};
+
+    std::vector<Particle> getParticleInstances();
+
+}
+;

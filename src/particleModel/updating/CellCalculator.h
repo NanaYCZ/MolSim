@@ -211,4 +211,6 @@ private:
      */
     inline bool mirror(std::array<dim_t,3> &position, std::array<double,3> &offset);
 
+    void calculateSpecialForce();
+
 };

@@ -126,7 +126,7 @@ int main(int argc, char *argsv[])
     addMembranes(cellContainer,args.specialForces,args.membranes);
 
     if(args.checkpoint_input_file.has_value()){
-        Checkpointer::addCheckpointparticles(cellContainer,args.checkpoint_input_file.value());
+         Checkpointer::addCheckpointparticles(cellContainer,args.checkpoint_input_file.value());
     }
 
     cellContainer.createPointers();

@@ -50,7 +50,7 @@ ForceCalculation inline forceHarmonicForce (std::vector<std::vector<double>>& si
             double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
             double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
             double r_c_squared = cutoff * cutoff;
-            /*instantly return 0 if r_c <= norm */
+            //instantly return 0 if r_c <= norm
             if(r_c_squared <= scalar_product) return {0,0,0};
             double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
             prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
