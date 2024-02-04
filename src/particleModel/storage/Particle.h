@@ -48,7 +48,8 @@ private:
 
     double FP;
 
-    std::array<double, 3> special={0,0,0};
+    //std::array<double, 3> special={0,0,7};
+    std::array<double, 3> special;
 
     /**
     * Force (which was) effective on this particle
@@ -92,6 +93,9 @@ public:
         // for visualization, we need always 3 coordinates
         // -> in case of 2d, we use only the first and the second
         std::array<double, 3> x_arg, std::array<double, 3> v_arg,double m_arg, int type = 0);
+
+    Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type_arg,
+             std::array<int, 3> grid, double rz, double fp, std::array<double, 3> special);
 
     virtual ~Particle();
 

@@ -40,7 +40,32 @@ Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
       m(m_arg),
       type(type_arg),
       f_1({0., 0., 0.}),
-      f_2({0., 0., 0.}),boundaries_crossed({0,0,0}) {
+      f_2({0., 0., 0.}),
+      boundaries_crossed({0,0,0})
+//      RZ(),
+//      FP(),
+//      special(),
+//      grid()
+      {
+    SPDLOG_TRACE("Particle generated!");
+}
+
+
+Particle::Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type_arg,
+                   std::array<int, 3> grid, double rz, double fp, std::array<double, 3> special)
+        : x(x_arg),
+          v(v_arg),
+          m(m_arg),
+          type(type_arg),
+          f_1({0., 0., 0.}),
+          f_2({0., 0., 0.}),
+          boundaries_crossed({0,0,0}),
+          grid(grid),
+          RZ(rz),
+          FP(fp),
+          special(special)
+
+{
     SPDLOG_TRACE("Particle generated!");
 }
 
@@ -117,7 +142,6 @@ void Particle::addF(int index, double value) {
 void Particle::addF(std::array<double,3> add_f){
   if (secondIsOld) {
     f_1 = f_1 + add_f;
-    f_1=f_1;
   } else {
     f_2 = f_2 + add_f;
   }

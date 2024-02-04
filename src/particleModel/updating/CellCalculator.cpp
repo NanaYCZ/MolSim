@@ -100,7 +100,7 @@ void CellCalculator::calculateV(){
 void CellCalculator::calculateF(){
     calculateInterCellF();
     calculatePeriodicF();
-
+    cellContainer.addSpecialF();
     #pragma omp parallel for default(none) schedule(dynamic) \
                             if(parallelization == concurrency_strategy::first_method)
 
@@ -108,6 +108,7 @@ void CellCalculator::calculateF(){
         calculateFWithin(&(*iterator));
     }
 }
+
 
 void CellCalculator::shiftF(){
 
@@ -346,3 +347,5 @@ void CellCalculator::calculateFWithin(std::vector<Particle*> *current_cell) {
         (*it1)->addF(2, (*it1)->getM() * gravity_factor);
     }
 }
+
+

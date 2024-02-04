@@ -122,6 +122,8 @@ public:
         }
     }
 
+    void addSpecialF();
+
 
 private:
     bool three_dimensions;

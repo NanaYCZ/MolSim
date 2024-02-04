@@ -20,7 +20,7 @@ void generateMembrane(FileReader::MembraneData& membrane, FileReader::SpecialFor
                     special=specialForces.f;
                 }
 
-                container.addParticle(cords, vel, grid,membrane.a, membrane.h, membrane.m, special);
+                container.addParticle(cords, vel, grid,membrane.a, membrane.h, membrane.m, {0,0,7});
 
             }
         }
@@ -28,7 +28,7 @@ void generateMembrane(FileReader::MembraneData& membrane, FileReader::SpecialFor
 }
 
 
-void addMembranes(CellContainer &container, std::list<FileReader::SpecialForcesData>  specialForces,std::list<FileReader::MembraneData> membranes) {
+void addMembranes(CellContainer &container, std::list<FileReader::SpecialForcesData> specialForces, std::list<FileReader::MembraneData> membranes) {
     for (auto &membrane : membranes) {
         for (auto &specialForce : specialForces){
             generateMembrane(membrane, specialForce,container);

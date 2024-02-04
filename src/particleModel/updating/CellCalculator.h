@@ -210,4 +210,5 @@ private:
      * @return bool indicating if the mirroring was successful with the current boundary conditions
      */
     inline bool mirror(std::array<dim_t,3> &position, std::array<double,3> &offset);
+
 };

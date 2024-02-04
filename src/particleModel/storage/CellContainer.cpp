@@ -196,7 +196,7 @@ void CellContainer::addParticle(const Particle& particle,double sigma, double ep
 }
 
 void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<int,3> grid, double rz, double fp, double m_arg, std::array<double,3> specialF){
-    addParticle(x_arg, v_arg, m_arg, grid,1,1,sigma_mixed[0][0], epsilon_mixed[0][0],specialF);
+    addParticle(x_arg, v_arg, m_arg, grid,rz,fp,sigma_mixed[0][0], epsilon_mixed[0][0],specialF);
 }
 
 void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, double sigma, double epsilon)
@@ -245,8 +245,12 @@ void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 
     newp.setGrid(grid);
     newp.setRZ(rz);
     newp.setFP(fp);
-    newp.setSpecial(specialF);
     particle_instances.push_back(newp);
+//    std::cout << "SPECIAL:" << newp.getSpecial() << std::endl;
+//    newp.setSpecial(specialF);
+//    std::cout << "newSPECIAL:" << newp.getSpecial() << std::endl;
+//    particle_instances.emplace_back(x_arg, v_arg, m_arg, type, grid, rz, fp, specialF);
+    std::cout<<particle_instances<<std::endl;
 }
 
 
@@ -271,6 +275,18 @@ void CellContainer::createPointers(){
 void CellContainer::plotParticles(outputWriter::VTKWriter &writer) {
     for(Particle& particle : particle_instances){
         writer.plotParticle(particle);
+    }
+}
+
+void CellContainer::addSpecialF(){
+    for (Particle& particle : particle_instances) {
+        std::cout << "F:" << particle.getF() << std::endl;
+        std::cout << "oldF:" << particle.getOldF() << std::endl;
+        std::cout << "OldSpecialF:" << particle.getSpecial() << std::endl;
+        particle.addF(particle.getSpecial());
+        std::cout << "newF:" << particle.getF() << std::endl;
+        std::cout << "newOldF:" << particle.getOldF() << std::endl;
+        std::cout << "newSpecialF:" << particle.getSpecial() << std::endl;
     }
 }
 
