@@ -48,8 +48,6 @@ private:
 
     double FP;
 
-    //std::array<double, 3> special={0,0,7};
-    std::array<double, 3> special;
 
     /**
     * Force (which was) effective on this particle
@@ -95,7 +93,7 @@ public:
         std::array<double, 3> x_arg, std::array<double, 3> v_arg,double m_arg, int type = 0);
 
     Particle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, int type_arg,
-             std::array<int, 3> grid, double rz, double fp, std::array<double, 3> special);
+             std::array<int, 3> grid, double rz, double fp);
 
     virtual ~Particle();
 
@@ -152,11 +150,8 @@ public:
 
     void setFP(double value);
 
-    void setSpecial(std::array<double, 3> value);
-
     double getFP() const;
 
-    std::array<double, 3> getSpecial() const;
 
     void setX(int index, double value);
 

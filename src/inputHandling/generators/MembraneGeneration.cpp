@@ -18,9 +18,13 @@ void generateMembrane(FileReader::MembraneData& membrane, FileReader::SpecialFor
 
                 if (int(specialForces.position[0])== x && int(specialForces.position[1])==y && int(specialForces.position[2])==z){
                     special=specialForces.f;
-                }
+                }else{special={0,0,0};}
 
-                container.addParticle(cords, vel, grid,membrane.a, membrane.f, membrane.m, {0,0,7});
+                container.setSpecialPosition(specialForces.position);
+                container.setSpecialTime(specialForces.tS);
+                container.setSpecialForce(specialForces.f);
+
+                container.addParticle(cords, vel, grid,membrane.a, membrane.f, membrane.m);
 
             }
 

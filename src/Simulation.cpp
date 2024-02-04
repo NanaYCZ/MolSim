@@ -64,6 +64,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
         calculator.calculateX();
         calculator.calculateF();
         calculator.calculateV();
+        if (current_time<container.getSpecialTime()) calculator.calculateSpecialForce();
         
         iteration++;
 

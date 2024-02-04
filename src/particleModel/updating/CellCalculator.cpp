@@ -328,9 +328,10 @@ void CellCalculator::calculateSpecialForce(){
         for (auto particle_ptr: *cell) {
             Particle &particle = *particle_ptr;
 
-            if ((particle.getGrid()[0]==17||particle.getGrid()[0]==18)&&
-                    (particle.getGrid()[1]==24||particle.getGrid()[1]==25)){
-                particle_ptr->addF({0,0,0.7});
+            if (particle.getGrid()[0]==cellContainer.getSpecialPosition()[0]&&
+                    particle.getGrid()[1]==cellContainer.getSpecialPosition()[1]&&
+                    particle.getGrid()[2]==cellContainer.getSpecialPosition()[2]){
+                particle_ptr->addF(cellContainer.getSpecialStrength());
             }
         }
     }

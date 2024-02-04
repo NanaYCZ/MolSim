@@ -188,24 +188,24 @@ bool CellContainer::setNext2dPattern(std::array<dim_t, 3> &pattern) {
 }
 
 void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg) {
-    addParticle(x_arg, v_arg, m_arg, default_grid_index, 1,1,sigma_mixed[0][0], epsilon_mixed[0][0],{0,0,0});
+    addParticle(x_arg, v_arg, m_arg, default_grid_index, 1,1,sigma_mixed[0][0], epsilon_mixed[0][0]);
 }
 
 void CellContainer::addParticle(const Particle& particle,double sigma, double epsilon){
-    addParticle(particle.getX(), particle.getV(), particle.getM(), default_grid_index, 1,1,sigma, epsilon,{0,0,0});
+    addParticle(particle.getX(), particle.getV(), particle.getM(), default_grid_index, 1,1,sigma, epsilon);
 }
 
-void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<int,3> grid, double rz, double fp, double m_arg, std::array<double,3> specialF){
-    addParticle(x_arg, v_arg, m_arg, grid,rz,fp,sigma_mixed[0][0], epsilon_mixed[0][0],specialF);
+void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<int,3> grid, double rz, double fp, double m_arg){
+    addParticle(x_arg, v_arg, m_arg, grid,rz,fp,sigma_mixed[0][0], epsilon_mixed[0][0]);
 }
 
 void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, double sigma, double epsilon)
 {
-    addParticle(x_arg, v_arg, m_arg, default_grid_index,1,1,sigma, epsilon,{0,0,0});
+    addParticle(x_arg, v_arg, m_arg, default_grid_index,1,1,sigma, epsilon);
 }
 
 void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg,
-                                double m_arg, std::array<int,3> grid, double rz, double fp,double sigma, double epsilon, std::array<double,3> specialF) {
+                                double m_arg, std::array<int,3> grid, double rz, double fp,double sigma, double epsilon) {
     if(domain_bounds[0] <= x_arg[0] || domain_bounds[1] <= x_arg[1] || (domain_bounds[2] <= x_arg[2] && three_dimensions) ||
       x_arg[0] < 0 || x_arg[1] < 0 || x_arg[2] < 0)
     {
@@ -241,7 +241,7 @@ void CellContainer::addParticle(std::array<double, 3> x_arg, std::array<double, 
             }
         }
     }
-    Particle newp = Particle(x_arg, v_arg, m_arg, type, grid, rz, fp, specialF);
+    Particle newp = Particle(x_arg, v_arg, m_arg, type, grid, rz, fp);
 //    std::cout<<"grid:"<<newp.getGrid()<<std::endl;
 //    newp.setGrid(grid);
 //    std::cout<<"grid after:"<<newp.getGrid()<<std::endl;
@@ -275,18 +275,6 @@ void CellContainer::createPointers(){
 void CellContainer::plotParticles(outputWriter::VTKWriter &writer) {
     for(Particle& particle : particle_instances){
         writer.plotParticle(particle);
-    }
-}
-
-void CellContainer::addSpecialF(){
-    for (Particle& particle : particle_instances) {
-        std::cout << "F:" << particle.getF() << std::endl;
-        std::cout << "oldF:" << particle.getOldF() << std::endl;
-        std::cout << "OldSpecialF:" << particle.getSpecial() << std::endl;
-        particle.addF(particle.getSpecial());
-        std::cout << "newF:" << particle.getF() << std::endl;
-        std::cout << "newOldF:" << particle.getOldF() << std::endl;
-        std::cout << "newSpecialF:" << particle.getSpecial() << std::endl;
     }
 }
 
@@ -341,6 +329,26 @@ std::vector<std::vector<std::vector<std::vector<Particle*>>>> CellContainer::par
 std::vector<Particle> CellContainer::getParticleInstances(){
     return particle_instances;
 }
+
+std::array<double,3> CellContainer::getSpecialPosition(){
+    return specialPosition;
+}
+int CellContainer::getSpecialTime(){
+    return spetialTime;
+}
+std::array<double,3> CellContainer::getSpecialStrength() {
+    return specialStrength;
+}
+void CellContainer::setSpecialPosition(std::array<double,3> sp){
+    specialPosition=sp;
+}
+void CellContainer::setSpecialTime(int st){
+    spetialTime=st;
+}
+void CellContainer::setSpecialForce(std::array<double,3> sf){
+    specialStrength=sf;
+}
+
 
 
 

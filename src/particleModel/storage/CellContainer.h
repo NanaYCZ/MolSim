@@ -48,11 +48,11 @@ public:
      */
     void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg);
 
-    void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<int,3> grid_index, double rz, double fP, double m_arg, std::array<double,3> specialF);
+    void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, std::array<int,3> grid_index, double rz, double fP, double m_arg);
 
     void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, double sigma, double epsilon);
 
-    void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, std::array<int,3> grid_index,  double rz, double fP,double sigma, double epsilon, std::array<double,3> specialF);
+    void addParticle(std::array<double, 3> x_arg, std::array<double, 3> v_arg, double m_arg, std::array<int,3> grid_index,  double rz, double fP,double sigma, double epsilon);
 
     void addParticle(const Particle& particle,double sigma, double epsilon);
 
@@ -99,6 +99,14 @@ public:
         return patterns;
     }
 
+    std::array<double,3> getSpecialPosition();
+    int getSpecialTime();
+    std::array<double,3> getSpecialStrength();
+    void setSpecialPosition(std::array<double,3> sp);
+    void setSpecialTime(int st);
+    void setSpecialForce(std::array<double,3> sf);
+
+
     /**
     * @brief allocates a cell position in the domain for the given position
     *
@@ -122,7 +130,6 @@ public:
         }
     }
 
-    void addSpecialF();
 
 
 private:
@@ -132,6 +139,10 @@ private:
     dim_t comparing_depth = 1;
     size_t particle_amount = 0;
     std::array<int,3> default_grid_index ={0, 0, 0};
+
+    std::array<double,3> specialPosition;
+    std::array<double,3> specialStrength;
+    int spetialTime;
 
     std::vector<Particle> particle_instances;
 

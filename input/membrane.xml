@@ -22,12 +22,12 @@
             </first_method>
         </parallelizationVersion>
         <boundaryConditions>
-            <boundaryConditionsPositiveZ>outflow</boundaryConditionsPositiveZ>
-            <boundaryConditionsNegativeZ>outflow</boundaryConditionsNegativeZ>
-            <boundaryConditionsPositiveX>reflective</boundaryConditionsPositiveX>
-            <boundaryConditionsNegativeX>reflective</boundaryConditionsNegativeX>
-            <boundaryConditionsPositiveY>reflective</boundaryConditionsPositiveY>
-            <boundaryConditionsNegativeY>reflective</boundaryConditionsNegativeY>
+            <boundaryConditionsPositiveZ>reflective</boundaryConditionsPositiveZ>
+            <boundaryConditionsNegativeZ>reflective</boundaryConditionsNegativeZ>
+            <boundaryConditionsPositiveX>outflow</boundaryConditionsPositiveX>
+            <boundaryConditionsNegativeX>outflow</boundaryConditionsNegativeX>
+            <boundaryConditionsPositiveY>outflow</boundaryConditionsPositiveY>
+            <boundaryConditionsNegativeY>outflow</boundaryConditionsNegativeY>
         </boundaryConditions>
         <domainDimensions>
             <x>148</x>
