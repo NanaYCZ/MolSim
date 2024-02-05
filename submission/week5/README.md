@@ -45,17 +45,167 @@ Call ./MolSim with no arguments or the -h argument to get a help message about t
 command line arguments and what is being returned by the executable. This file should probably be viewed on GitHub, as some media embeddings might not work in e.g. an IDE. Sadly GitHub only allows to upload videos with less than 10 Mb, therefore most of the videos have a mediocre quality and are relatively short.
 
 ## Report
-### Task 1
-In parameters.hpp and cpp, allow the input of membranes and special forces in XML file. 
+### Task 1 Membrane
+In parameters.hpp and cpp, allow input of membranes and special forces in XML file. 
+The membrane xml should be 
+```
+<?xml version="1.0" encoding="UTF-8"?>
+<parameters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="parameters.xsd">
 
-### Task 2 
+    <!-- Output Parameters -->
+    <outputParameters>
+        <baseName>out</baseName>
+        <writeFrequency>100</writeFrequency>
+    </outputParameters>
 
 
+    <!-- Simulation Parameters -->
+    <simulationParameters>
+        <tEnd>500</tEnd>
+        <deltaT>0.01</deltaT>
+        <cutOffRadius>4.0</cutOffRadius>
+        <cellSize>4.0</cellSize>
+        <gravityFactor>-0.001</gravityFactor>
+        <forceType><Membrane/></forceType>
+        <parallelizationVersion>
+            <second_method>
+                <numThreads>4</numThreads>
+            </second_method>
+        </parallelizationVersion>
+        <boundaryConditions>
+            <boundaryConditionsPositiveZ>reflective</boundaryConditionsPositiveZ>
+            <boundaryConditionsNegativeZ>reflective</boundaryConditionsNegativeZ>
+            <boundaryConditionsPositiveX>outflow</boundaryConditionsPositiveX>
+            <boundaryConditionsNegativeX>outflow</boundaryConditionsNegativeX>
+            <boundaryConditionsPositiveY>outflow</boundaryConditionsPositiveY>
+            <boundaryConditionsNegativeY>outflow</boundaryConditionsNegativeY>
+        </boundaryConditions>
+        <domainDimensions>
+            <x>148</x>
+            <y>148</y>
+            <z>148</z>
+        </domainDimensions>
+    </simulationParameters>
 
+    <!-- Membranes -->
+    <membranes>
+        <position>
+            <x>15</x>
+            <y>15</y>
+            <z>1.5</z>
+        </position>
+        <velocity>
+            <x>0</x>
+            <y>0</y>
+            <z>0</z>
+        </velocity>
+        <dimensions>
+            <x>50</x>
+            <y>50</y>
+            <z>1</z>
+        </dimensions>
+        <mass>1.0</mass>
+        <meshWidth>2.2</meshWidth>
+        <averageBondLength>2.2</averageBondLength>
+        <forceParameter>300</forceParameter>
+        <sigma>1.0</sigma>
+        <epsilon>1.0</epsilon>
+    </membranes>
 
+    <!-- SpecialForces -->
+    <SpecialForces>
+        <tS>150</tS>
+        <f>
+            <x>0</x>
+            <y>0</y>
+            <z>0.8</z>
+        </f>
+        <position>
+            <x>18</x>
+            <y>25</y>
+            <z>0</z>
+        </position>
+    </SpecialForces>
 
+    <SpecialForces>
+        <tS>150</tS>
+        <f>
+            <x>0</x>
+            <y>0</y>
+            <z>0.8</z>
+        </f>
+        <position>
+            <x>18</x>
+            <y>24</y>
+            <z>0</z>
+        </position>
+    </SpecialForces>
 
+    <SpecialForces>
+        <tS>150</tS>
+        <f>
+            <x>0</x>
+            <y>0</y>
+            <z>0.8</z>
+        </f>
+        <position>
+            <x>17</x>
+            <y>25</y>
+            <z>0</z>
+        </position>
+    </SpecialForces>
 
+    <SpecialForces>
+        <tS>150</tS>
+        <f>
+            <x>0</x>
+            <y>0</y>
+            <z>0.8</z>
+        </f>
+        <position>
+            <x>17</x>
+            <y>24</y>
+            <z>0</z>
+        </position>
+    </SpecialForces>
+</parameters>
+```
+- Implement membrane generator, which passes extra parameters averageBondLength, forceParameter and position index to the particle parameters. 
+- Implement special force generator, which passes three parameters of the special force position, strengh and last time. To set special forces seperate, so that it is also allowed to pass different strength on different locations to the cell container. Whether it succeeds in passing the membranes and special forces can be read through the output messages.
+- Implement specialForce calculator in cell calculator, which compares the corresponding particle position index and special force position index and adds the special force.
+- Implement harmonic force, which compares the particle position index of each particle pair to determine whether they are neighbors. Add direct neighbor force and diagonal neighbor force accordingly. If not neighbors, compares the distance between the particles and decides whether the force should be ignored due to cutoff and self penetration, remaining only repulsive part of the LJ force. 
+- In the end, with the input file above, we could simulate the situation where a membrane lifted up from a plain and falling onto (and bounces on) the plain due to gravity again. 
+- The animation is as follows: [membrane_falling.avi](membrane_falling.avi). We can see the procedure of forces being passed through the membrane.
+
+### Task 2 Parallelization
+- As for previous tasks, we already make calculations as linear as possible, which allows x, v and f to be calculated simultaneously in each grid and calculate the boundary conditions at the same time, it's hard to implement other improvements based on the original structure other than strategy 1, and after testing, other loops set parallel will cause false behaviors.
+- I implemented another (more basic) structure of the whole calculator and apply the parallelization there (https://github.com/NanaYCZ/MolSim/blob/master/src/particleModel/CellCalculator.cpp) However, the input and output is not well merged into that structure so I failed to profile its improvement.
+- I did the profiling still using strategy 1, and add a method 2 which should be sequencial in the simulation function for comparison. With         
+```
+#pragma omp parallel if (calculator.parallelization == concurrency_strategy::second_method)
+{
+#pragma omp master
+{
+#pragma omp task depend(out:x)
+{calculator.calculateX();}
+#pragma omp task depend(in:x) depend(out:f)
+{calculator.calculateF();}
+#pragma omp task depend(in:f)
+{calculator.calculateV();}
+```
+the redundant strategy even slows down the program by 985%. Running the small rayleigh taylor experiment on AMD Ryzen 7 7735HS with Radeon , with serial strategy it took 67.03s, with method 1 four threads it uses 229.274s and method 2 four threads it takes 727.089s.
+![first_method_small_rayleigh_experiment.png](first_method_small_rayleigh_experiment.png)
+
+![second_method_small_rayleigh_experiment.png](second_method_small_rayleigh_experiment.png)
+
+However, the big rayleigh experiment can be speed up with method 1. The speed up rate and time cost of 100 iterations can be shown in the graphs given. 
+![img.png](img.png)
+![img_1.png](img_1.png)
+- From the comparison between small and big rayleigh experiment, we can infer that the inner and inter cells methods are well set but there are defects in the boundary conditions. 
+- With Intel VTune Amplifier, the data of serial and 16 threads method 1 parallelization are shown below. The sequential analysis is convincable that the most time is used in function lambda, however the parallel report seems weird.
+![vtune_sequence.png](vtune_sequence.png)
+![vtune_sequence.png](vtune_sequence.png)
 
 
 
