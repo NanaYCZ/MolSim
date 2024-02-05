@@ -6,8 +6,7 @@ Yuchen Zhao,
 Grazvydas Kuras,
 David Kratz
 
-[Project Link](https://github.com/Grazvy/PSEMolDyn_GroupB/tree/yuchen)
-or [Project Link](https://github.com/NanaYCZ/MolSim)
+[Project Link](https://github.com/NanaYCZ/MolSim)
 
 **Last commit:** "Readme done"
 
