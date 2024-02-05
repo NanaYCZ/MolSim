@@ -6,9 +6,10 @@ Yuchen Zhao,
 Grazvydas Kuras,
 David Kratz
 
-[Project Link](https://github.com/Grazvy/PSEMolDyn_GroupB)
+[Project Link](https://github.com/Grazvy/PSEMolDyn_GroupB/tree/yuchen)
+or [Project Link](https://github.com/NanaYCZ/MolSim)
 
-**Last commit:** commit-id: 4031c37 or "Merge remote-tracking branch 'origin/master'"
+**Last commit:** "Readme done"
 
 **Build/Usage:**
 ```
@@ -181,7 +182,7 @@ xsi:noNamespaceSchemaLocation="parameters.xsd">
 ### Task 2 Parallelization
 - As for previous tasks, we already make calculations as linear as possible, which allows x, v and f to be calculated simultaneously in each grid and calculate the boundary conditions at the same time, it's hard to implement other improvements based on the original structure other than strategy 1, and after testing, other loops set parallel will cause false behaviors.
 - I implemented another (more basic) structure of the whole calculator and apply the parallelization there (https://github.com/NanaYCZ/MolSim/blob/master/src/particleModel/CellCalculator.cpp) However, the input and output is not well merged into that structure so I failed to profile its improvement.
-- I did the profiling still using strategy 1, and add a method 2 which should be sequencial in the simulation function for comparison. With         
+- The main parallelization is done still using strategy 1, but a method 2 which should be sequential in the simulation function for comparison.          
 ```
 #pragma omp parallel if (calculator.parallelization == concurrency_strategy::second_method)
 {
@@ -194,12 +195,12 @@ xsi:noNamespaceSchemaLocation="parameters.xsd">
 #pragma omp task depend(in:f)
 {calculator.calculateV();}
 ```
-the redundant strategy even slows down the program by 985%. Running the small rayleigh taylor experiment on AMD Ryzen 7 7735HS with Radeon , with serial strategy it took 67.03s, with method 1 four threads it uses 229.274s and method 2 four threads it takes 727.089s.
+The redundant strategy above even slows down the program by 985%. Running the small rayleigh taylor experiment on AMD Ryzen 7 7735HS with Radeon , with serial strategy it took 67.03s, with method 1 four threads it uses 229.274s and method 2 four threads it takes 727.089s.
 ![first_method_small_rayleigh_experiment.png](first_method_small_rayleigh_experiment.png)
 
 ![second_method_small_rayleigh_experiment.png](second_method_small_rayleigh_experiment.png)
 
-However, the big rayleigh experiment can be speed up with method 1. The speed up rate and time cost of 100 iterations can be shown in the graphs given. 
+However, the big rayleigh experiment can be speed up using parallelization. The speed up rate and time cost of 100 iterations can be shown in the graphs given. 
 ![img.png](img.png)
 ![img_1.png](img_1.png)
 - From the comparison between small and big rayleigh experiment, we can infer that the inner and inter cells methods are well set but there are defects in the boundary conditions. 
