@@ -327,11 +327,12 @@ void CellCalculator::calculateSpecialForce(){
     for (auto cell = begin_CellIterator(); cell != end_CellIterator(); ++cell) {
         for (auto particle_ptr: *cell) {
             Particle &particle = *particle_ptr;
-
-            if (particle.getGrid()[0]==cellContainer.getSpecialPosition()[0]&&
-                    particle.getGrid()[1]==cellContainer.getSpecialPosition()[1]&&
-                    particle.getGrid()[2]==cellContainer.getSpecialPosition()[2]){
-                particle_ptr->addF(cellContainer.getSpecialStrength());
+            for (int i=0;i<cellContainer.getSpecialPositions().size();i++){
+                if (particle.getGrid()[0]==cellContainer.getSpecialPositions()[i][0]&&
+                    particle.getGrid()[1]==cellContainer.getSpecialPositions()[i][1]&&
+                    particle.getGrid()[2]==cellContainer.getSpecialPositions()[i][2]){
+                    particle_ptr->addF(cellContainer.getSpecialStrength()[i]);
+                }
             }
         }
     }

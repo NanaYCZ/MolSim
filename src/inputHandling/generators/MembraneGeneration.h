@@ -2,5 +2,6 @@
 
 #include "inputHandling/FileReader.h"
 
-void generateMembrane(FileReader::MembraneData& membrane, FileReader::SpecialForcesData& specialForces,CellContainer& container);
-void addMembranes(CellContainer &container, std::list<FileReader::SpecialForcesData>  specialForces,std::list<FileReader::MembraneData> membranes);
+void generateMembrane(FileReader::MembraneData& membrane, CellContainer& container);
+void addMembranes(CellContainer &container, std::list<FileReader::MembraneData> membranes);
+void addSpecialForces(CellContainer &container, std::list<FileReader::SpecialForcesData> specialForces);

@@ -31,7 +31,8 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
     SPDLOG_INFO("Starting Simulation");
 
     #ifdef _OPENMP
-    if(calculator.parallelization == concurrency_strategy::first_method){
+    if(calculator.parallelization == concurrency_strategy::first_method
+    ||calculator.parallelization ==concurrency_strategy::second_method){
         SPDLOG_INFO("max threads: " + std::to_string(omp_get_max_threads()));
         SPDLOG_INFO("scheduled chunk size: " + std::to_string(chunk_size));
     }
@@ -64,6 +65,7 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
         calculator.calculateX();
         calculator.calculateF();
         calculator.calculateV();
+
         if (current_time<container.getSpecialTime()) calculator.calculateSpecialForce();
         
         iteration++;

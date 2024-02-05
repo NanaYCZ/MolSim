@@ -5658,9 +5658,10 @@ protected:
 
 protected:
 
-    ::xsd::cxx::tree::one< PositionIndex_type > PositionIndex_;
-    ::xsd::cxx::tree::one< Strength_type > Strength_;
-    ::xsd::cxx::tree::one< tSEnd_type > tSEnd_;
+        ::xsd::cxx::tree::one< tSEnd_type > tSEnd_;
+        ::xsd::cxx::tree::one< Strength_type > Strength_;
+        ::xsd::cxx::tree::one< PositionIndex_type > PositionIndex_;
+
 
     //@endcond
 };

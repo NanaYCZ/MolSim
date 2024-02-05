@@ -1,13 +1,12 @@
 #include "MembraneGeneration.h"
 #include "inputHandling/FileReaderProgramArgs.h"
 
-void generateMembrane(FileReader::MembraneData& membrane, FileReader::SpecialForcesData& specialForces,CellContainer& container) {
+void generateMembrane(FileReader::MembraneData& membrane, CellContainer& container) {
     for(int z = 0; z < membrane.N3; z++) {
 
         for (int y = 0; y < membrane.N2; y++) {
 
             for (int x = 0; x < membrane.N1; x++) {
-                std::array<double, 3> special = {0,0,0};
                 std::array<double, 3> cords(membrane.x);
                 std::array<double, 3> vel(membrane.v);
                 std::array<int, 3> grid = {x,y,z};
@@ -16,30 +15,26 @@ void generateMembrane(FileReader::MembraneData& membrane, FileReader::SpecialFor
                 cords[1] += y * membrane.h;
                 cords[2] += z * membrane.h;
 
-                if (int(specialForces.position[0])== x && int(specialForces.position[1])==y && int(specialForces.position[2])==z){
-                    special=specialForces.f;
-                }else{special={0,0,0};}
-
-                container.setSpecialPosition(specialForces.position);
-                container.setSpecialTime(specialForces.tS);
-                container.setSpecialForce(specialForces.f);
-
                 container.addParticle(cords, vel, grid,membrane.a, membrane.f, membrane.m);
 
             }
-
-
         }
     }
 }
 
 
-void addMembranes(CellContainer &container, std::list<FileReader::SpecialForcesData> specialForces, std::list<FileReader::MembraneData> membranes) {
-    for (auto &membrane : membranes) {
-        for (auto &specialForce : specialForces){
-            generateMembrane(membrane, specialForce,container);
-        }
 
+void addMembranes(CellContainer &container, std::list<FileReader::MembraneData> membranes) {
+    for (auto &membrane : membranes) {
+        generateMembrane(membrane, container);
+    }
+}
+
+void addSpecialForces(CellContainer &container, std::list<FileReader::SpecialForcesData> specialForces){
+     for (auto  &specialForce : specialForces){
+        container.setSpecialTime(specialForce.tS);
+        container.pushbackSpecialPosition(specialForce.position);
+        container.pushbackSpecialForce(specialForce.f);
     }
 }
 

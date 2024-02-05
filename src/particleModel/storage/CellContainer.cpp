@@ -330,23 +330,23 @@ std::vector<Particle> CellContainer::getParticleInstances(){
     return particle_instances;
 }
 
-std::array<double,3> CellContainer::getSpecialPosition(){
-    return specialPosition;
+std::vector<std::array<double,3>> CellContainer::getSpecialPositions(){
+    return specialPositions;
 }
 int CellContainer::getSpecialTime(){
     return spetialTime;
 }
-std::array<double,3> CellContainer::getSpecialStrength() {
+std::vector<std::array<double,3>> CellContainer::getSpecialStrength() {
     return specialStrength;
 }
-void CellContainer::setSpecialPosition(std::array<double,3> sp){
-    specialPosition=sp;
+void CellContainer::pushbackSpecialPosition(std::array<double,3> sp){
+    specialPositions.push_back(sp);
 }
 void CellContainer::setSpecialTime(int st){
     spetialTime=st;
 }
-void CellContainer::setSpecialForce(std::array<double,3> sf){
-    specialStrength=sf;
+void CellContainer::pushbackSpecialForce(std::array<double,3> sf){
+    specialStrength.push_back(sf);
 }
 
 

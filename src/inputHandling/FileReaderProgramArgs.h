@@ -190,10 +190,12 @@ struct FileReader::MembraneData {
 *
 */
 struct FileReader::SpecialForcesData {
+
+    double tS;
     /// initial velocity and position vectors
     std::array<double, 3> position, f;
 
-    double tS;
+
 
     std::string to_string() const {
         std::stringstream ss;
@@ -208,9 +210,9 @@ struct FileReader::SpecialForcesData {
     }
 
     /**
-     * @brief Compare two MembraneData structs. Used for Testing
+     * @brief Compare two SpecialForce structs. Used for Testing
      *
-     * @return True if this MembraneData struct has the same content as other
+     * @return True if this SpecialForce struct has the same content as other
      */
     bool operator==(const SpecialForcesData &other) const {
         return (position == other.position && f == other.f && tS == other.tS);
@@ -357,7 +359,8 @@ struct FileReader::ProgramArgs {
     }
 
     bool operator==(const ProgramArgs& other) const {
-        if(cuboids.size() == other.cuboids.size() && spheres.size() == other.spheres.size()){
+        if(cuboids.size() == other.cuboids.size() && spheres.size() == other.spheres.size()
+                                                     && membranes.size() == other.membranes.size()){
             auto cuboids_it = cuboids.begin();
             auto cuboids_it2 = other.cuboids.begin();
 
@@ -375,6 +378,17 @@ struct FileReader::ProgramArgs {
             for(;spheres_it != spheres.end() && spheres_it2 != other.spheres.end(); ++spheres_it , ++spheres_it2){
                 if(!(*spheres_it == *spheres_it2)){
                     std::cout << "Comp failed bc these two were not equal:" << (*spheres_it).to_string() << (*spheres_it2).to_string() << std::endl;
+                    return false;
+                }
+            }
+
+            auto membranes_it = membranes.begin();
+            auto membranes_it2 = other.membranes.begin();
+
+
+            for(; membranes_it != membranes.end() && membranes_it2 != other.membranes.end() ; ++membranes_it , ++membranes_it2){
+                if( !(*membranes_it ==  * membranes_it2)){
+                    std::cout << "Comp failed bc these two were not equal:" << (*membranes_it).to_string() << (*membranes_it2).to_string() << std::endl;
                     return false;
                 }
             }
@@ -451,6 +465,10 @@ struct FileReader::ProgramArgs {
         }
         if (!(spheres == other.spheres)) {
             std::cout << "Comparison failed: spheres" << std::endl;
+            return false;
+        }
+        if (!(membranes == other.membranes)) {
+            std::cout << "Comparison failed: membranes" << std::endl;
             return false;
         }
 

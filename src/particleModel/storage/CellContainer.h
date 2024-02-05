@@ -99,12 +99,13 @@ public:
         return patterns;
     }
 
-    std::array<double,3> getSpecialPosition();
+
     int getSpecialTime();
-    std::array<double,3> getSpecialStrength();
-    void setSpecialPosition(std::array<double,3> sp);
+    std::vector<std::array<double,3>> getSpecialPositions();
+    std::vector<std::array<double,3>>  getSpecialStrength();
     void setSpecialTime(int st);
-    void setSpecialForce(std::array<double,3> sf);
+    void pushbackSpecialPosition(std::array<double,3> sp);
+    void pushbackSpecialForce(std::array<double,3> sf);
 
 
     /**
@@ -140,8 +141,8 @@ private:
     size_t particle_amount = 0;
     std::array<int,3> default_grid_index ={0, 0, 0};
 
-    std::array<double,3> specialPosition;
-    std::array<double,3> specialStrength;
+    std::vector<std::array<double,3>> specialPositions;
+    std::vector<std::array<double,3>> specialStrength;
     int spetialTime;
 
     std::vector<Particle> particle_instances;

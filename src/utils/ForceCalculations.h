@@ -29,9 +29,29 @@
  */
 using ForceCalculation = std::function<std::array<double, 3>(const Particle &, const Particle &, const std::array<double,3> &)>;
 
+
+/**
+ * @brief Calculate force between neighboring particles
+ *
+ * Uses particle grids (the index of the particles in three dimensions) to determine if they are neighbors
+ * If true, uses the harmonic potential to calculate, which further set different factor of multiplication
+ * depending on whether they are direct neighbors or diagonal neighbors.
+ *
+ *
+ *
+ * (offset is always applied, when the difference between the positions of p_i and p_j is calculated)
+ *
+ * @param sigma_mixed the matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param epsilon_mixed the matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
+ * @param cutoff upper cutoff radius for the force
+ *
+ * @return Three-dimensional vector that corresponds to \f$ f_{ij} \f$
+**/
+
 ForceCalculation inline forceHarmonicForce (std::vector<std::vector<double>>& sigma_mixed,
                                             std::vector<std::vector<double>>& epsilon_mixed, double cutoff) {
     return [&sigma_mixed,&epsilon_mixed,cutoff](const Particle &p_i, const Particle &p_j, const std::array<double, 3> &offset) -> std::array<double, 3> {
+
         double factor = sqrt(2);
         const auto r_zero = p_i.getRZ();
         const auto &x_i = p_i.getX(), x_j = p_j.getX();
@@ -52,6 +72,7 @@ ForceCalculation inline forceHarmonicForce (std::vector<std::vector<double>>& si
             double r_c_squared = cutoff * cutoff;
             //instantly return 0 if r_c <= norm
             if(r_c_squared <= scalar_product) return {0,0,0};
+            if(norm<sigma*1.12246204831) return {0,0,0};
             double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
             prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
             return prefactor * (x_i - x_j + offset);
@@ -77,6 +98,7 @@ ForceCalculation inline forceHarmonicForce (std::vector<std::vector<double>>& si
  *
  * @return Three-dimensional vector that corresponds to \f$ f_{ij} \f$
  */
+
 ForceCalculation inline forceSimpleGravitational(double cutoff){
         return [cutoff](const Particle &p_i, const Particle &p_j, const std::array<double,3> &offset) -> std::array<double,3> {
         double m_i = p_i.getM(), m_j = p_j.getM();

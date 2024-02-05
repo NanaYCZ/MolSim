@@ -70,13 +70,51 @@
             <z>0.8</z>
         </f>
         <position>
-            <x>17</x>
+            <x>18</x>
+            <y>25</y>
+            <z>0</z>
+        </position>
+    </SpecialForces>
+
+    <SpecialForces>
+        <tS>150</tS>
+        <f>
+            <x>0</x>
+            <y>0</y>
+            <z>0.8</z>
+        </f>
+        <position>
+            <x>18</x>
             <y>24</y>
             <z>0</z>
         </position>
     </SpecialForces>
 
+    <SpecialForces>
+        <tS>150</tS>
+        <f>
+            <x>0</x>
+            <y>0</y>
+            <z>0.8</z>
+        </f>
+        <position>
+            <x>17</x>
+            <y>25</y>
+            <z>0</z>
+        </position>
+    </SpecialForces>
 
-
-
+    <SpecialForces>
+        <tS>150</tS>
+        <f>
+            <x>0</x>
+            <y>0</y>
+            <z>0.8</z>
+        </f>
+        <position>
+            <x>17</x>
+            <y>24</y>
+            <z>0</z>
+        </position>
+    </SpecialForces>
 </parameters>
