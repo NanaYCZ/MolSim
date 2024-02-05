@@ -10,7 +10,7 @@
  * offset is based on the particles location within the cuboid and a distance h
  * to the particles around it. Grid of the particles is based on their initial index.
  *
- * @param cuboid data for the generation
+ * @param membrane data for the generation
  * @param container reference to add the cuboids particles to
  */
 void generateMembrane(FileReader::MembraneData& membrane, CellContainer& container);
@@ -19,7 +19,7 @@ void generateMembrane(FileReader::MembraneData& membrane, CellContainer& contain
  * @brief determines global dimension of the membranes particles and iteratively generates membranes
  *
  * @param container reference to add particles to
- * @param cuboids all the membranes data to iterate over
+ * @param membranes all the membranes data to iterate over
  */
 void addMembranes(CellContainer &container, std::list<FileReader::MembraneData> membranes);
 

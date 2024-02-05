@@ -18,9 +18,9 @@
         <gravityFactor>-12.44</gravityFactor>
         <forceType><LJ/></forceType>
         <parallelizationVersion>
-            <first_method>
-                <numThreads>16</numThreads>
-            </first_method>
+            <second_method>
+                <numThreads>1</numThreads>
+            </second_method>
         </parallelizationVersion>
         <Thermostats>
             <initTemp>40</initTemp>

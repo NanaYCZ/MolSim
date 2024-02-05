@@ -113,11 +113,10 @@ FileReader::ProgramArgs FileReader::readProgramArguments(std::string filename){
             args.parallelization_version = concurrency_strategy::first_method;
             if(sim_params.parallelizationVersion().get().first_method().get().numThreads().present())
             args.choose_amount_threads = sim_params.parallelizationVersion().get().first_method().get().numThreads().get();
-        }else if(sim_params.parallelizationVersion().get().first_method().present()){
+        }else if(sim_params.parallelizationVersion().get().second_method().present()){
             args.parallelization_version = concurrency_strategy::second_method;
             if(sim_params.parallelizationVersion().get().second_method().get().numThreads().present())
                 args.choose_amount_threads =  sim_params.parallelizationVersion().get().second_method().get().numThreads().get();
-            //spdlog::info("The second method can be choosen, but at the moment it does not differ from the first");
         }else{
             spdlog::info("The Strategy for Parallelization you provided does not exist");
         }

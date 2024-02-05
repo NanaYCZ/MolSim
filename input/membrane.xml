@@ -18,8 +18,9 @@
         <gravityFactor>-0.001</gravityFactor>
         <forceType><Membrane/></forceType>
         <parallelizationVersion>
-            <first_method>
-            </first_method>
+            <second_method>
+                <numThreads>4</numThreads>
+            </second_method>
         </parallelizationVersion>
         <boundaryConditions>
             <boundaryConditionsPositiveZ>reflective</boundaryConditionsPositiveZ>

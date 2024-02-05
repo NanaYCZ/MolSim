@@ -22,7 +22,9 @@
            </smoothedLJ>
         </forceType>
         <parallelizationVersion>
-            <serial/>
+            <first_method>
+                <numThreads>4</numThreads>
+            </first_method>
         </parallelizationVersion>
         <Thermostats>
             <initTemp>40</initTemp>

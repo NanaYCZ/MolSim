@@ -46,8 +46,22 @@ command line arguments and what is being returned by the executable. This file s
 
 ## Report
 ### Task 1
+In parameters.hpp and cpp, allow the input of membranes and special forces in XML file. 
 
 ### Task 2 
+
+
+
+
+
+
+
+
+
+
+
+
+### Task 2
 #### Parallelization
 - for our parallelization strategy, we looked for discrete workloads within our code, which was to the most part already the case
 for calculateX, calculateV, shiftF, calculateFWithin and calculateInterCellF (thanks to our parallelization plan from previous tasks).

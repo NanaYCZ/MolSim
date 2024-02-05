@@ -60,12 +60,21 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
         SPDLOG_TRACE("Doing a Iteration with CellCalculator");
         //this applies Ghost Particle reflective boundary conditions, only 
         //if any of the boundaries is boundary_condition::ghost_reflective
- 
-        calculator.calculateX();
-        calculator.calculateF();
-        calculator.calculateV();
+        int x, f;
+#pragma omp parallel if (calculator.parallelization == concurrency_strategy::second_method)
+        {
+#pragma omp master
+            {
+#pragma omp task depend(out:x)
+                {calculator.calculateX();}
+#pragma omp task depend(in:x) depend(out:f)
+                {calculator.calculateF();}
+#pragma omp task depend(in:f)
+                {calculator.calculateV();}
 
-        if (current_time<container.getSpecialTime()) calculator.calculateSpecialForce();
+                if (current_time<container.getSpecialTime()) calculator.calculateSpecialForce();
+            }
+        }
         
         iteration++;
 
