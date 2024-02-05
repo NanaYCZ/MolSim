@@ -57,7 +57,6 @@ void runSimulation(CellContainer &container, CellCalculator& calculator, ThermoS
 
     while (current_time < end_time) {
         SPDLOG_TRACE(std::to_string(current_time));
-
         SPDLOG_TRACE("Doing a Iteration with CellCalculator");
         //this applies Ghost Particle reflective boundary conditions, only 
         //if any of the boundaries is boundary_condition::ghost_reflective

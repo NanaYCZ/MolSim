@@ -100,7 +100,6 @@ void CellCalculator::calculateV(){
 void CellCalculator::calculateF(){
     calculateInterCellF();
     calculatePeriodicF();
-    calculateSpecialForce();
     #pragma omp parallel for default(none) schedule(dynamic) \
                             if(parallelization == concurrency_strategy::first_method)
 

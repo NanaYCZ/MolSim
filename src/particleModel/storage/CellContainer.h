@@ -38,11 +38,16 @@ public:
     /**
      * @brief creates a particle instance with the given parameters
      *
-     * stores the particle in particle_instances, and increments particle_amount.
+     * stores the particle and sets its parameter accordings
+     * in particle_instances, and increments particle_amount.
+     * epsilon and sigma is stored in container
      *
      * @param x_arg particle position
      * @param v_arg particle velocity
      * @param m_arg particle mass
+     * @param grid_index particle grid index
+     * @param rz particle r_zero average bond length
+     * @param fp particle force parameter stiffness constant
      *
      * @throws std::invalid_argument if the particle position is outside the domain bounds
      */
@@ -101,10 +106,16 @@ public:
 
 
     int getSpecialTime();
+
+
+/** get the list of special positions storing the special particle index */
     std::vector<std::array<double,3>> getSpecialPositions();
+/** get the list of special forces on each special particle index */
     std::vector<std::array<double,3>>  getSpecialStrength();
     void setSpecialTime(int st);
+/**  push back a set of special particle grid index to list of special positions */
     void pushbackSpecialPosition(std::array<double,3> sp);
+/** push back a set of special particle force strength to list of special positions */
     void pushbackSpecialForce(std::array<double,3> sf);
 
 
@@ -202,7 +213,6 @@ private:
       */
     bool isApproximatelyEqual(double a, double b, double epsilon = 1e-8);
 
-    std::vector<Particle> getParticleInstances();
 
 }
 ;

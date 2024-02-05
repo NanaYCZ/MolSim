@@ -5403,7 +5403,7 @@ protected:
 
   //@cond
 /**
- * @brief Class corresponding to the %membraneType schema type.
+ * @brief Class corresponding to the %specialForcesType schema type.
  *
  * @nosubgrouping
  */
@@ -5411,13 +5411,13 @@ protected:
     {
     public:
         /**
-     * @name averageBondLength
+     * @name tSEnd
      *
-     * @brief Accessor and modifier functions for the %mass
+     * @brief Accessor and modifier functions for the %end of special time
      * required element.
      */
 
-/**
+    /**
      * @brief Element type.
      */
         typedef ::xml_schema::double_ tSEnd_type;
@@ -5457,9 +5457,9 @@ protected:
 
         //@}
         /**
-     * @name forceParameter
+     * @name Stength
      *
-     * @brief Accessor and modifier functions for the %forceParameter
+     * @brief Accessor and modifier functions for the %specialForces
      * required element.
      */
 
@@ -5516,10 +5516,14 @@ protected:
 
         //@}
         /**
-         * @name position
+         * @name PositionIndex
         /**
-         * @brief Element type.
-         */
+         * @brief Accessor and modifier functions for the %specialForcesPositionGridIndex
+     * required element.
+
+        /**
+        * @brief Element type.
+        */
         typedef ::vector3DType PositionIndex_type;
 
         /**
@@ -5993,11 +5997,11 @@ class parameters: public ::xml_schema::type
 
 
     /**
-     * @name cuboids
-     *
-     * @brief Accessor and modifier functions for the %cuboids
-     * sequence element.
-     */
+   * @name specialForces
+   *
+   * @brief Accessor and modifier functions for the %spheres
+   * sequence element.
+   */
     //@{
 
     /**

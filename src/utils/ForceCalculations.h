@@ -34,12 +34,10 @@ using ForceCalculation = std::function<std::array<double, 3>(const Particle &, c
  * @brief Calculate force between neighboring particles
  *
  * Uses particle grids (the index of the particles in three dimensions) to determine if they are neighbors
- * If true, uses the harmonic potential to calculate, which further set different factor of multiplication
+ * If true, uses the harmonic potential to calculate, which further sets different factor of multiplication
  * depending on whether they are direct neighbors or diagonal neighbors.
- *
- *
- *
- * (offset is always applied, when the difference between the positions of p_i and p_j is calculated)
+ * If false, uses LJ force to calculate, which will be set to zero if the length is too large to save calculation
+ * or if length is too small to avoid self penetration of the membrane. In the end only repulsive part will remain.
  *
  * @param sigma_mixed the matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
  * @param epsilon_mixed the matrix of mixed interaction parameters for the respective Particles (supplied by CellCalculator)
@@ -51,28 +49,38 @@ using ForceCalculation = std::function<std::array<double, 3>(const Particle &, c
 ForceCalculation inline forceHarmonicForce (std::vector<std::vector<double>>& sigma_mixed,
                                             std::vector<std::vector<double>>& epsilon_mixed, double cutoff) {
     return [&sigma_mixed,&epsilon_mixed,cutoff](const Particle &p_i, const Particle &p_j, const std::array<double, 3> &offset) -> std::array<double, 3> {
-
+//direct neighbor factor=1, diagonal neighbor factor=2
         double factor = sqrt(2);
+//r_zero average bond length
         const auto r_zero = p_i.getRZ();
+//position of two particles
         const auto &x_i = p_i.getX(), x_j = p_j.getX();
+//position index of two particles
         const auto &grid_i = p_i.getGrid(), grid_j = p_j.getGrid();
+//distance of the two particles
         std::array<double, 3> delta_x = x_j - x_i + offset;
         double scalar_product = ArrayUtils::scalarProduct(delta_x, delta_x);
         double norm = std::sqrt(scalar_product);
+//direct neighbor
         if (abs(grid_i[0] - grid_j[0]) + abs(grid_i[1] - grid_j[1])
             + abs(grid_i[2] - grid_j[2]) == 1) {
             factor = 1;
             return p_i.getFP() * (norm - factor*r_zero) / norm * delta_x;
-        }else if (abs(grid_i[0] - grid_j[0]) <= 1 && abs(grid_i[1] - grid_j[1]) <= 1
+        }
+//diagonal neighbor
+        else if (abs(grid_i[0] - grid_j[0]) <= 1 && abs(grid_i[1] - grid_j[1]) <= 1
         && abs(grid_i[2] - grid_j[2]) <= 1){
             return p_i.getFP() * (norm - factor*r_zero) / norm* delta_x;
-        }else{
+        }
+//not neighbor, use lj force
+        else{
             double sigma = sigma_mixed[p_i.getType()][p_j.getType()];
             double epsilon = epsilon_mixed[p_i.getType()][p_j.getType()];
             double r_c_squared = cutoff * cutoff;
-            //instantly return 0 if r_c <= norm
+ //norm>=cutoff, force = 0
             if(r_c_squared <= scalar_product) return {0,0,0};
-            if(norm<sigma*1.12246204831) return {0,0,0};
+ //norm>=2^1/6*sigma, force = 0, to avoid self penetration
+            if(norm>sigma*1.12246204831) return {0,0,0};
             double prefactor = (-24 * epsilon) / (std::pow(norm, 2));
             prefactor *= (std::pow(sigma / norm, 6) - 2 * std::pow(sigma / norm, 12));
             return prefactor * (x_i - x_j + offset);

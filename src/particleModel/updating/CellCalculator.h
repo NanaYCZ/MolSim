@@ -89,7 +89,14 @@ public:
      */
     void calculatePeriodicF();
 
-
+    /**
+     * @brief calculates the special forces
+     * determine whether the grid index of the current particle is same as the special particle grid index
+     * stored in the cell container
+     * if true apply the special forces stored in cell container on that grid location
+     * if false do nothing
+    */
+    void calculateSpecialForce();
 
 
     /**
@@ -145,7 +152,7 @@ public:
     ForceCalculation force;
     concurrency_strategy parallelization;
 
-    void calculateSpecialForce();
+
 
 
 private:
